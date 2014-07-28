@@ -1,0 +1,108 @@
+git pull (obter a última versão do repositório remoto):
+    $ git pull origin master:refs/heads/master
+
+
+git push (levar os commits do repositório local para o repositório remoto):
+    $ git push origin master:refs/heads/master    
+
+
+Resetar todos os arquivos locais para o último commit:
+    $ git reset --hard
+
+    OBS.: Existe, a partir da versão 1.7.1, o comando:
+
+        $ git reset --keep
+
+    This mode of git reset was added in git version 1.7.1, and is exactly like "git reset --hard" except that it PRESERVES ANY UNCOMMITTED CHANGES in the working tree.
+
+Resetar apenas um arquivo local para o último commit:
+    $ git checkout <path_do_arquivo>
+
+  
+Alterar a mensagem do ultimo commit
+    * ANTES DE FAZER O PUSH (SÓ FEITO O COMMIT):
+        $ git commit -a --amend -m "TASK #23 - Implementada exportação CSV de Contatos de uma lista"    
+
+    * APÓS FEITO O PUSH:    
+        $ git commit -a --amend -m "TASK #23 - Implementada exportação CSV de Contatos de uma lista"    
+        $ git rebase -m HEAD
+        $ git pull
+        $ git push
+
+
+Remover commit (antes do push):
+    1) Clean the working tree:
+        $ git stash
+        $ git stash apply
+
+    2) Remove the commit on your local repository. You can do this using git rebase -i. 
+    For example, if it's your last commit, you can do:
+        $ git rebase -i HEAD~2
+    Then, delete the second line within the editor window that pops up (it corresponds to the last commit).
+
+
+Remover commit (após feito push):    
+    1) $ git push -f origin HEAD^:master (isto irá operar direto no repositório remoto, movendo o ponteiro do HEAD para o penúltimo commit (HEAD^)) 
+    2) Refazer o git clone do repositório remoto. 
+    
+    
+ERRO AO DAR O PUSH EM UM REPOSITÓRIO REMOTO:
+    $ git push
+    To git@tiagoprnl.me:simpletasks.git
+     ! [rejected]        master -> master (non-fast-forward)
+    error: failed to push some refs to 'git@tiagoprnl.me:simpletasks.git'
+    To prevent you from losing history, non-fast-forward updates were rejected
+    Merge the remote changes before pushing again.  See the 'Note about
+    fast-forwards' section of 'git push --help' for details.
+        COMO CORRIGIR:
+        $ git pull
+        $ git push
+
+GIT REMOTES:
+    VIEW:
+        $ git remote -v
+
+    ADD:    
+        $ git remote add origin git@github.com:tiagoprn/repo.git
+
+    REMOVE: 
+        $ git remote rm origin
+
+    CHANGE:
+        $ git remote set-url origin git@github.com:tiagoprn/pybots.git
+        (This will set the remote for cloning a repo through github using my ssh keys)
+
+
+VOLTAR UM REPOSITÓRIO PARA UM COMMIT ANTERIOR:
+  $ git reset [SHA1_ID DO COMMIT]
+  Ex.:
+    $ git reset 06661bedcd150e33c461916a491518990ec3243e
+
+BRANCHES:
+    CRIAR UM BRANCH E ALTERNAR PARA ELE:
+        OBS.: "CustomVars" é o nome do branch, e o número depois dele é o hash do commit que será usado para fazer o "fork".
+        $ git checkout -b CustomVars fa75bb4de8444c837ee4f960103013c73fbce842
+
+    FAZER PUSH NESSE BRANCH:
+        OBS.: o git push normal em "master" não vai funcionar porque o branch agora é outro. Então, deve ser informado no git push.
+        $ git push origin CustomVars
+
+
+TAGS:
+    LISTAR :
+        $ git tag
+            v1.2.2
+            v1.2.3
+
+    CHECKOUT:
+        $ git checkout v1.2.3
+
+AFTER WORKING ON A BRANCH, HOW TO CORRECTLY MERGE IT WITH "master", with minimum impact to users:
+    (merging the right changes back to the original master)
+
+    $ git checkout experimental_branch    # switch to the which that has the modifications you have been working with 
+    $ git merge --strategy=ours master    # keep the content of this branch, but record a merge
+    $ git checkout master                 # switch to master
+    $ git merge experimental_branch       # fast-forward master up to the merge
+
+*** ADVANCED GIT TIPS: http://andyjeffries.co.uk/articles/25-tips-for-intermediate-git-users ***

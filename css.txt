@@ -1,0 +1,245 @@
+* The order in which hyperlink styles should be defined in a stylesheet:
+
+  :link
+  :visited
+  :hover
+  :active
+
+  The good news is that there’s a mnemonic to remember the order: LoVe HAte. For those not paying attention: mind the casing of the mnemonic!
+
+* How to make elements inside a div get their width in % relative to their container.
+  Ex.:
+      <div id="full_div" style="text-align: left;">
+        <p class="payments">
+      	  <span id="lp_date"   style="text-align: left;   width: 25%; float:left;"> column 1 </span>
+      	  <span id="lp_filler" style="text-align: center; width: 45%; float:left;"> column 2</span>
+      	  <span id="lp_value"  style="text-align: right;  width: 30%; float:left;"> column 3 </span>
+      	</p>
+      </div>
+
+  On the example above, the span elements will get their width of x% relative to the div "full_div". The trick is I can't achieve this only with "width", I have to force a "float: left", to make this work right.
+
+* Como usar padding dentro de containers com porcentagem (e tb como adicionar padding sem adicionar width e height a um container):
+
+O truque para isso funcionar é, dentro do container, adicionar um outro container, com uma classe css contendo display: block e o próprio padding.
+Assim, eu não aumento o tamanho do container principal.
+No Exemplo abaixo, dentro dos containers "half_block e dos containers "w*of100" eu uso uma classe css "padding10px" que se encarrega de adicionar o padding,
+sem aumentar o tamanho desses containers:
+
+#CSS:
+
+.padding10px {
+    display: block;
+    padding: 10px 10px 10px 10px;
+}
+
+.one_third_block {
+  width: 33.3%;
+  float: left;
+}
+
+.half_block {
+  width: 50%;
+  float: left;
+}
+
+.w30of100 {
+  width: 30%;
+  float: left;
+}
+
+.w70of100 {
+  width: 70%;
+  float: left;
+}
+
+#HTML:
+
+        <div class="half_block">
+            <div class=padding10px>
+                <h1>Tiago Paranhos Lima</h1>
+                <h2>Desenvolvedor web, geek, gamer</h2>
+            </div>
+        </div>
+
+        <div class="half_block">
+            <div class="w70of100">
+                <div class=padding10px>
+                    <p><b>XBox Live Gamertag: </b> <a href="http://live.xbox.com/pt-BR/Profile?Gamertag=ogaitamil"> ogaitamil </a></p>
+                    <p><b>Nintendo 3DS Friend Code: </b> 2019-9901-2311 </p>
+                </div>
+            </div>
+
+            <div class="w30of100">
+                <div class=padding10px>
+                  <img src="{{ MEDIA_URL }}images/me/me_new.jpg" alt="minha foto">
+                </div>
+            </div>
+        </div>
+
+---
+
+* Maneira elegante de aumentar o tamanho de uma row em uma table:
+Ao invés de alterar o height da linha, adicionar paddings top e bottom na row.
+
+Ex.:
+
+HTML:
+
+    <table class="lista" cellpadding="0" cellspacing="0">
+        <thead class="list_header">
+            <tr class="dt_header">
+               <td>&nbsp;</td>
+               <td class="center_align">Data / Hora</td>
+               <td class="center_align">Carga Média <br> (Load da máquina)</td>
+               <td class="center_align">Uso de Disco <br> (%)</td>
+               <td class="center_align">Network I/O <br> (% de Perda de Pacotes)</td>
+               <td class="center_align">Média de Leitura/Escrita nos Discos <br> (Bytes por segundo)</td>
+               <td class="center_align">Média de uso das CPUs <br> (%)</td>
+               <td class="center_align">Uso de Swap <br> (%)</td>
+               <td class="center_align">Uso de Memória <br> (%)</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in server04_monitor_history %}
+                <tr class="dt_row">
+                    <td width="5px">&nbsp;</td>
+                    <td class="center_align">{{ registro.0 }}</td>
+                    <td class="center_align">{{ registro.1 }}</td>
+                    <td class="center_align">{{ registro.2 }}</td>
+                    <td class="center_align">{{ registro.3 }}</td>
+                    <td class="center_align">{{ registro.4 }}</td>
+                    <td class="center_align">{{ registro.5 }}</td>
+                    <td class="center_align">{{ registro.6 }}</td>
+                    <td class="center_align">{{ registro.7 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+CSS:
+
+    table thead tr {
+	    background-color: #f29d2e;
+	    font-size: 14px;
+    }
+
+    table thead tr td {
+        padding: 10px 0 10px 0;
+    }
+
+
+    table tbody tr td {
+        padding: 10px 0 10px 0;
+    }
+
+    .center_align {
+	    text-align: center;
+    }
+
+    .px_filler {
+	    width: 10px;
+    }
+
+    .light_background_color {
+	    background-color: #FCDAB0;
+    }
+
+---
+
+Como fazer um elemento (neste exemplo, um botão, assumir a largura total do container pai):
+
+#screen #sidebar #sidebar_help .btn {
+    display: block;
+    width: 100%;
+}
+
+---
+
+Como centralizar uma imagem em uma div:
+
+#sidebar_image img {
+    display: block;
+    margin: auto;
+}
+
+---
+
+Como centralizar a div principal na janela do browser:
+
+#div_principal {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+---
+
+<!-- Inline CSS to apply a font static served on http://www.mystaticserver.com -->
+<style type="text/css">
+  @font-face{
+    font-family:'cool_font_headlineextra_bold';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_extrabold-webfont.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_extrabold-webfont.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_extrabold-webfont.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_extrabold-webfont.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_extrabold-webfont.svg#cool_font_headlineextra_bold) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+  @font-face{
+    font-family:'cool_font_headlinebold';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_bold-webfont.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_bold-webfont.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_bold-webfont.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_bold-webfont.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_bold-webfont.svg#cool_font_headlinebold) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+  @font-face{
+    font-family:'cool_font_headlinelight';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_light-webfont.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_light-webfont.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_light-webfont.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_light-webfont.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_light-webfont.svg#cool_font_headlinelight) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+  @font-face{
+    font-family:'cool_font_headlineregular';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_regular-webfont.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_regular-webfont.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_regular-webfont.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_regular-webfont.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfontheadline_regular-webfont.svg#cool_font_headlineregular) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+  @font-face{
+    font-family:'cool_font_textbold';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-bold-webfont.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-bold-webfont.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-bold-webfont.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-bold-webfont.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-bold-webfont.svg#cool_font_textbold) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+  @font-face{
+    font-family:'cool_font_textlight';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-light-webfont.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-light-webfont.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-light-webfont.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-light-webfont.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-light-webfont.svg#cool_font_textlight) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+  @font-face{
+    font-family:'cool_font_textmedium';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-medium-webfont.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-medium-webfont.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-medium-webfont.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-medium-webfont.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-medium-webfont.svg#cool_font_textmedium) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+  @font-face{
+    font-family:'cool_font_textregular';
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-regular-webfont-optimized.eot);
+    src:url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-regular-webfont-optimized.eot?#iefix) format("embedded-opentype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-regular-webfont-optimized.woff) format("woff"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-regular-webfont-optimized.ttf) format("truetype"),url(http://www.mystaticserver.com/assets/fonts/cool-font/coolfonttext-regular-webfont-optimized.svg#cool_font_textregular) format("svg");
+    font-weight:normal;
+    font-style:normal
+  }
+
+  body {
+    font-family: cool_font_textregular, Arial, Helvetica;
+  }
+
+  h2 {
+    font-family: cool_font_headlineextra_bold, Arial, Helvetica;
+  }
+</style>
+
+---

@@ -1,0 +1,23 @@
+INSTALL THE LIBRARY:
+====================
+    $ pear install PhpDocumentor    
+    
+CONFIGURE PHPDOCUMENTOR WEB INTERFACE:
+======================================
+
+    To install phpDocumentor to use the web interface, you must first change one of PEAR's configuration variables, data_dir, to be a sub-directory of your web server's document root. The simplest way to do this is through PEAR's command-line interface with the command: 
+        $ pear config-set data_dir /path/to/document_root/pear    
+
+GENERATE THE DOCUMENTATION FOR A PHP FILE:
+==========================================
+    $ phpdoc -o HTML:frames:earthli -f phpdoctest.php -t phpdoctest_docs
+    
+    
+INSTALAÇÃO DO MARKDOWN:
+=======================
+    $ pear channel-discover pear.michelf.com    
+    $ pear install michelf/MarkdownExtra
+    
+    
+    
+reference: http://manual.phpdoc.org/HTMLSmartyConverter/HandS/phpDocumentor/tutorial_phpDocumentor.quickstart.pkg.html    

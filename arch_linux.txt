@@ -1,0 +1,105 @@
+INTERFACES DE REDE:
+    - Obter as interfaces de rede (IEEE 802.11bgn: WIFI. Ex.: wlp2s0)
+          $ iwconfig
+
+    - Subir uma interface:
+            $ ip link set wlp3s0 up
+
+    - Configurar o wifi:
+          $ wifi-menu wlp3s0
+
+    - Listar:
+        # ls /sys/class/net
+            OU
+        # ip link show
+
+    - Iniciar:
+        # systemctl start dhcpcd@[[INTERFACE]].service
+
+            OBS.: Para ativar manualmente uma interface cabeada, também posso fazer:
+                # dhcpcd enp1s0
+
+    - Habilitar no boot (para sempre):
+        # systemctl enable dhcpcd@[[INTERFACE]].service
+
+    - Habilitar ifconfig e outras ferramentas de rede:
+        # pacman -S net-tools
+
+
+KEYMAPS (do console):
+    - Listar:
+        # localectl list-keymaps
+    - Setar definitivamente:
+        # localectl set-keymap --no-convert [[keymap]]
+    - Carregar temporariamente (para testar o keymap):
+        # loadkeys [[keymap]]
+
+MODULOS VIRTUALBOX (arch linux como GUEST OS):
+    # modprobe vboxvideo vboxguest
+    # modprobe vboxsf
+
+INICIAR KDM:
+    # systemctl start kdm.service
+
+LIMPAR CACHES DO PACMAN:
+    - Limpar caches:
+        $ pacman -Scc
+
+    - Instalar todos os pacotes que começam com "gstreamer":
+          $ pacman -S $(pacman -Ssq gstreamer)
+
+ADICIONAR SUPORTE AO ANTIGO "/etc/rc.local":
+    (referencia: http://pgdiario.com/blog/instalando-postgres-9-2-archlinux/)
+
+    OBS: O Arch Linux usa o systemd como seu gerenciador de serviços padrão, e por isso não dá suporte a scripts de inicialização (initscripts). O que vamos fazer aqui é uma “pequena” intervenção para que possamos usar um script de inicialização /etc/rc.local famoso em outras distros linux.
+    Crie o seguinte arquivo: /usr/lib/systemd/system/rc-local.service
+
+    $ sudo nano /usr/lib/systemd/system/rc-local.service
+
+    Em seguida coloque o seguinte conteúdo no arquivo:
+
+    [Unit]
+    Description=/etc/rc.local compatibility
+
+    [Service]
+    Type=oneshot
+    ExecStart=/etc/rc.local
+    RemainAfterExit=yes
+
+    [Install]
+    WantedBy=multi-user.target
+
+    Este arquivo é o arquivo do nosso serviço, que poderemos usar com o systemd.
+
+    Agora crie um arquivo /etc/rc.local:
+
+    $ sudo nano /etc/rc.local
+
+    Insira o seguinte conteúdo neste arquivo:
+
+    #!/bin/sh -e
+    #
+    # rc.local
+    #
+    #
+    # por padrao este arquivo nao faz nada.
+
+    exit 0
+
+    Altere o arquivo acima para se tornar executável:
+
+    $ sudo chmod +x /etc/rc.local
+
+    Por fim vamos habilitar o nosso serviço para reconhecimento e uso do script de inicialização:
+
+    $ sudo systemctl enable rc-local.service
+
+
+COMO REMONTAR UMA PARTIÇÃO COMO RW:
+    mount -t auto /dev/sda1 -o remount,rw /
+    
+
+IMPROVE THE STARTUP TIME OF KDE APPLICATIONS:
+    - this "magic trick" to improve application start-up time by 50-150ms. To enable it, create this folder in your home:
+        $ mkdir -p ~/.compose-cache/
+    Note: For those curious about what is going on here, this enables an optimization which Lubos (of general KDE speediness fame) came up with some time ago and was then rewritten and integrated into libx11. Ordinarily, on startup, applications read input method information from /usr/share/X11/locale/your locale/Compose. This file is quite long (>5000 lines for the en_US.UTF-8 one) and takes some time to process. libX11 can create a cache of the parsed information which is much quicker to read subsequently, but it will only re-use an existing cache or create a new one in ~/- .compose-cache if the directory already exists.

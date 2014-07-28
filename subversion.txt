@@ -1,0 +1,83 @@
+CRIAR UM REPOSITÓRIO SVN LOCAL:
+    OBS.: Assumindo que "project1" já existe em "/home/user/project1" e tem conteúdo, vamos criar um repositório e importar o conteúdo de "project1".
+    1) Cria o diretório que irá conter o repositório:
+        $ mkdir /home/user/svnrep
+    2) Entra no diretório que contém o repositório:
+        $ cd /home/user/svnrep
+    3) Cria um repositório vazio e na revisão 0:
+        $ svnadmin create project1
+    4) Importa o conteúdo do projeto existente em "/home/user/project1" no repositório criado:
+        $ svn import /home/user/project1 file:///home/user/svnrep/project1/trunk -m "Import inicial de project1."
+    5) Faz uma cópia do repositório para trabalhar em sua cópia local:
+        $ svn co file:///home/user/svnrep/project1/trunk /home/user/project1_work
+    6) Faça as mudanças necessárias.
+    7) Leve as mudanças para o repositório:
+        $ svn commit -m "Atualização do repositório"
+
+ADICIONAR ARQUIVOS NO COMMIT:
+    $ svn add <arquivos>
+    
+ATUALIZAR MINHA CÓPIA LOCAL:
+    $ svn update
+    
+DESFAZER MUDANÇAS EM UM ARQUIVO DA MINHA CÓPIA LOCAL (VOLTAR PARA CÓPIA DO "HEAD"):
+    $ svn revert <arquivo>         
+
+COMMITAR:
+    $ svn commit -m "Atualização."
+    
+VER STATUS DA MINHA CÓPIA LOCAL:
+    $ svn status     
+    
+IGNORAR ARQUIVOS/DIRETÓRIOS NO SUBVERSION (EQUIVALENTE AO ".gitignore" do git):
+    * EXEMPLO 1: Ignorar arquivos "suo" no diretório "teste":
+        $ cd teste
+        $ svn propset svn:ignore *.suo . # o "." se refere ao diretório atual
+    * EXEMPLO 2: Ignorar o diretório "bin" dentro do diretório "teste":
+        $ cd teste
+        $ svn propset svn:ignore bin . # o "." se refere ao diretório atual     
+    * EXEMPLO 3: Ignorar múltiplos tipos de arquivos e diretórios no diretório "teste":
+        $ cd teste
+        $ vim ignore_list.txt #digitar 1 string em cada linha
+          obj
+          bin
+          *~
+        $ svn propset svn:ignore -F ignore_list.txt . # o "." se refere ao diretório atual
+    IMPORTANTE: Com isto eu posso, pelo menos teoricamente, manter um projeto sob controle do git e do svn simultaneamente 
+    (adicionando o diretório ".svn" no "gitignore" e o diretório ".git" no "svn propset svn:ignore".
+    
+MOSTRAR DIFERENÇAS ENTRE MINHA CÓPIA LOCAL E O "HEAD" DO SERVIDOR:
+    $ svn diff
+        OU
+    $ svn diff <arquivo>
+
+MOSTRAR DIFERENÇAS ENTRE 2 REVISÕES DO SERVIDOR:
+  $ svn diff -r 10:11 arquivo.txt
+  Nesse exemplo, mostra as diferenças entre as revisões 10 e 11 do arquivo "arquivo.txt". Posso também ao invés de passar um arquivo passar todo um diretório. Ex.:
+  $ svn diff -r 10:11 diretorio/
+    
+VERIFICAR OS LOGS DO REPOSITÓRIO:
+    * Todo o histórico:    
+        $ svn log
+    * X últimas revisões. 
+        $ svn log -l 10
+        (Neste exemplo: 10 últimas)
+        
+MARCAR UM CONFLITO COMO RESOLVIDO:
+    $ svn resolved [nome_arquivo_conflito]
+    
+LISTAR OS ARQUIVOS COMMITADOS EM UMA REVISÃO:
+    $ svn log --verbose -r 42           
+
+
+SVN STATUS CODES:
+    U        Local file updated
+    G        Local file safely merged
+    M        Local file has been modified, needs to be checked in
+    C        Local file contains conflicts that need to be resolved
+    ?        Local file not in repository
+    !        File missing from local copy
+    A        Local file scheduled to be added
+    A+       Local file scheduled to be moved
+    D        Local file scheduled to be deleted
+    L        Local file is locked by a running svn command        

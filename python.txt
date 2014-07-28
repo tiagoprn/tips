@@ -1,0 +1,386 @@
+* CONVERT A STRING TO A LIST:
+
+    >>> string = '[1,2,3]'
+    >>> list = eval(string)
+    >>> list
+    [1, 2, 3]
+    >>>
+
+* CONVERT A LIST TO A STRING:
+
+    #Se a lista for composta de strings:
+    filtrar_por_status = ['0','1','2','3','4']
+    filtrar_por_status_str = ' '.join(filtrar_por_status)
+
+    #Se a lista for composta de outro tipo que não string:
+    filtrar_por_status = [0,1,2,3,4]
+    filtrar_por_status_str = ' '.join(["%s" % el for el in filtrar_por_status])
+
+
+* Imprimir todas as propriedades e valores de um objeto:
+  print 'OBJETO >>> %s' % obj.__dict__
+
+  PS: Outros métodos interessantes são o "help()" e o "dir()".
+
+  Para obter de estruturas:
+  . posso tentar aplicar os métodos "unicode" ou "str", se o objeto os implementou:
+    print 'OBJETO >>> %s' % str(obj)
+    ou
+    print 'OBJETO >>> %s' % unicode(obj)
+    ou
+    print 'OBJETO >>> %s' % repr(obj)
+
+* IMPRIMIR A ITERAÇÃO ATUAL EM UM LAÇO FOR..IN:
+    BACKUP_DIRS_LIST = (
+                         'root@tiagoprnl.me::/home ',
+                         'root@tiagoprnl.me::/root ',
+                         'root@tiagoprnl.me::/etc ',
+                         'root@tiagoprnl.me::/var ',
+                         'root@tiagoprnl.me::/srv ',
+                         'root@tiagoprnl.me::/BACKUPS ',
+                         )
+
+    # MOSTRAR SÓ OS ELEMENTOS DA LISTA:
+    for dir in BACKUP_DIRS_LIST:
+        print (u"Fazendo backup do dir: %s") % (dir)
+
+    # MOSTRAR OS ELEMENTOS DA LISTA, COM O RESPECTIVO NÚMERO DA ITERAÇÃO:
+    for iter, dir in enumerate(BACKUP_DIRS_LIST):
+        print (u"Fazendo backup do dir (%s): %s") % (str(iter+1) + '/' + str(len(BACKUP_DIRS_LIST))  , dir)
+
+
+    #OUTRO EXEMPLO, DESTA VEZ ITERANDO EM UM ARQUIVO:
+    source= open( '/tmp/arquivo.txt', "r" )
+    for linenumber, line in enumerate(source):
+        line = line.rstrip() #strips whitespace, newline and others
+        print u'NÚMERO DA LINHA: %s ; CONTEÚDO: %s' % (unicode(linenumber), unicode(line))
+
+
+* OBTER O FULL PATH DO INTERPRETADOR PYTHON ATUAL EM EXECUÇÃO:
+    import sys
+    interpreter_path = sys.executable
+    print 'PATH DO INTERPRETADOR: %s' % interpreter_path
+
+* CABEÇALHO UTF-8 PARA SUPORTAR ACENTUAÇÃO EM ARQUIVOS PYTHON:
+    Na primeira linha do arquivo, adicionar:
+        # coding: utf-8
+
+* RECIPE PARA FAZER LOGGING EM PYTHON:
+import logging
+
+def log_to_file(text, logfile='/tmp/log_python_script.log'):
+    logging.basicConfig(
+        level = logging.DEBUG,
+        format = '%(asctime)s %(levelname)s %(message)s',
+        filename = logfile,
+        filemode = 'a'
+    )
+    logging.debug(text)
+
+* STRINGS MULTILINE EM PYTHON:
+
+    PRIMEIRO EXEMPLO:
+            q = """
+                    DELETE FROM email_marketing_contatolista
+                    WHERE contato_id IN ( select contato_id from email_marketing_contato where importacao_id = %d) ;
+
+                    DELETE FROM email_marketing_contatodados
+                    WHERE contato_id IN ( select contato_id from email_marketing_contato where importacao_id = %d) ;
+
+                    DELETE FROM email_marketing_contato where importacao_id = %d;
+                """ % (int(importacao_id),int(importacao_id),int(importacao_id))
+
+    SEGUNDO EXEMPLO:
+            try:
+                #my handled block of code here
+            except Exception, e:
+                excecao = """
+                        EXCECAO: %s \n
+                        TRACEBACK: \n
+                        %s
+                    """ % (e, unicode(traceback.format_tb(sys.exc_info()[2])))
+                print u">> ERRO NA LINHA %d: '%s'" % (current_row_number, excecao)
+
+
+
+
+* ONE-LINERS PYTHON:
+    EXEMPLO 1 (equivalente ao operador '?' do php):
+        def is_valid_email(email):
+            if email == None: return False
+            return True if email_re.match(email) else False
+
+    EXEMPLO 2:
+        qh = "INSERT %s INTO email_marketing_contatodados (contato_id, metadado_id, valor) VALUES " % ("" if dup else "IGNORE")
+
+* RAISING AN EXCEPTION:
+    raise Exception(u'populate_table() - Exceção xxx')
+
+* CATCHING AN EXCEPTION:
+
+            try:
+                # my block of code
+            except Exception, e:
+                excecao = u"""
+                        EXCEÇÃO: %s \n
+                        TIPO DA EXCEÇÃO: %s \n
+                        TRACEBACK: \n
+                        %s
+                    """ % (unicode(e), type(e), unicode(traceback.format_tb(sys.exc_info()[2])))
+                write_text_to_file(u">> Exceção: %s" % excecao)
+
+* SEARCH A SUBSTRING INSIDE A STRING
+    string = 'minha bela string'
+    if 'bela' in string:
+       return True
+    else:
+       return False
+
+* OPERATIONS ON A DICTIONARY:
+# Creates the phonebook with values:
+phonebook = {'Andrew Parson':8806336, \
+'Emily Everett':6784346, 'Peter Power':7658344, \
+'Lewis Lame':1122345}
+
+# Creates an empty phonebook:
+phonebook = {}
+
+# Add the person 'Gingerbread Man' (key) to the phonebook:
+phonebook['Gingerbread Man'] = 1234567
+
+# Delete a key (with its value) from the phonebook:
+del phonebook['Andrew Parson'] #key
+
+* OPERAÇÕES EM ARQUIVOS:
+    # cria um handle para leitura do arquivo:
+    file_handle = open('/path/arquivo.txt', "r")
+    # aponta para o início do arquivo (byte 0):
+    file_handle.seek(0)
+    # file_handle.tell() - aponta para a posição atual no arquivo (byte "x"):
+    write_text_to_file(u'>>>>> POSIÇÃO NO ARQUIVO (byte): %d' % file_handle.tell())
+
+* RECIPE PARA ESCREVER EM ARQUIVO EM PYTHON:
+import codecs
+
+def write_to_file(text, filename='/tmp/file.txt'):
+    #'with' will automatically close the file, even if an exception happens:
+    with codecs.open(filename, "a", "utf-8") as file_handle:
+      file_handle.write(text + '\n')
+
+* ORDENAR UM DICIONÁRIO POR "KEY":
+
+author = {"php":"Rasmus Lerdorf",\
+        "perl":"Larry Wall",\
+        "tcl":"John Ousterhout",\
+        "awk":"Brian Kernighan",\
+        "java":"James Gosling",\
+        "parrot":"Simon Cozens",\
+        "python":"Guido van Rossum"}
+
+langs = author.keys()
+langs.sort()
+
+for language in langs:
+        print language,"is the child of",author[language]
+
+---
+
+* COMO USAR O LINE_PROFILER (http://packages.python.org/line_profiler/):
+    1) Instalar o módulo:
+          $ pip install line_profiler
+
+    2) Na mesma pasta onde está o arquivo a ser analisado (.py), faça download do arquivo "kernprof.py":
+          $ wget -c -t inf -T 40 http://packages.python.org/line_profiler/kernprof.py
+
+    3) No arquivo a ser analisado (.py), adicionar nos imports:
+       # arquivo_a_ser_analisado.py
+       from line_profiler import *
+
+    4) No método a ser analisado, adicione o decorator '@profile' no método a ser analisado:
+       # arquivo_a_ser_analisado.py
+        @profile
+        def second_method(arg1, arg2):
+            print u'2nd - WAIT...'
+            file = open('/path/myfile.csv')
+            counter = 0
+            for lines in file.readline():
+                counter += 1
+            file.close()
+            print "ARG1: '%s', ARG2: '%s'" % (arg1, arg2)
+            print u'2nd - DONE!'
+
+    5) Rode o script 'kernprof.py' baixado em cima do arquivo a ser analisado:
+          $ kernprof.py -l -v arquivo_a_ser_analisado.py
+
+           A saída irá ser semelhante à seguinte:
+
+        Wrote profile results to tests.py.lprof
+        Timer unit: 1e-06 s
+
+        File: tests.py
+        Function: second_method at line 21
+        Total time: 0.000125 s
+
+        Line #      Hits         Time  Per Hit   % Time  Line Contents
+        ==============================================================
+            21                                           @profile
+            22                                           def second_method(arg1, arg2):
+            23         1           11     11.0      8.8      print u'2nd - WAIT...'
+            24         1           11     11.0      8.8      file = open('/storage/workspace/django/email_marketing/docs/csv/importacao_contatos/gigantic_client_import_file_30MB.csv')
+            25         1            2      2.0      1.6      counter = 0
+            26        20           50      2.5     40.0      for lines in file.readline():
+            27        19           27      1.4     21.6          counter += 1
+            28         1            8      8.0      6.4      file.close()
+            29         1            9      9.0      7.2      print "ARG1: '%s', ARG2: '%s'" % (arg1, arg2)
+            30         1            7      7.0      5.6      print u'2nd - DONE!'
+
+---
+
+* LIST COMPREHENSIONS PARA VERIFICAR VALORES EM UM INTERVALO:
+
+def get_server_group_ip_from_sender_name(sender_name):
+    server_group = 0
+
+    sender_id_str = sender_name.replace('S', '')
+    if sender_id_str[0] == '0' and len(sender_id_str) == 2:
+        sender_id_str = sender_id_str[1]
+
+    if int(sender_id_str) in [x for x in xrange(21)]: # 0 a 20
+        server_group = '1'
+    elif int(sender_id_str) in [x+21 for x in xrange(20)]: # 21 a 40
+        server_group = '2'
+    elif int(sender_id_str) in [x+41 for x in xrange(20)]: # 41 a 60
+        server_group = '3'
+    else:
+        server_group = '?'
+
+    return SENDER_SERVER_GROUPS[server_group]
+
+
+def test_get_server_group_ip_from_sender_name():
+    servers = ['S00', 'S05', 'S20', 'S21', 'S40', 'S41', 'S60', 'S61']
+    for server in servers:
+        sg = get_server_group_ip_from_sender_name(server)
+        print "SERVER GROUP DE (%s): %s" % (server, sg)
+
+---
+
+SINTAXE RESUMIDA DO IF EM PYTHON:
+    indice = pos if pos >=0 else indice = 0
+
+---
+
+MANIPULANDO JSON:
+
+json_string = """
+{
+    "pk": 1,
+    "fa": "cc.ee",
+    "fb": {
+        "fc": "",
+        "fd_id": "12345"
+    }
+}"""
+
+try:
+    import json
+except:
+    import simplejson as json
+
+data = json.loads(json_string)
+if data["fa"] == "cc.ee":
+    data["fb"]["new_key"] = "cc.ee was present!"
+
+print json.dumps(data)
+
+---
+
+* Suporte à acentuação no raw_input():
+
+
+nome_cliente = raw_input(u'  > INFORME O NOME DO CLIENTE (pode ser parcial): ').decode(sys.stdin.encoding)
+
+---
+
+* Formatar uma string para que tenha zeros à esquerda, para forçar 3 caracteres em um inteiro:
+
+> string = str(1).zfill(3)
+>>> '001'
+
+---
+
+* module import works from python interactive console, but not from script:
+
+    Verifique atentamente o módulo que acusa erro (provavelmente um método "missing", ou "no module named x").
+    Como o path onde está o script atual é automaticamente adicionado ao PYTHON_PATH, verifique se o script que está acusando erro ou outro no mesmo diretório dele possui o mesmo nome do módulo que você está tentando importar.
+
+---
+
+QUANDO É DISPARADA UMA EXCEÇÃO AO SE TENTAR FAZER UMA CONVERSÃO PARA UNICODE:
+Ex.:
+	field = u'"%s"' % unicode(field)
+	    >>> EXCEÇÃO: 'ascii' codec can't decode byte 0xe2 in position 9: ordinal not in range(128)
+	    >>> TIPO DA EXCEÇÃO: <type 'exceptions.UnicodeDecodeError'>
+
+Como corrigir:
+	field = u'"%s"' % unicode(field.decode('latin1'))
+
+Isso acontece porque o texto pode estar em outra codificação, por isso é necessário o decode. Nesse caso, o texto original era latin1.
+
+---
+
+IMPRIMIR UMA STRING COMO "RAW" (por exemplo, para mostrar os caracteres de quebra de linha ao invés de realmente quebrar a linha):
+
+string = 'teste\n\n\n\n'
+print 'String Formatada... >>> %s' % string
+print 'String RAW......... >>> %r' % string
+
+---
+
+FORÇAR SAÍDA:
+
+    De um MÉTODO:
+        quit()
+
+    De um SCRIPT (abortar a execução do script):
+        import sys
+        sys.exit("Saindo...")
+
+---
+
+PRETTY PRINT DE ESTRUTURAS PYTHON (Exemplo: listas, dicionários):
+
+from pprint import pformat
+print u'>>> OBJETO >>> %s' % pformat(objeto.__dict__)
+
+---
+
+DICIONÁRIOS ORDENADOS:
+
+(para funcionar nas versões do python anteriores à 2.7, basta instalar pelo pip o pacote ordereddict)
+
+Exemplo:
+
+[MEU GITHUB] code_snippets_library/ python/ dicionario_ordenado.py
+
+---
+
+- Instalação de pacotes que estão no github via pip:
+    $ pip install git+https://github.com/damianmoore/django-fagungis.git
+
+---
+
+-  Estatísticas de execução de um script python:
+
+    python -m cProfile script.py
+
+---
+
+Código para aplicar REGEX para mudar
+    texto = 'chave=valor chave="valor"'
+para:
+    texto = 'chave="valor" chave="valor"'
+
+re.sub(r'(?P<valor1>\w+)=(?P<valor2>\w+)', r'\1="\2"', texto)
+
+---

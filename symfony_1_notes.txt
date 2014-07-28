@@ -1,0 +1,151 @@
+* PASSAGEM DE PARÃMETROS
+    No symfony 1 as urls não precisam ser mapeadas (routing no symfony2), basta que se crie a action na pasta de actions e que se chame o parâmetro desejado via frontend.
+    
+    Ex.:
+    
+      public function executeLoadEmailAccountsFromWorkqueue( sfWebRequest $request)
+      {
+        $fields = $request->getParameterHolder()->getAll();
+
+        //Loga no error_log do nginx o parâmetro "workqueue_id":
+        //Ex.: http://webmail-tiago.mandic.com/mmm.php/report/LoadEmailAccountsFromWorkqueue/workqueue_id/154
+        error_log('executeLoadEmailAccountsFromWorkqueueRecords(): ID: '.$fields['workqueue_id']); 
+
+        //Gets the logged user Uid (which in this case is exactly the email)
+        $myUser = $this->getUser()->getUid();
+
+        //$workqueue_batch_files_id = '153'
+
+        $connection= Propel::getConnection( ExchangeMigrationPeer::DATABASE_NAME );
+        $sql = 'SELECT uid
+                FROM workqueue_account
+                WHERE workqueue_batch_files_id = '.$fields['workqueue_id']
+                .' ORDER BY uid';
+        $statementUser = $connection->prepare( $sql );
+        $statementUser->execute();
+        $records = array();
+        while ( $row = $statementUser->fetch( PDO::FETCH_NUM ) ) {
+          $records[] = array(
+            'email' => $row[0],
+          );
+          
+        }
+
+        $result = array(
+          'success' => true,
+          'records' => $records
+        );
+
+        echo json_encode($result);
+
+        return sfView::NONE;
+      }  
+        
+* Alterações no schema (criação de novas tabelas na base de dados)
+  ETAPAS:
+    1) Montar os SQL e executar na minha base de testes;
+    2) Montar o arquivo "kangaroo-update.sql"
+    3) Alterar o Schema (arquivo XML): config/kangaroo-schema.xml
+    4) Atualizar o ORM: 
+      $ /mandic/interpreters/php/bin-5.3/bin/php symfony propel:build-model.
+    
+* Alterações no schema (criação de novo campo em uma tabela já existente na base de dados):
+  ETAPAS:
+    1) Montar o SQL para criar o novo campo na tabela;
+    2) Executar o SQL no servidor de testes (kangaroo);
+    3) Adicionar o SQL montado no passo [1] em "data/sql/kangaroo_update.sql"
+    4) Alterar o arquivo "config/kangaroo-schema.xml" (adicionando o novo campo)
+    5) Rodar o comando para atualizar o ORM:   
+      $ /mandic/interpreters/php/bin-5.3/bin/php symfony propel:build-model    
+
+* Criar um módulo dentro de uma aplicação:
+  $ [path_to_php/]php [path_to_symfony/]symfony generate:module application module_name
+
+* Onde o symfony guarda os models (se estiver usando o Propel):
+  5.5.x/lib/model/kangaroo/map
+
+* Rodar os unit tests:
+  $ [path_to_php/]php symfony test:functional application nome_teste
+  (Ex.: 
+      Supondo que os testes estão em: '/test/functional/portal/loginActionsTest.php', ficaria assim:
+      /mandic/interpreters/php/bin-5.3/bin/php symfony test:functional portal loginActions
+  ) 
+   
+* Como fazer "queries":
+
+  Toda classe possui uma classe "Peer" correspondente. Por exemplo, se eu quiser trazer instâncias da classe "Email", posso fazer de 2 formas diferentes:
+
+    $mail = 'email@tiago.com.br';
+
+    /* //Forma 1:
+      $mailInstance =  EmailPeer::retrieveByUid($mail);
+    */     
+
+    /* //Forma 2:
+      $criteria = new Criteria();
+      $criteria->add( EmailPeer::UID, $mail );
+      $mailInstance = EmailPeer::doSelectOne( $criteria );    
+    */
+
+* Como fazer um post via URL no browser:
+    [URL]/postPARAM1NOME/postPARAM1VALOR//postPARAM2NOME/postPARAM2VALOR
+
+    Ex.:
+        http://webmail-tiago.mandic.com/portal.php/email/SetEmailData/email/user1@testemandic.com/nome/NOME1ALT/sobrenome/SOBRENOME1ALT/pergunta/PERGUNTA1ALT/resposta/RESPOSTA1ALT
+
+* Como fazer um get via URL no browser:
+    [URL]?param1NOME=param1VALOR&param2NOME=param2VALOR
+    Ex.:
+        http://webmail-tiago.mandic.com/portal.php/email/GetEmailData?email=user1@testemandic.com
+
+* Atualizar os dados de uma instância:
+
+  public function executeSetEmailData(sfWebRequest $request)
+  {
+    $mail = $request->getParameter( 'email' );
+    $nome = $request->getParameter( 'nome' );
+    $sobrenome = $request->getParameter( 'sobrenome' );    
+    $pergunta = $request->getParameter( 'pergunta' );        
+    $resposta = $request->getParameter( 'resposta' );        
+    
+    try 
+    {
+        $mailInstance = EmailPeer::retrieveByUid($mail); //confirmar o nome da classe       
+                                    
+        $mailInstance->setNome($nome); //'$mailInstance->Nome = $nome' não irá funcionar :P
+        $mailInstance->setSobrenome($sobrenome);
+        $mailInstance->setPergunta($pergunta);
+        $mailInstance->setResposta($resposta);
+    
+        $mailInstance->Save();
+        
+        echo json_encode(array('success' => true,
+                               'msg' => 'Successful.'
+                              ));
+    } 
+    catch (Exception $e) 
+    {
+        $message = $e->getMessage();
+        echo json_encode(array('success' => false,
+                               'msg' => $message
+                              ));
+    }                                
+                                
+    return sfView::NONE;
+  }
+
+* classe "sfConfig": "get" de uma configuração definida no app.yml (este app.yml equivale a um "settings.py" do Django).
+
+* symfony cc: (cc = clear cache) deve ser usando sempre que se alterar o yml, e sempre que algo se comportar de forma estranha.
+
+* Configurar o nome da database no symfony 1: "config/databases.yml".
+
+* ARQUIVOS DO ORM DO SYMFONY1 QUE DEVEM SER ALTERADOS QUANDO HOUVER MUDANÇAS EM TABELAS DE UMA DATABASE:
+    /config/[[DATABASE_NAME]]-schema.xml
+    /lib/model/kangaroo/[[MODEL_NAME]].php
+    /lib/model/kangaroo/map/[[MODEL_NAME]]TableMap.php
+    /lib/model/kangaroo/om/Base[[MODEL_NAME]]Peer.php
+    /lib/model/kangaroo/om/Base[[MODEL_NAME]].php
+    /data/sql/[[DATABASE_NAME]]_update.sql
+
+

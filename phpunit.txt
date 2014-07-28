@@ -1,0 +1,204 @@
+* PHPUnit distinguishes between failures and errors. A failure is a violated PHPUnit assertion such
+as a failing assertEquals() call. An error is an unexpected exception or a PHP error. Sometimes
+this distinction proves useful since errors tend to be easier to fix than failures. If you have a big list of
+problems, it is best to tackle the errors first and see if you have any failures left when they are all fixed.
+
+* One of the most time-consuming parts of writing tests is writing the code to set the world up in a
+known state and then return it to its original state when the test is complete. This known state is called
+the fixture of the test.
+
+* Without some help from the testing framework, we would have to
+duplicate the code that sets up the fixture for each test we write.
+
+* PHPUnit supports sharing the setup code. Before a test method is run, a template method called
+setUp() is invoked. setUp() is where you create the objects against which you will test. Once
+the test method has finished running, whether it succeeded or failed, another template method called
+tearDown() is invoked. tearDown() is where you clean up the objects against which you tested.
+
+* The setUp() and tearDown() template methods are run once for each test method (and on
+fresh instances) of the test case class. In addition, the setUpBeforeClass() and tearDownAfterClass() template methods
+are called before the first test of the test case class is run and after the last test of the test case class
+is run, respectively.
+
+* EXAMPLE OF A TEST:
+
+<?php
+class TemplateMethodsTest extends PHPUnit_Framework_TestCase
+{
+  public static function setUpBeforeClass()
+  {
+    print __METHOD__ . "\n";
+  }
+  
+  protected function setUp()
+  {
+    print __METHOD__ . "\n";
+  }
+  
+  protected function assertPreConditions()
+  {
+    print __METHOD__ . "\n";
+  }
+  
+  public function testOne()
+  {
+    print __METHOD__ . "\n";
+    $this->assertTrue(TRUE);
+  }
+  
+  public function testTwo()
+  {
+    print __METHOD__ . "\n";
+    $this->assertTrue(FALSE);
+  }
+  
+  protected function assertPostConditions()
+  {
+    print __METHOD__ . "\n";
+  }
+  
+  protected function tearDown()
+  {
+    print __METHOD__ . "\n";
+  }
+  
+  public static function tearDownAfterClass()
+  {
+    print __METHOD__ . "\n";
+  }
+  
+  protected function onNotSuccessfulTest(Exception $e)
+  {
+    print __METHOD__ . "\n";
+    throw $e;
+  }
+}
+?>
+
+* setUp() and tearDown() are nicely symmetrical in theory but not in practice. In practice, you
+only need to implement tearDown() if you have allocated external resources like files or sockets 
+in setUp(). If your setUp() just creates plain PHP objects, you can generally ignore tearDown().
+However, if you create many objects in your setUp(), you might want to unset() the variables
+pointing to those objects in your tearDown() so they can be garbage collected. The garbage
+collection of test case objects is not predictable.
+
+* A good example of a fixture that makes sense to share across several tests is a database connection:
+you log into the database once and reuse the database connection instead of creating a new connection
+for each test. This makes your tests run faster.
+
+Ex.:
+
+<?php
+class DatabaseTest extends PHPUnit_Framework_TestCase
+{
+  protected static $dbh;
+  
+  public static function setUpBeforeClass()
+  {
+    self::$dbh = new PDO('sqlite::memory:');
+  }
+  
+  public static function tearDownAfterClass()
+  {
+    self::$dbh = NULL;
+  }
+}
+?>
+
+* I can have many tests on a directory, to execute all them I should do:
+  $ phpunit my_directory_with_the_tests
+  If you point the PHPUnit command-line test runner to a directory it will look for *Test.php
+files.
+  
+* A PHPUnit's XML configuration file can also be used to compose a test suite.
+  Ex.: 
+  <phpunit>
+    <testsuites>
+      <testsuite name="Object_Freezer">
+        <directory>Tests</directory>
+      </testsuite>
+    </testsuites>
+  </phpunit>
+
+* The order in which tests are executed can be made explicit:
+<phpunit>
+  <testsuites>
+    <testsuite name="Object_Freezer">
+      <file>Tests/Freezer/HashGenerator/NonRecursiveSHA1Test.php</file>
+      <file>Tests/Freezer/IdGenerator/UUIDTest.php</file>
+      <file>Tests/Freezer/UtilTest.php</file>
+      <file>Tests/FreezerTest.php</file>
+      <file>Tests/Freezer/StorageTest.php</file>
+      <file>Tests/Freezer/Storage/CouchDB/WithLazyLoadTest.php</file>
+      <file>Tests/Freezer/Storage/CouchDB/WithoutLazyLoadTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>
+  
+* DATABASE TESTING:
+  - The DBUnit Extension extension considerably simplifies the setup of a database for testing purposes
+  and allows to verify the contents of a database after performing a series of operations.
+
+  * What PHPUnit can't help you with is the fact that database tests are very slow compared to tests not
+  using the database. Depending on how large the interactions with your database are your tests could
+  run a considerable amount of time, I have heard of suites running as long as 40 minutes. However if
+  you keep the amount of data used for each test small and try to test as much code using non-database
+  tests you can easily get away in under a minute even for large testsuites.
+    Take for example the Doctrine 2 project [http://www.doctrine-project.org] which implement a
+  powerful Object-Relational Mapper currently has a testsuite of about 1000 tests where nearly half
+  of them accesses the database and still runs in 15 seconds against a MySQL database on a standard
+  desktop computer.
+
+  * If you want to test code that works with the Database Extension the setup is a bit more complex and
+you have to extend a different abstract TestCase requiring you to implement two abstract methods
+getConnection() and getDataSet(). 
+
+  * getConnection(): uses PDO automatically
+  
+  * getDataSet(): The getDataSet() method defines how the initial state of the database should look like before each
+test is executed. The state of a database is abstracted through the concepts DataSet and DataTable. 
+  The getDataSet() method is called once during setUp() to retrieve the fixture data-set and insert it 
+into the database. In the example we are using Database Testing a factory method createFlatXMLDataSet($filename) 
+that represents a data-set through an XML representation.
+
+  * PHPUnit assumes that the database schema with all its tables, triggers, sequences and views is created
+before a test is run.
+
+  * Tip: Use your own Abstract Database TestCase. If you use the XML Configuration  you could make the database connection configurable per test-run. 
+  Ex.:  
+  <?xml version="1.0" encoding="UTF-8" ?>
+  <phpunit>
+    <php>
+      <var name="DB_DSN" value="mysql:dbname=myguestbook;host=localhost" />
+      <var name="DB_USER" value="user" />
+      <var name="DB_PASSWD" value="passwd" />
+      <var name="DB_DBNAME" value="myguestbook" />
+    </php>
+  </phpunit>
+  
+  This way, we can now run the database testsuite using different configurations from the command-line interface:
+    user@desktop> phpunit --configuration developer-a.xml MyTests/
+    user@desktop> phpunit --configuration developer-b.xml MyTests/
+  
+  * A central concept of PHPUnits Database Extension are DataSets and DataTables. You should try to
+understand this simple concept to master database testing with PHPUnit. The DataSet and DataTable
+are an abstraction layer around your datatabse tables, rows and columns. A simple API hides the
+underlying database contents in an object structure, which can also be implemented by other non-
+datatabase sources.
+  This abstraction is necessary to compare the actual contents of a database against the expected contents.
+Expectations can be represented as XML, YAML, CSV files or PHP array for example. The DataSet
+and DataTable interfaces enable the comparison of this conceptually different sources, emulating
+relational database storage in a semantically simliar approach.
+
+  * There are three different types of datasets/datatables:
+    - File-Based DataSets and DataTables
+    - Query-Based DataSet and DataTable
+    - Filter and Composition DataSets and DataTables
+    The file-based datasets and tables are generally used for the initial fixture and to describe the expected
+    state of the database.
+
+  * During Fixture SetUp PHPUnits Database Extension inserts the rows into the database in the order
+they are specified in your fixture. If your database schema uses foreign keys this means you have to
+specify the tables in an order that does not cause foreign key constraints to fail.
+
+  

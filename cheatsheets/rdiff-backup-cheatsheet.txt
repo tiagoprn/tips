@@ -1,0 +1,41 @@
+CHEATSHEET
+
+* Fazer backup:
+  $ rdiff-backup /fonte /backups
+    OBS.: 
+      1) O backup da última versão dos arquivos ficará em /backups. 
+      2) O diretório /backups/rdiff-backup-data contém os diffs das versões antigas dos arquivos.
+      3) Para ver as estatísticas do backup:
+         $ rdiff-backup-statistics /backups
+           OBS.: Ele deve ser rodado na pasta "destino" dos backups.
+      
+* Listar backups disponíveis:
+  $ rdiff-backup -l /backups
+    OBS.:
+      1) Para ver o lugar ocupado por cada backup: $ rdiff-backup -l --list-increment-sizes /backups
+      
+* Eliminar backups antigos:
+    Ex.: Mais velhos do que 7 dias:
+    $ rdiff-backup --remove-older-than 7D --force /backups 
+
+* Restaurar um backup:
+    Ex.: arquivo "arquivo.txt", restaurar para a versão de 3 dias atrás:
+    $ rdiff-backup -r 3D /backups/meuarquivo.txt /fonte/antigo.txt 
+    OBS.:
+      O "-r" quer dizer "restore".
+    
+* Fazer backup remotamente (o rdiff-backup tem que estar instalado nas 2 máquinas):
+    Ex. 1: backup directory "/some/local-dir" to the directory "/whatever/remote-dir" on the machine "hostname.net"
+         (será feito por ssh, por isso foi informado o user):
+    $ rdiff-backup /some/local-dir user@hostname.net::/whatever/remote-dir
+    
+    Ex. 2: backup directory "/whatever/remote-dir" on the machine "hostname.net" to a local machine, directory "/some/local-dir"
+         (será feito por ssh, por isso foi informado o user):
+    $ rdiff-backup user@hostname.net::/whatever/remote-dir /some/local-dir
+
+UM EXEMPLO DE SCRIPT QUE POSSO USAR COMO BASE PARA FAZER UM SCRIPT PYTHON:
+#!/bin/bash
+# Note, tags/descriptions can't have '%' and probably some other special characters
+date "+%A %m-%d-%Y %l:%M %p : $1" >> backupState.log
+rdiff-backup --print-statistics --exclude '**~' /etc /home/tiago/BACKUPS/TESTE/etc >> backupState.log
+rdiff-backup --print-statistics --exclude '**~' /var/log /home/tiago/BACKUPS/TESTE/var/log >> backupState.log

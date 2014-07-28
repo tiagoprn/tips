@@ -1,0 +1,324 @@
+CONFIGURAÇÃO DA BASE DE DADOS INICIAL:
+
+
+    CRIANDO DIRETÓRIO PARA OS DADOS:
+
+        # mkdir -p /srv/postgresql/data
+        # chown -R postgres.postgres /srv/postgresql/data/
+
+    INICIALIZANDO O BANCO:
+
+        # su - postgres
+        $ initdb -D /srv/postgresql/data/
+
+    RODANDO O POSTGRES EM SEGUNDO PLANO, GRAVANDO LOGS:
+
+        $ postmaster -D /srv/postgresql/data >> /srv/postgresql/data/logfile &
+
+        ou
+
+        $ postgres -D /srv/postgresql/data
+
+        ou
+
+        $ pg_ctl -D /srv/postgresql/data -l logfile start
+
+
+    CRIANDO BASE DE DADOS E TESTANDO:
+
+        $ createdb test
+
+        $ psql test
+
+
+    IMPORTANTE: A configuração do postgresql (pg_hba.conf) usada para, dentre outros,
+    configurar acesso à base por TCP/IP, fica dentro do diretório de dados (no caso
+    acima, "/srv/postgresql/data/pg_hba.conf"). A configuração da instância do postgresql
+    fica no mesmo diretório (arquivo "postgresql.conf").
+        ENCONTRE A LINHA:
+            listen_addresses='localhost'
+        E TROQUE PARA:
+            listen_addresses='*'
+
+    CRIANDO USUÁRIOS:
+
+        $ createuser postgresql
+
+
+
+***
+
+CLIENTE LINHA DE COMANDO DO POSTGRESQL:
+
+  - Acesso:
+    $ psql -h hostname -U username -d databasename
+
+  - Criando uma database:
+    $ createdb -h hostname -U username databasename
+
+  - Listar todas as tabelas:
+    dbname=# \dt
+    SQL: SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+
+  - Listar todas as databases:
+    dbname=# \l
+    SQL: SELECT datname FROM pg_database;
+
+  - Listar todas as colunas de uma tabela:
+    dbname=# \d nome_tabela
+    SQL: SELECT column_name FROM information_schema.columns WHERE table_name ='table';
+
+  - Detalhes de uma tabela ("DESCRIBE TABLE"):
+    dbname=# \d+ nome_tabela
+    SQL: SELECT column_name FROM information_schema.columns WHERE table_name ='table';
+
+***
+
+
+CRIAÇÃO DE PRIMARY KEY EM TABELA:
+  Para criar uma PK preciso criar manualmente uma "sequence" com o comando CREATE SEQUENCE.
+
+  create sequence financ_aliquota_seq;
+
+  CREATE TABLE financ_aliquota
+  (
+    financ_aliquota_id integer PRIMARY KEY default nextval('financ_aliquota_seq'::regclass),
+    valor numeric(10,4),
+    descricao varchar(60)
+  );
+
+  GRANT ALL ON financ_aliquota TO web; --"web" neste caso é o usuário do postgres em questão
+  GRANT ALL ON financ_aliquota_seq TO web; --"web" neste caso é o usuário do postgres em questão
+
+***
+
+CRIAÇÃO DE FOREIGN KEY EM TABELA:
+  Para criar uma FK preciso criar a coluna e uma "constraint" para a tabela referenciada.
+
+  ALTER TABLE produto ADD COLUMN aliquota integer;
+  ALTER TABLE produto ADD CONSTRAINT fk_aliquota_financ_aliquota FOREIGN KEY (aliquota) REFERENCES financ_aliquota (financ_aliquota_id);
+
+***
+
+STRINGS
+  Strings no postgres só aceitam aspas SIMPLES. Aspas DUPLAS causam erro nas
+  queries.
+
+***
+
+EQUIVALENTE AO "SELECT ... INTO OUTFILE" DO MYSQL:
+
+COPY (
+    SELECT * FROM tabela
+)
+TO 'tabela.csv' WITH CSV HEADER;
+
+PS: Outra alternativa pode ser rodar o comando pelo console, passando o comando pelo psql e redirecionando a saída para arquivo com o ">".
+    Ex.: psql [conexão_info] [query] > /tmp/saida.txt
+
+
+***
+
+POSTGRESQL SQL CHEATSHEET:
+
+    /* ALTERAÇÃO DE SCHEMA */
+
+        /* table_1 */
+            /* ADD COLUMN */
+	        ALTER TABLE table_1 ADD COLUMN new_column VARCHAR(500) NOT NULL DEFAULT 'nenhum';
+	        /* DROP OLD PK  */
+	        ALTER TABLE table_1 DROP CONSTRAINT table_1_pkey;
+	        /* CREATE NEW PK */
+	        ALTER TABLE table_1 ADD PRIMARY KEY (old_column_1_pk, old_column_2_pk, new_column);
+
+        /* table_2 */
+	        ALTER TABLE table_2 ADD COLUMN old_column_2_pk INTEGER NOT NULL DEFAULT 0;
+	        ALTER TABLE table_2 ADD COLUMN new_column INTEGER NOT NULL DEFAULT 0;
+	        /* RODAR E TESTAR */
+            ALTER TABLE table_2 ADD CONSTRAINT table_2_old_column_1_pk_fkey FOREIGN KEY (old_column_1_pk) REFERENCES table_1(old_column_1_pk);
+
+            ALTER TABLE table_2 ADD CONSTRAINT table_2_old_column_2_pk_fkey FOREIGN KEY (old_column_2_pk) REFERENCES table_1(old_column_2_pk);
+            ALTER TABLE table_2 ADD CONSTRAINT table_2_new_column_fkey FOREIGN KEY (new_column) REFERENCES table_1(new_column);
+
+
+    /* DESFAZER ALTERAÇÕES ACIMA */
+
+        /* REFAZ A CHAVE PRIMÁRIA ANTIGA */
+        ALTER TABLE table_1 DROP CONSTRAINT table_1_pkey;
+        ALTER TABLE table_1 DROP COLUMN new_column, DROP COLUMN new_column;
+        ALTER TABLE table_1 ADD PRIMARY KEY (old_column_1_pk, old_column_2_pk);
+
+        /* REFAZ AS COLUNAS */
+        ALTER TABLE table_2 DROP CONSTRAINT table_2_old_column_2_pk_fkey;
+        ALTER TABLE table_2 DROP CONSTRAINT table_2_new_column_fkey;
+        ALTER TABLE table_2 DROP COLUMN old_column_2_pk, DROP COLUMN new_column;
+
+* PROCESSO COMPLETO DE CRIAÇÃO DE TABELA (COM SEQUENCES, RELACIONAMENTOS ENTRE TABELAS, ETC...):
+
+    /* TABELA new_table */
+
+	    /* Monta o "auto_increment" manualmente */
+	    CREATE SEQUENCE new_table_id_seq
+	     INCREMENT 1
+	     MINVALUE 0
+	     MAXVALUE 9223372036854775807
+	     START 0
+	     CACHE 1;
+
+	    /* Cria tabela */
+	    CREATE TABLE new_table(
+		    new_table_id INTEGER DEFAULT NEXTVAL('new_table_id_seq'),
+		    name VARCHAR(100) NOT NULL ,
+		    descricao VARCHAR(200),
+		    big_field VARCHAR(500)
+	    );
+
+	    /* CONFIRMA QUAL SERÁ O PRÓXIMO (PRIMEIRO, NESSE CASO) "id" A SER USADO */
+	    SELECT NEXTVAL('new_table_id_seq');
+
+	    /* TORNA O CAMPO DA PK UNIQUE (PARA PODER REFERENCIAR A FOREING KEY EM OUTRAS TABELAS): */
+	    ALTER TABLE new_table ADD CONSTRAINT new_table_id_key UNIQUE (new_table_id);
+
+
+    /* TABELA old_table - Novo relacionamento cmo a tabela "new_table" */
+
+	    /* Novo campo */
+	    ALTER TABLE old_table ADD COLUMN new_table_id INTEGER;
+
+	    /* Chave Estrangeira */
+	    ALTER TABLE old_table ADD CONSTRAINT new_table_id_fkey FOREIGN KEY (new_table_id) REFERENCES new_table(new_table_id);
+
+***
+
+TROCAR O OWNER DE UMA TABELA:
+
+ALTER TABLE <tablename> OWNER TO <username>
+
+***
+
+RODAR UM COMANDO NO CONSOLE DO POSTGRESQL E DAR SAÍDA DIRETO EM ARQUIVO (PARA, POR EXEMPLO, AUTOMATIZAR VIA BASH):
+
+psql -h <IP_OU_SERVERNAME> -U <USERNAME> -d <DATABASE> -c '<COMANDO SQL>' > /tmp/saida_sql.txt
+
+***
+
+CriaÃ§Ã£o de 1Â° super usuÃ¡rio no PostgreSQL
+Depois de instalado seu SGBD postgres, como criar seu 1Â° usuÃ¡rio? Qual a senha de root? Qual a senha padrÃ£o?
+
+Esta dica Ã© para iniciantes.
+
+ApÃ³s a instalaÃ§Ã£o dos seu PostgreSQL no Linux, como criar seu 1Â° usuÃ¡rio para administraÃ§Ã£o do banco?
+
+Simples, na mÃ¡quina com o banco instalado siga os seguintes passos.
+
+Logue-se como root, tecle "su root" ou "sudo -i" no Ubuntu (no terminal a mensagem padrÃ£o deve terminar com #).
+
+Entre como usuÃ¡rio postgres comando:
+
+# su postgres
+
+Conecte no banco comando:
+
+$ psql
+
+Agora deve aparecer a frase de boas vindas (Bem vindo ao psql...) e vocÃª estÃ¡ no terminal do posgres.
+
+Entre com o comando:
+
+CREATE USER nomedousuario SUPERUSER INHERIT CREATEDB CREATEROLE;
+
+e tecle enter.
+
+Depois entre com o comando:
+
+ALTER USER nomedousuario PASSWORD 'senha';
+
+e tecle enter.
+
+Pronto! UsuÃ¡rio criado.
+
+Agora para este usuÃ¡rio acessar o banco de outras mÃ¡quinas da rede devemos liberar se acesso no arquivo pg_hba.conf com o usuÃ¡rio root, siga os passos.
+
+A localizaÃ§Ã£o deste arquivo varia segundo a distribuiÃ§Ã£o Linux, no SUSE estÃ¡ em ~postgres/data/pg_hba.conf, no Ubuntu estÃ¡ em /etc/postgres/8.4/pg_hba.conf. Adicione a linha:
+
+host    all         nomedousuario         0/0                   password
+
+Para que seu usuÃ¡rio tenha acesso de qualquer mÃ¡quina a todos os bancos de dados neste servidor.
+
+Feito isso reinicie o postgres ou recarregue como o comando:
+
+# /etc/init.d/posgresql restart
+ou
+# /etc/init.d/posgresql reload
+
+Espero ter ajudado!
+
+***
+
+Create table populating it with a txt file
+
+(Note: This example ran in a Windows environmen)
+
+    DROP TABLE income_trn;
+
+    CREATE TABLE income_trn
+	    (age INTEGER,
+	     workclass text,
+	     fnlwgt INTEGER,
+	     education text,
+	     education_num INTEGER,
+	     marital_status text,
+	     occupation text,
+	     relationship text,
+	     race text,
+	     sex text,
+	     capital_gain INTEGER,
+	     capital_loss INTEGER,
+	     hours_per_week INTEGER,
+	     native_country text,
+	     category text);
+
+    COPY income_trn
+    FROM '\\\\nas\\Files\\Data\\income\\adult.data' DELIMITER ',' CSV;
+
+***
+
+CREATING A CUSTOM SEQUENCE TO AUTO-INCREMENT AN INTEGER PRIMARY KEY:
+( Adapted from: http://stackoverflow.com/questions/1038126/auto-incrementing-attribute-with-custom-logic-in-sqlalchemy )
+
+CREATE SEQUENCE testing_id_seq;
+
+CREATE OR REPLACE FUNCTION next_id(IN sequencename varchar, OUT result bigint) AS $$
+DECLARE
+    our_epoch bigint := 1314220021721;
+    seq_id bigint;
+    now_millis bigint;
+    shard_id int := 5;
+BEGIN
+    SELECT nextval(sequencename) % 1024 INTO seq_id;
+    SELECT FLOOR(EXTRACT(EPOCH FROM clock_timestamp()) * 1000) INTO now_millis;
+    result := (now_millis - our_epoch) << 23;
+    result := result | (shard_id << 10);
+    result := result | (seq_id);
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TABLE testing (
+    "id" bigint NOT NULL PRIMARY KEY DEFAULT next_id('testing_id_seq'),
+    "text" varchar(25)
+);
+
+***
+
+Como descobrir tamanhos de bases, tabelas:
+
+- Tamanho de base:
+    SELECT pg_size_pretty(pg_database_size('mydb'));
+
+- Tamanho de tabela:
+    (Com índices) SELECT pg_size_pretty(pg_total_relation_size('big_table'));
+    (Sem índices) SELECT pg_size_pretty(pg_relation_size('big_table'));
+
+***
+
+- Query plan in postgresql example: http://michael.otacoo.com/postgresql-2/postgres-9-5-feature-highlight-where-pushdown-with-window-function/    

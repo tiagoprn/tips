@@ -1,0 +1,17 @@
+VARIÁVEIS:
+ 
+DATE=$(date +"%Y%m%d_%H%M_%N")
+mysqldump -h localhost -u root -p --databases mydb > dump.$DATE.sql
+ 
+---
+ 
+PERCORRER RECURSIVAMENTE UM DIRETÓRIO EM CIMA DE UM COMANDO:
+ 
+#!/bin/bash
+for i in $(ls *.sql); do
+    echo "restaurando arquivo/tabela  $i ... [WAIT]" ;
+    # mysql -u root -p'senhabanco' databasename <  "$i" 
+    echo "restaurando arquivo/tabela  $i ... [DONE]" ;
+done;
+
+---

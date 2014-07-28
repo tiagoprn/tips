@@ -1,0 +1,165 @@
+1) BASICS	
+:e filename	Open filename for edition
+:w		Save file
+:q		Exit Vim
+:w!		Exit Vim without saving
+: new		New File
+
+2) MODES	
+Esc, v		Visual Mode
+Esc, i		Insert Mode
+
+3) UNDO AND REDO	
+u 		Undo the last action
+ctrl-r 		Redo
+
+4) EDITING BLOCKS OF TEXT	
+(Note: the Vim commands marked with (V) work in visual mode, when you've selected some text. The other commands work in the command mode, when you haven't selected any text)
+~ 		Change the case of characters. This works both in visual and command mode. In visual mode, change the case of highlighted characters. In command mode, change the case of the character under cursor.
+> (V) 		Shift right (indent).
+< (V) 		Shift left (de-indent).
+c (V) 		Change the highlighted text.
+x (V)		Cut
+y (V)		Copy
+p  (V)		Paste
+
+5) SELECTING TEXT	
+v 		Start highlighting characters. Use the normal movement keys and commands to select text for highlighting.
+V 		Start highlighting lines.
+ctrl + v	Vertical selection (select columns)
+
+6) SYNTAX HIGHLIGHTING	
+:syntax on		Turn on syntax highlighting
+:syntax off		Turn off syntax highlighting
+:set syntax=perl	Force syntax highlighting
+
+7) TEXT INDENT	
+:set autoindent		Turn on auto-indent
+:set smartindent	Turn on intelligent auto-indent
+:set shiftwidth=4	Defines 4 spaces as indent size
+ctrl-t, ctrl-d		Indent/un-indent in insert mode
+>>			Indent
+<<			Un-indent
+
+8) FILE EXPLORER	
+:e .				Open integrated file explorer
+:Sex				Split window and open integrated file explorer
+:browse e			Graphical file explorer
+:ls				List buffers
+:cd ..				Move to parent directory
+:args				List files
+:args *.php			Open file list
+:grep expression *.php		Returns a list of .php files contening expression
+gf				Open file name under cursor
+
+9) MOVING AROUND IN THE FILE	
+j or Up Arrow 			Move the cursor up one line.
+k or Down Arrow 		Down one line.
+h or Left Arrow 		Left one character.
+l or Right Arrow 		Right one character.
+e 				To the end of a word.
+E 				To the end of a whitespace-delimited word.
+b 				To the beginning of a word.
+B 				To the beginning of a whitespace-delimited word.
+0 				To the beginning of a line.
+^ 				To the first non-whitespace character of a line.
+$ 				To the end of a line.
+H 				To the first line of the screen.
+M 				To the middle line of the screen.
+L 				To the the last line of the screen.
+:n 				Jump to line number n. For example, to jump to line 42, you'd type :42
+ctrl-o 				cursor to previous(*) position
+ctrl-i 				cursor to next(*) position
+				(*)OBS.: for example, on a search. 
+
+10) LINE BREAKS HANDLING	
+:set wrap			Auto line break
+:set nowrap			No auto line break
+	
+11) AUTO-COMPLETION	
+Ctrl+n Ctrl+p (in insert mode)		Complete word
+Ctrl+x Ctrl+l				Complete line
+:set dictionary=dict			Define dict as a dictionnary
+Ctrl+x Ctrl+k				Complete with dictionnary
+
+12) WINDOW SPLITING	
+:e filename		Edit filename in current window
+:split filename		Split the window and open filename
+ctrl-w up arrow		Puts cursor in top window
+ctrl-w ctrl-w		Puts cursor in next window
+ctrl-w_			Maximise current window
+ctrl-w=			Gives the same size to all windows
+10 ctrl-w+		Add 10 lines to current window
+:vsplit file		Split window vertically
+:sview file		Same as :split in readonly mode
+:hide			Close current window
+:­nly			Close all windows, excepted current
+:b 2			Open #2 in this window
+:close			Close Active Window
+
+13) TABS	
+:tabnew			Creates a new tab
+gt			Show next tab
+:tabfirst		Show first tab
+:tablast		Show last tab
+:tabm n(position)	Rearrange tabs
+:tabdo %s/foo/bar/g	Execute a command in all tabs
+:tab ball		Puts all open files in tabs
+:tabclose		Close active tab
+
+14) BASIC SEARCH AND REPLACE	
+(NOTES: 	
+A- The "g" flag at the end means global – each occurrence in the line is changed, rather than just the first.	
+B- The first parameter after the bar is the search term, and the second is the replace term. If I want just to search, I can stay with the first parameter.)
+:%s/foo/bar/g 		Find each occurrence of 'foo', and replace it with 'bar'. 
+:%s/foo/bar/gc 		Change each 'foo' to 'bar', but ask for confirmation first. 
+:%s/\<foo\>/bar/gc 	Change only whole words exactly matching 'foo' to 'bar' - ask for confirmation. 
+:%s/foo/bar/gci 	Change each 'foo' (case insensitive) to 'bar' - ask for confirmation. 
+:%s/foo/bar/gcI 	Change each 'foo' (case sensitive) to 'bar' - ask for confirmation. 
+
+15) ADVANCED SEARCH AND REPLACE	
+:%s/\<foo\>.*// 		On each line, delete the whole word "foo" and all following text (to end of line). 
+:%s/\<foo\>.\{5}// 		On each line, delete the whole word "foo" and the following five characters. 
+:%s/\<foo\>\zs.*// 		On each line, delete all text following the whole word "foo" (to end of line). 
+:%s/.*\<foo\>// 		On each line, delete the whole word "foo" and all preceding text (from beginning of line). 
+:%s/.*\ze\<foo\>// 		On each line, delete all the text preceding the whole word "foo" (from beginning of line). 
+:%s/.*\(\<foo\>\).*/\1/ 	On each line, delete all the text preceding and following the whole word "foo"
+
+16) YOU CAN USE OTHER DELIMITERS WITH SUBSTITUTE:
+    :s#http://www.example.com/index.html#http://example.com/# 
+
+17) SEARCH RANGE 	
+(HERE, THE WORD BETWEEN IS INCLUSIVE OF THE START AND END LINES):	
+:s/foo/bar/g    	changes each 'foo' to 'bar' in the current line. 
+:%s/foo/bar/g    	changes each 'foo' to 'bar' in all lines. 
+:5,12s/foo/bar/g    	changes each 'foo' to 'bar' for all lines between line 5 and line 12. 
+:'a,'bs/foo/bar/g    	changes each 'foo' to 'bar' for all lines between marks a and b. 
+:.,$s/foo/bar/g    	changes each 'foo' to 'bar' for all lines between the current line (.) and the last line ($). 
+:.,+2s/foo/bar/g    	changes each 'foo' to 'bar' for the current line (.) and the two next lines (+2). 
+:%s 			is equivalent to :1,$s 
+
+18) WHEN SEARCHING:
+    ., *, \, [, ], ^, and $ are metacharacters. 
+    +, ?, |, {, }, (, and ) must be escaped to use their special function. 
+    \/ is / (use backslash + forward slash to search for forward slash) 
+    \t is tab, \s is whitespace 
+    \n is newline, \r is CR (carriage return = Ctrl-M = ^M) 
+    \{#\} is used for repetition. /foo.\{2\} will match foo and the two following characters. The \ is not required on the closing } so /foo.\{2} will do the same thing. 
+    \(foo\) makes a backreference to foo. Parenthesis without escapes are literally matched. Here the \ is required for the closing \). 
+
+
+19) WHEN REPLACING:
+    \r is newline, \n is a null byte (0x00). 
+    \& is ampersand (& is the text that matches the search pattern). 
+    \1 inserts the text of the first backreference. \2 inserts the second backreference, and so on. 
+
+20) REFERENCES:
+http://www.catswhocode.com/blog/100-vim-commands-every-programmer-should-know
+http://www.tuxfiles.org/linuxhelp/vimcheat.html
+http://terminally-incoherent.com/
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+CREATE/SAVE A PROJECT
+* Project->Close Project (just to make sure)
+* Drag some folder into Sublime.
+* Project->Save Project As...
+
+---
+

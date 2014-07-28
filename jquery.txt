@@ -1,0 +1,166 @@
+1 - GETTING THE VALUES OF SPECIFIC COLUMNS ON A TABLE:
+
+    $(document).ready(function(){
+        console.log('document_ready()');    	
+    	
+        $('#exportar_csv_button').click(function(){
+            console.log('#exportar_csv_button - click()');
+
+            //Gets the values of the second and third columns on the table that has a class named 'lista':            
+            $(".lista td:first-child").each(function() {
+                var nome = $(this).closest('tr').find('td:eq(1)').text(); // for second column
+                var email = $(this).closest('tr').find('td:eq(2)').text(); // for third column
+                
+                console.log('Nome: ' + nome + '; Email: ' + email);                
+            });
+
+            //...
+
+        });
+        
+    });
+
+    
+2 - AS TEMPLATETAGS DA LINGUAGEM DE TEMPLATE DO DJANGO PODEM SER USADAS NORMALMENTE DENTRO DE CÓDIGO JAVASCRIPT/JQUERY:
+
+    $(document).ready(function(){
+        console.log('document_ready()');
+        
+        $('#exportar_csv_button').click(function(){
+        	var cont = 0;
+        	
+            console.log('#exportar_csv_button - click()');
+
+            {% if all_contatos %}
+	            {% for o in all_contatos %}
+	                cont += 1
+	                console.log('ID: ' + cont + ' , Nome: ' + '{{ o.nome }}, Email: ' + '{{ o.email }}');
+	            {% endfor %}
+	        {% else %}    
+		        console.log('VAZIO!'); 
+            {% endif %}
+            
+            //Passes the json to the django view, to generate the CSV:
+            window.location = '#';
+            
+        });
+        
+    });        
+
+    Neste exemplo, a variável "all_contatos" foi passada através de uma view do django (via ContextRequest).
+    
+    
+3 - OBTER A URL ATUAL:
+
+        $('.paginador_proximo_texto').click(function(){
+            var current_link = location.href;
+            console.log(current_link);            		
+        });    
+        
+4 - CHECKBOX: MARCANDO / VERIFICANDO SE ESTÁ MARCADO:
+
+    * Descobrir se checkbox está marcado: 
+        if ($('#checkbox_id').is(':checked')) {
+            alert("Filtro ATIVOS marcado!");            
+        } else {
+            alert("Filtro ATIVOS *des*marcado!");           
+        }      
+        
+    * Setar checkbox como "MARCADO":
+        $('#checkbox_id').attr('checked', true);
+
+    * Setar checkbox como "DESMARCADO":
+        $('#checkbox_id').attr('checked', false);
+        
+        
+5 - ADICIONANDO E REMOVENDO DINAMICAMENTE ESTILOS A UM ELEMENTO USANDO CRIAÇÃO DINÂMICA DE CLASSES CSS (para evitar o uso de inlines com a tag "style" nos elementos HTML):
+
+Exemplo:
+<script type="text/javascript">
+    $(document).ready(function(){
+    	
+    	function defineEstiloFiltroDefault(ativar) {
+
+    		if (ativar) { 
+    			/* Primeiro eu devo adicionar a classe ao elemento e depois definí-la, se eu adicionar depois de definir não vai dar certo */
+                $('#filtro_tudo').addClass('selected_filter');
+                
+                $('.selected_filter').css({
+                    'width': '35px', 
+                    'font-weight': 'bold', 
+                    'background-color': 'rgb(102, 102, 102)', 
+                    'border-color': 'rgb(0, 0, 0)', 
+                    'color': 'rgb(255, 255, 255)'
+                    });
+
+                /* DEBUG CODE
+                if ($('#filtro_tudo').hasClass('selected_filter')) {
+                    console.log('>>> ESTILO APLICADO COM SUCESSO!');
+                } else {
+                    console.log('>>>ESTILO REMOVIDO COM SUCESSO!');               
+                }
+                */
+                   
+                /* Ajusta o valor do elemento que será enviado via POST */
+                $("#filtro").val('tudo');
+                
+    		} else {
+    			
+                $('#filtro_tudo').removeClass('selected_filter');   			
+
+                $("#filtro").val('');                
+    		}
+            
+    	}
+    	
+    	/*  
+    	.
+    	.
+    	.
+    	*/
+
+        /* Para habilitar o estilo */
+        defineEstiloFiltroDefault(true);        
+
+        /* Para desabilitar o estilo */
+        defineEstiloFiltroDefault(false);  
+        
+    });
+</script>              
+
+
+6 - HOW TO SELECT AN ELEMENT USING A REGEX:
+
+Example: an element that starts with "AAA_" and ends with "_BBB"
+    <input id="AAA_RandomString_BBB" type="text" />
+
+    How to get it with JQuery:    
+        $('[id^="AAA_"][id$="_BBB"]')      
+
+
+7 - Se eu fizer um append em um elemento HTML dentro de um laço (um append para cada elemento), e eles vierem fora de ordem:
+
+Ao invés de fazer o append de cada elemento no laço for, posso concatenar uma string a partir de uma array, e fazer um único append com todos:
+
+    Ex.:
+
+        var camposPersonalizados  = []
+        for(var i = 0; i < window.camposPersonalizadosEntidadeAsJson.total_campos; i++) {
+            var obj = window.camposPersonalizadosEntidadeAsJson.campos[i];
+            var element_id = 'custom' + obj.id + '_' + obj.nome;
+
+            camposPersonalizados.push('<div class="form-group" id="form-group">');
+            camposPersonalizados.push('    <label for="' + element_id + '" class="col-xs-2" id="label_align"> <b>' +  obj.nome+ '</b> </label>');
+            camposPersonalizados.push('    <div class="col-lg-3">');
+            camposPersonalizados.push('        <input type="text" class="form-control" id="' + element_id + '" placeholder="' + obj.descricao + '"/>');
+            camposPersonalizados.push('    </div>');
+            camposPersonalizados.push('</div>');
+        }
+        camposPersonalizados = camposPersonalizados.join("");
+        $('#model-form').append(camposPersonalizados);   
+
+
+8 - CHANGE THE MOUSE CURSOR ON A PAGE (for example, before and after an AJAX request finished):
+    $('html, body').css("cursor", "wait");
+    $('html, body').css("cursor", "auto");
+       

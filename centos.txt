@@ -1,0 +1,37 @@
+REPOSITÓRIOS ADICIONAIS (PÓS INSTALAÇÃO):
+  - epel
+  - rpmforce
+
+LISTAR TODOS OS PACOTES INSTALADOS:
+    $ yum list installed
+    
+MUDAR O HOSTNAME:
+    Arquivo /etc/sysconfig/network.
+    
+GRUPO DE PACOTES COM AS FERRAMENTAS DE DESENVOLVIMENTO (equivalente ao "build-essential" do ubuntu): 
+    $ yum groupinstall "Development Tools"
+    
+DEPENDÊNCIAS PARA COMPILAR O python-mysql no virtualenv:    
+  $ yum -y install mysql-devel mysql zlib zlib-devel openssl
+  $ pip install MySQL-python
+  
+INSTALAÇÃO VIA YUM PEDINDO PARA IGNORAR CHAVES GNUPG:
+  $ yum --nogpg install sshfs
+
+RUNLEVELS NO CENTOS/FEDORA/RHEL:
+    0 Halt
+    1 Single-user mode
+    2 Multi-user mode console logins only (without networking)
+    3 Multi-user mode, console logins only
+    4 Not used/User-definable
+    5 Multi-user mode, with display manager as well as console logins (X11)
+    6 Reboot
+    Para mudar de runlevel:
+        $ init [runlevel]
+
+COMO RECONFIGURAR AS INTERFACES eth* (Ex.: para ativar o compartilhamento de rede Bridge ao invés de NATno VirtualBox):
+    $ mv /etc/udev/rules.d/70-persistent-net.rules /etc/udev/rules.d/70-persistent-net.rules.OLD
+    $ reboot
+    Após reiniciar, ele irá re-detectar as eth a partir das interfaces disponíveis no VirtualBox e assumir o IP da rede interna.
+    
+  

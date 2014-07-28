@@ -1,0 +1,4 @@
+- How to move to a specific line / column on the file:
+    :call cursor(line,column)
+    Example:
+        :call cursor(1,80)

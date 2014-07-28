@@ -1,0 +1,175 @@
+Symfony2 is an HTTP framework; it is a Request/Response framework. The fundamental principles of Symfony2 are centered around the HTTP specification.
+
+Symfony2 has many components. They all can be used as standalone libraries. 
+Worth noticing are: ClassLoader, Console, YAML, Finder, Process, DomCrawler, CssSelector, HttpFoundation (adds an object-oriented layer on top of PHP for everything related to the Web: Requests, Responses, Uploaded files, Cookies, Sessions), Routing, EventDispatcher, HttpKernel. 
+
+
+Referência: http://fabien.potencier.org/article/49/what-is-symfony2
+
+***
+
+A great tool to check both the request and response headers while browsing is the Live HTTP Headers extension for Firefox.
+
+***
+
+The Request and Response classes are part of a standalone component included with Symfony called HttpFoundation. This component can be used entirely independent of Symfony and also provides classes for handling sessions and file uploads.
+
+SYMFONY WORKFLOW:
+
+    1) Each request is passed to a front controller file (web/app*.php);
+    2) The routing system (src/[Namespace]/[Bundle]/Resources/config/routing.yml) determines which PHP function should be executed based on information from the request and routing configuration you've created;
+    3) The correct PHP function is executed (src/[Namespace]/[Bundle]/Controller/[Main]Controller.php => function indexAction), where your code creates and returns the appropriate Response object.
+    
+    PS: As views (arquivos '.twig' - chamados nas actions dos controllers) ficam em src/[Namespace]/[Bundle]/Resources/views.
+    
+
+ADDING A SIMPLE PAGE TO A SYMFONY APPLICATION:
+
+    Suppose you want to add a /contact page to your Symfony application. First, start by adding an entry for /contact to your routing configuration file:
+
+    contact:
+        pattern:  /contact
+        defaults: { _controller: AcmeDemoBundle:Main:contact }
+
+    When someone visits the /contact page, this route is matched, and the specified controller is executed. The AcmeDemoBundle:Main:contact string is a short syntax that points to a specific PHP method contactAction inside a class called MainController:
+
+    class MainController
+    {
+        public function contactAction()
+        {
+            return new Response('<h1>Contact us!</h1>');
+        }
+    }
+
+    In this very simple example, the controller simply creates a Response object with the HTML "<h1>Contact us!</h1>". A controller can render templates, allowing your "presentation" code (i.e. anything that actually writes out HTML) to live in a separate template file. This frees up the controller to worry only about the hard stuff: interacting with the database, handling submitted data, or sending email messages.
+
+Referẽncia: http://symfony.com/doc/current/book/http_fundamentals.html
+
+***
+
+Atualizando os vendors (configuration e setup):
+
+  $ [path_to_php/]php bin/vendors install
+  $ [path_to_php/]php bin/vendors install --reinstall
+  
+***  
+
+"asset dump": comando do symfony que parseia nos templaets o que é referenciado de css, js, etc... e gera os assets no ambiente de produção. 
+
+***
+
+todo o desenvolvimento é feito no "app-dev.php": ele compila automaticamente os css, js, etc...
+
+***
+To update bootstrap.php.cache:
+
+php bin/vendors update
+
+This will update all vendors (including Symfony itself) and always call that build_bootstrap.php script for you.
+
+ [path_to_php/]php ./vendor/bundles/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php
+
+***
+
+Internal server error ao carregar os arquivos css ao renderizar a página html (como corrigir):
+
+[path_to_php]php app/console assets:install --env=dev web
+
+***
+
+Como logar no Symfony2:
+
+  	$logger = $this->get('logger');
+  	$logger->info('>>>> LOGANDO INFO...');
+  	$logger->err('>>>> LOGANDO ERR...');
+
+Se o ambiente estiver configurado como produção o log vai estar em 'app/logs/dev.log', caso contrário vai estar em 'app/logs/prod.log'.
+
+***
+
+MONTAGEM DO AMBIENTE PARA DESENVOLVER NO SYMFONY2:
+
+1) cd [pasta_onde_o_symfony2_foi_baixado]
+
+2) Instala os bundles "default" do symfony:
+   $ [path_to_php/]php bin/vendors install
+
+3) Monta as estruturas de pastas do framework:
+   $ [path_to_php/]php ./vendor/bundles/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php
+
+4) Copiar app/config/parameters.ini.dist para app/config/parameters.ini
+
+5) $ [path_to_php/]php app/console assetic:dump --env=prod
+
+6) $ [path_to_php/]php app/console assets:install web
+
+7) rodar o setfacl para setar as permissoes em app/cache e app/logs:
+   $ sudo setfacl -dR -m u:phpcgi5:rwx -m u:[SEU_USUARIO]:rwx app/cache app/logs
+
+8) $ [path_to_php/]php app/console assetic:dump --env=dev
+
+9) acessar pelo browser: http://dominio/app_dev.php
+
+***
+
+Cache Clear no symfony2 (ambiente de desenvolvimento):
+
+$ [path_to_php/]php app/console assetic:dump --env=dev
+$ [path_to_php/]php app/console assets:install --env=dev web
+$ [path_to_php/]php app/console cache:clear
+
+
+***
+HOW TO GET A REQUEST PARAMETER IN A SYMFONY2 CONTROLLER:
+
+  /* MyController.php */
+  .
+  .
+  .
+  use Symfony\Component\HttpFoundation\Request;
+  .
+  .
+  .
+  public function my_controllerAction(Request $request)
+  {
+    // $_GET parameters
+    $name = $request->query->get('my_post_parameter', ''); //tries to get the 'my_post_parameter' parameter, if not passed, assumes ''
+
+    // $_POST parameters
+    $name = $request->request->get('my_post_parameter', ''); //tries to get the 'my_post_parameter' parameter, if not passed, assumes ''
+    .
+    .
+    .
+  }
+  
+  HOW TO CALL THIS CONTROLLER (VIA A POST REQUEST):
+
+    <script type="text/javascript">
+    jQuery(document).ready( function($) {
+      console.log('binding OK...');
+
+      $('#mybutton').click(function(){
+          $.post( 'module/my_controller', { my_post_parameter: 'ALL'}, function( content ) {
+            console.log('post request done...');
+          });
+        }
+      }); 
+
+    })	
+    </script>  
+
+***
+
+ONDE ALTERAR OS ARQUIVOS DE MÍDIA ESTÁTICA (CSS, JS e IMAGENS):
+
+Recursos como css, js e imagens ficam em:
+- src/[SuaEmpresa]/[SeuBundle]/Resources/public
+
+Ao rodar o clear cache:
+php app/console assetic:dump --env=dev;
+php app/console assets:install --env=dev web;
+php app/console cache:clear;
+
+As 2 primeiras etapas levam da pasta "Resources/public" para a pasta "web" do projeto.
+
+***

@@ -1,0 +1,603 @@
+* Descobrir a versão do django:
+
+  $ python
+      import django
+      django.VERSION
+
+---
+
+* Extra fields on many-to-many relationships
+    reference: https://docs.djangoproject.com/en/dev/topics/db/models/#intermediary-manytomany
+
+
+When you're only dealing with simple many-to-many relationships such as mixing and matching pizzas and toppings, a standard ManyToManyField is all you need. However, sometimes you may need to associate data with the relationship between two models.
+
+For example, consider the case of an application tracking the musical groups which musicians belong to. There is a many-to-many relationship between a person and the groups of which they are a member, so you could use a ManyToManyField to represent this relationship. However, there is a lot of detail about the membership that you might want to collect, such as the date at which the person joined the group.
+
+For these situations, Django allows you to specify the model that will be used to govern the many-to-many relationship. You can then put extra fields on the intermediate model. The intermediate model is associated with the ManyToManyField using the through argument to point to the model that will act as an intermediary. For our musician example, the code would look something like this:
+
+class Person(models.Model):
+    name = models.CharField(max_length=128)
+
+    def __unicode__(self):
+        return self.name
+
+class Group(models.Model):
+    name = models.CharField(max_length=128)
+    members = models.ManyToManyField(Person, through='Membership')
+
+    def __unicode__(self):
+        return self.name
+
+class Membership(models.Model):
+    person = models.ForeignKey(Person)
+    group = models.ForeignKey(Group)
+    date_joined = models.DateField()
+    invite_reason = models.CharField(max_length=64)
+
+When you set up the intermediary model, you explicitly specify foreign keys to the models that are involved in the ManyToMany relation. This explicit declaration defines how the two models are related.
+
+There are a few restrictions on the intermediate model:
+
+    Your intermediate model must contain one - and only one - foreign key to the target model (this would be Person in our example). If you have more than one foreign key, a validation error will be raised.
+    Your intermediate model must contain one - and only one - foreign key to the source model (this would be Group in our example). If you have more than one foreign key, a validation error will be raised.
+    The only exception to this is a model which has a many-to-many relationship to itself, through an intermediary model. In this case, two foreign keys to the same model are permitted, but they will be treated as the two (different) sides of the many-to-many relation.
+    When defining a many-to-many relationship from a model to itself, using an intermediary model, you must use symmetrical=False (see the model field reference).
+
+Now that you have set up your ManyToManyField to use your intermediary model (Membership, in this case), you're ready to start creating some many-to-many relationships.
+
+---
+
+* Variáveis de sessão no Django:
+
+De acordo com a documentação oficial do Django:
+"When SessionMiddleware is activated, each HttpRequest object – the first argument to any Django view function – will have a session attribute, which is a dictionary-like object.
+You can read it and write to request.session at any point in your view. You can edit it multiple times."
+
+#views.py
+def login(request)
+    ...
+    request.session['KEY'] = 'this is a test session variable'
+    ...
+    print '>>> REQUEST.SESSION: ' + request.session.get('KEY', 'NONE') # neste caso, 'NONE' é o valor default a ser assumido se a chave não existe no dicionário
+
+#views.py
+def logout(request):
+    try:
+        del request.session['KEY'] #remove a chave do dicionário
+    except KeyError:
+        pass
+    return HttpResponse("You're logged out.")
+
+Documentação oficial em: "https://docs.djangoproject.com/en/dev/topics/http/sessions/"
+
+
+---
+
+* Como montar filtros dinâmicos para "[Model].objects.filter()"
+
+Exemplo:
+
+def _filtrar_contato(request, filtro, pesquisa, filtrar_ativos=False, filtrar_inativos=False, filtrar_softbounce=False, filtrar_hardbounce=False, filtrar_optout=False):
+    if (not filtrar_ativos and not filtrar_inativos and not filtrar_softbounce and not filtrar_hardbounce):
+        filtrar_por_status = [0,1,2,3,4]
+    else:
+        filtrar_por_status = []
+        if filtrar_ativos == 'ativos':
+            filtrar_por_status.append(1) # ativo
+        if filtrar_inativos == 'inativos':
+            filtrar_por_status.append(2) # inativo
+        if filtrar_softbounce == 'soft':
+            filtrar_por_status.append(3) # erro_temporario
+        if filtrar_hardbounce == 'hard':
+            filtrar_por_status.append(4) # erro_permanente
+
+    filtrar_por_status_str = ' '.join(["%s" % el for el in filtrar_por_status])
+
+    '''
+    Below, we will configure the filter manipulating a string "formatted" as a dictionary.
+    Later on we will convert the string into a real dictionary using the python 'eval' function:
+    '''
+
+    # creates a string with all the parameters
+    parameters = "{'entidade': request.session['entidade'], 'status__in': filtrar_por_status, }"
+    # convert this string into a real dictionary:
+    kwargs = eval(parameters)
+    # passes the dictionary as the filter to retrieve the model instances:
+    return Contato.objects.filter(**kwargs)
+
+---
+
+* How to search by the foreign key's names on a query?
+
+# models.py:
+class Proposta(models.Model):
+    quem = models.ForeignKey(ContatoVeiculo, null=True, blank=True)
+    quem_rawdesc = models.CharField(max_length=255)
+    agencia = models.ForeignKey(Agencia, null=True, blank=True)
+    assunto = models.CharField(max_length=255)
+
+class ContatoVeiculo(models.Model):
+    nome = models.CharField(max_length=200)
+
+class Agencia(models.Model):
+    nome = models.CharField(max_length=200)
+
+
+# views.py:
+def proposta_search(request):
+    query = request.GET.get('q', '')
+    if query:
+        qset = (
+            Q(assunto__icontains=query) |
+            Q(quem_rawdesc__icontains=query) |
+            Q(quem__nome__icontains=query) | #I just need to use two "_" to access a field from the related model
+            Q(agencia__nome__icontains=query) #I just need to use two "_" to access a field from the related model
+        )
+        results = Proposta.objects.filter(qset).distinct().order_by('-enviada_em_ano', '-enviada_em_mes', '-enviada_em_dia', '-horario_hora', '-horario_minuto')
+    else:
+        results = []
+
+    return render_to_response('sistema_gerencial/proposta/search.html', locals(),
+        context_instance=RequestContext(request))
+
+---
+
+* How to execute SQL directly:
+
+    - First approach:
+
+        def my_custom_sql():
+            from django.db import connection, transaction
+            cursor = connection.cursor()
+
+            # Data modifying operation - commit required
+            cursor.execute("UPDATE bar SET foo = 1 WHERE baz = %s", [self.baz])
+            transaction.commit_unless_managed()
+
+            # Data retrieval operation - no commit required
+            cursor.execute("SELECT foo FROM bar WHERE baz = %s", [self.baz])
+            row = cursor.fetchone()
+
+            return row
+
+
+    - Second approach:
+
+        def sql(self, params):
+                    self.criaLog()
+                    cursor=connection.cursor()
+                    sql='select * from tabela where codigo=%s'%params;
+                    cursor.execute(sql)
+                    dados = cursor.fetchall()
+                    return dados
+
+
+    - Mais detalhes em:
+
+        https://docs.djangoproject.com/en/dev/topics/db/sql/#executing-custom-sql-directly
+
+
+---
+Como pegar os valores originais de uma instância antes de alterar os seus valores (no model):
+(também posso ter acesso a outros signals):
+
+#models.py
+# -*- coding: utf-8 -*-
+from django.db import models
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+
+class Estoque(models.Model):
+    produto_cor = models.ForeignKey(ProdutoCor, blank=True, null=True)
+
+    qtde = models.IntegerField()
+    qtde_alerta = models.IntegerField()
+
+    ultima_alteracao = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.produto_cor.produto.descricao + ' (qtde: ' + unicode(self.qtde) + ')'
+
+@receiver(pre_save, sender=Estoque)
+def callback_pre_save_estoque(sender, **kwargs):
+    instance_to_be_saved = kwargs["instance"]
+
+    #Se for um update, e não um create da instância:
+    if instance_to_be_saved.pk:
+        #Como no signal pre_save o registro ainda não foi salvo, eu faço uma query para pegar a instância original na base:
+        original_instance = Estoque.objects.get(pk=instance_to_be_saved.id)
+
+        #Grava o registro anterior na tabela de histórico:
+        if original_instance:
+            h = EstoqueHistorico(
+                produto_cor = original_instance.produto_cor,
+                qtde = original_instance.qtde,
+                qtde_alerta = original_instance.qtde_alerta,
+                data_alteracao_tabela_estoque = original_instance.ultima_alteracao
+            )
+            h.save()
+
+    #print (" PRE_SAVE >>> NEW_INSTANCE: [%s], ORIGINAL_INSTANCE: [%s]") % (repr(instance_to_be_saved), repr(original_instance))
+
+---
+
+UPLOAD FILES TO django-tastypie:
+
+  class MyResource(ModelResource):
+      class Meta:
+          queryset = MyModel.objects.all()
+          resource_name = 'mymodels'
+          authentication = ApiKeyPlusWebAuthentication()
+          authorization = DjangoAuthorization()
+
+      def override_urls(self):
+          return [
+              url(r"^(?P<resource_name>%s)/(?P<pk>\w[\w/-]*)/thumbnail/$" % self._meta.resource_name, self.wrap_view('thumbnail')),
+          ]
+
+      def thumbnail(self, request, pk, **kwargs):
+          if request.method == 'POST':
+              obj = get_object_or_404(MyModel, pk=pk)
+              src_file = tempfile.NamedTemporaryFile()
+              src_file.write(request.raw_post_data)
+              src_file.seek(0)
+
+              obj.thumbnail.save('thumbnail.jpeg', File(src_file))
+              bundle = self.build_bundle(obj)
+              bundle = self.full_dehydrate(bundle)
+              bundle = self.alter_detail_data_to_serialize(request, bundle)
+              return self.create_response(request, bundle)
+          else:
+              return HttpResponseNotAllowed(['POST'])
+
+FAZER O ENVIO VIA CURL: http://site.tiagoprnl.in/core/visitor_home/nota/36/
+
+---
+
+COMO FAZER UMA REQUISIÇÃO AJAX NO DJANGO:
+
+$(document).ready(function(){
+    $.ajax({
+	url: configuration['jsdemo']['ajax_view'],
+	cache: false,
+	type: "POST",
+	data: {"key": "value"},
+	success: function(data){
+	},
+	beforeSend: function(xhr, settings){
+	    xhr.setRequestHeader("X-CSRFToken", $.cookie('csrftoken'));
+	}
+    });
+});
+
+---
+
+Quando precisar escapar strings (para serem usadas em códigos js e/ou outros):
+
+EXEMPLO DE UTILIZAÇÃO:
+Ao retornar textos gravados na base a partir de um Rich Text Editor (como o uEditor) para popular um Rich Text Editor com seu conteúdo original para edição:
+
+from django.template.defaultfilters import escape, force_escape, escapejs
+.
+.
+instance_conteudo = escapejs(instance.conteudo)
+
+Ex. de uso: tiagoprnl_web, nota_update.
+
+---
+
+CRIAR COOKIES VIA JAVASCRIPT PARA CONSUMO NO DJANGO:
+
+# JAVASCRIPT (CRIAÇÃO DO COOKIE):
+  function updateCookie(name,value) {
+  	/* Da forma que está sendo criado aqui, o cookie
+  	   irá ser criado sem encriptação nenhuma.
+  	   Portanto, isso pode ser útil apenas para gravar
+  	   parâmetros como filtros de pesquisa, e outros dados
+  	   não críticos. */
+      document.cookie = name+"="+value;
+  }
+
+
+  $('#buscar').click(function(){
+
+    updateCookie('filtro', '???');
+    updateCookie('pesquisa', '???');
+
+    /* Também posso visualizar o valor dos cookies no Google Chrome: Developer Toolbar => Resources => Cookies => localhost */
+
+  });
+
+# DJANGO (OBTER O VALOR DO COOKIE):
+
+def minha view(request):
+    print 'COOKIES DA SESSÃO: ' + repr(request.COOKIES)
+    '''
+    O Django irá retornar o seguinte:
+    COOKIES DA SESSÃO: {'filtro': '???', 'csrftoken': 'a3f4554f2da0e04acc14c7b4219db02f', 'sessionid': 'e2cb52a54abc5a67103b8f58f8a9d0e0', 'pesquisa': '???'}
+    Observe que além dos cookies 'filtro' e 'pesquisa' criados via javascript, ele retorna também cookies que ele mesmo utiliza (csrftoken e sessionid).
+    '''
+
+---
+
+FILTROS COMPOSTOS NO DJANGO, USANDO OBJETOS "Q":
+(referência: http://www.michelepasin.org/techblog/2010/07/20/the-power-of-djangos-q-objects)
+
+EXEMPLO:
+def _filtrar_contato(request, filtro, pesquisa, filtrar_ativos=False, filtrar_inativos=False, filtrar_softbounce=False, filtrar_hardbounce=False, filtrar_optout=False):
+    # campo entidade
+    query_entidade = Q(entidade = request.session['entidade'])
+
+    # campos status + optout
+    if (not filtrar_ativos and not filtrar_inativos and not filtrar_softbounce and not filtrar_hardbounce and not filtrar_optout):
+        filtrar_por_status = [1,2,3,4]
+    else:
+        filtrar_por_status = []
+        if filtrar_ativos == 'ativos':
+            filtrar_por_status.append(1) # ativo
+        if filtrar_inativos == 'inativos':
+            filtrar_por_status.append(2) # inativo
+        if filtrar_softbounce == 'soft':
+            filtrar_por_status.append(3) # erro_temporario - soft bounce
+        if filtrar_hardbounce == 'hard':
+            filtrar_por_status.append(4) # erro_permanente - hard bounce
+
+    if filtrar_optout == 'optout':
+        query_statuses = Q(optout = 1)
+        query_statuses = query_statuses | Q(status__in = filtrar_por_status)
+    else:
+        query_statuses = Q(optout__isnull = True)
+        if not ((len(filtrar_por_status)==1) and (2 in filtrar_por_status)):
+            query_statuses = (query_statuses) & Q(status__in = filtrar_por_status)
+        else: #tratamento especial para status SOMENTE 'inativo'
+            query_statuses = Q(status__in = filtrar_por_status)
+
+    # campos nome, email (filtro)
+    if filtro <> 'tudo':
+        customizar_filtro = True
+        if filtro == 'numerico':
+            query_filtro = Q(nome__regex = r'^[0-9]')
+        elif len(filtro) == 1:
+            query_filtro = Q(nome__istartswith=filtro) | Q(email__istartswith=filtro)
+    else:
+        customizar_filtro = False
+
+    # campos email, nome (pesquisa)
+    if pesquisa <> '':
+        customizar_pesquisa = True
+        query_pesquisa = Q(email__icontains=pesquisa) | Q(nome__icontains=pesquisa)
+    else:
+        customizar_pesquisa = False
+
+
+    query_all = (query_entidade) & (query_statuses)
+
+    if customizar_filtro:
+        query_all = (query_all) & query_filtro
+
+    if customizar_pesquisa:
+        query_all = (query_all) & query_pesquisa
+
+    print repr(query_all)
+    print query_all.__dict__
+
+    return Contato.objects.filter(query_all)
+
+---
+
+Como testar queries (objetos Q, filters, etc...) no shell do django:
+
+$ python manage.py shell
+>>> from projeto.app.models import *
+>>> instancias = MeuModel.objects.all()
+>>> len(instancias)
+22
+>>>
+
+---
+
+Aplicar slugs em strings:
+
+>>> from django.template.defaultfilters import slugify
+>>> msg = 'This Is Just a Random String to Be converted to SLUG strinG!'
+>>> slugify(msg)
+u'this-is-just-a-random-string-to-be-converted-to-slug-string'
+>>>
+
+---
+
+Imprimir a SQL gerada por uma QuerySet:
+
+from datetime import datetime
+from datetime import timedelta
+
+# A 'today' object that contains date but not time, e.g. 2012-08-07
+today = datetime.now().date()
+
+dates = Dateset.objects.filter(
+    Q(date_one__activity_date__lte=today, complete=False) |
+    Q(date_one__activity_date=today),
+    date_one__activity__user=request.user).order_by('-date_one__activity_date')
+
+# Abaixo ele vai imprimir o SQL gerado por essa query:
+print dates.query
+
+---
+
+IMPLEMENTANDO CACHE SERVER-SIDE NO DJANGO:
+  https://docs.djangoproject.com/en/dev/topics/cache/
+
+  TIPOS DE CACHE MAIS ÚTEIS:
+    A) FAZENDO CACHE DE UMA VIEW:
+    https://docs.djangoproject.com/en/dev/topics/cache/?from=olddocs/#the-per-view-cache
+
+    B) FAZENDO CACHE DE UM FRAGMENTO DE UM TEMPLATE:
+    https://docs.djangoproject.com/en/dev/topics/cache/?from=olddocs/#template-fragment-caching
+
+    C) FAZENDO CACHE DE OBJETOS PYTHON ESPECÍFICOS:
+      "Perhaps, for instance, your site includes a view whose results depend on several expensive queries, the results of which change at different intervals.
+    In this case, it would not be ideal to use the full-page caching that the per-site or per-view cache strategies offer, because you wouldn't want
+    to cache the entire result (since some of the data changes often), but you'd still want to cache the results that rarely change.
+      For cases like this, Django exposes a simple, low-level cache API. You can use this API to store objects in the cache with any level of granularity you like.
+    You can cache any Python object that can be pickled safely: strings, dictionaries, lists of model objects, and so forth. (Most common Python objects can be pickled;
+    refer to the Python documentation for more information about pickling.)"
+      Link: https://docs.djangoproject.com/en/dev/topics/cache/?from=olddocs/#the-low-level-cache-api
+
+    Este último tipo de cache ("C"), em especial, pode ser útil para informar o usuário sobre o progresso de uma operação que está sendo realizada no server por uma determinada view. Por exemplo, supondo que em uma view eu chamo um processo que alimenta uma tabela a partir de um arquivo CSV. E eu tenho outra view onde eu informo o usuário sobre o progresso dessa alimentação. Basta eu usar o cache_set periodicamente no processo de alimentação da tabela, e na view que informa sobre o progresso eu também periodicamente uso o cache_get para obter o progresso da alimentação.
+
+---
+COMO RETORNAR UM ARQUIVO QUE ESTÁ NO SERVER PARA DOWNLOAD EM UMA VIEW DO DJANGO:
+
+def get_csv_file(request):
+    csv_file = '/path/no_server/para_o_arquivo/invalidos.csv'
+    f = open(csv_file)
+    response = HttpResponse(f, mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s' % csv_file
+    return response
+
+---
+
+Converter um inteiro para string em um template django, para fazer comparação entre o inteiro e o string:
+
+{% if request.session.EMPRESA_CHECKED_IN|stringformat:"s" != e.id|stringformat:"s" %}
+{% endifequal %}
+
+---
+
+* IMPLEMENTANDO upload de arquivo(s) entre Javascript / JQuery e um backend Django:
+
+    FRONTEND:
+        (Testado com o "JQuery File Uploader". Acredito que ele possa ser descartado numa outra implementação, pois a tag HTML5 <input type="file"> deve se encarregar de todas as features necessárias)
+
+        - HTML:
+
+            <body>
+                <form id="model-form" role="form" action="" enctype="multipart/form-data" method="POST" name="form1" onsubmit="return false">
+
+                    <div class="input-group col-lg-7 padding_bottom_medium">
+                        <label for="file-upload">Selecione o arquivo com seu template html:</label>
+                        <input type="file" class="form-control input-lg" name="files"  id="files-input"/>
+                        <button class="btn btn-sm btn-primary form_field_space" id="buttonImportarDeArquivo" type="button">Importar de Arquivo</button>
+                    </div>
+
+                </form>
+            </body>
+            <script src="/site_media/assets/js/jquery_file_uploader/jquery.ui.widget.js"></script>
+            <script src="/site_media/assets/js/jquery_file_uploader/jquery.iframe-transport.js"></script>
+            <script src="/site_media/assets/js/jquery_file_uploader/jquery.fileupload.js"></script>
+
+
+        - JS:
+
+            $('#buttonImportarDeArquivo').click(function() {
+                var file = $("#files-input")[0].files[0];
+
+                //TODO: Passar o conteúdo do arquivo para uma view no django
+                // Aqui é necessário usar FormData ao invés de fazer uma requisição AJAX um objeto JSON simples.
+                // Desta forma o arquivo será enviado na request e popular ele no request.FILES
+                // para pegar no Django.
+                var formData = new FormData();
+                formData.append('file', file);
+
+                var upload_request = new XMLHttpRequest();
+                upload_request.open("POST", "/root/django_view_url/");
+
+                upload_request.onload = function() {
+                    // console.log(upload_request);
+                    var responseAsJson  = JSON.parse(upload_request.response);
+                    console.log(responseAsJson);
+
+                    if (upload_request.status == 200) {
+                        var filehtml = responseAsJson.responseText;
+                        alert("HTML retornado: " + filehtml);
+                    } else {
+                        alert("Erro ao fazer o envio do arquivo: " + upload_request.status);
+                    }
+                };
+
+
+                upload_request.send(formData);
+
+            });
+
+
+    - BACKEND:
+
+        - DJANGO VIEW:
+
+            def django_view(request):
+                if request.method == 'POST':
+                    message = 'Sucesso!'
+                    success = True
+                    http_status_code = 200
+
+                    print u'Método POST chamado...'
+
+                    #TODO: Implementar a leitura do arquivo
+                    files = request.FILES
+                    file_object = request.FILES['file']
+                    html = file_object.read().decode('utf-8')
+
+                    print u'Conteúdo do arquivo >>>> %s' % html
+
+                    # Formats the return to the front-end
+                    data = simplejson.dumps({
+                        'responseText': message,
+                        'success': success
+                    })
+
+                    return HttpResponse(content=data, mimetype='application/json', status=http_status_code, content_type='text/json')
+
+
+---
+
+How return a CSV file on a view's response:
+
+https://docs.djangoproject.com/en/dev/howto/outputting-csv/
+
+This also explains how to generate files using templates (like html ones used by default), and how to handle unicode content on csv.
+
+---
+
+- Django project / app start helpers:
+    INICIAR PROJETO:
+        $ django-admin.py startproject [nome_projeto]
+    INICIAR APP:
+        (ir para a pasta do projeto)
+        $ django-admin.py start app [nome_app]
+
+
+---
+
+- Django Admin - Cadastrar permissões para um usuário para uma nova app:
+    Na app "Auth => Groups" do Django Admin, criar um grupo
+com o nome da app e filtrar todas as operações que podem ser feitas
+pelo nome da app.
+    Depois, ir na app "Auth => Users", criar o usuário e atribuí-lo ao grupo criado.
+
+---
+
+- Django run local development server exporting access through a network:
+    $ python manage.py runserver 0.0.0.0:8000
+
+---
+
+Difference between ForeignKey and OneToOneField:
+- There are some differences between OneToOneField(SomeModel) and ForeignKey(SomeModel, unique=True).
+    - OneToOneField: A one-to-one relationship. Conceptually, this is  *** similar *** to a ForeignKey with unique=True,
+    BUT the "reverse" side of the relation will directly return a single object.
+        In contrast to the OneToOneField "reverse" relation, a ForeignKey "reverse" relation returns a QuerySet.
+(reference: http://stackoverflow.com/questions/5870537/whats-the-difference-between-django-onetoonefield-and-foreignkey)
+
+---
+
+Get the latest record (by id) on a table from a database - through django's ORM:
+
+from app.models import *
+last_instance = my_model.objects.latest('id')
+
+---

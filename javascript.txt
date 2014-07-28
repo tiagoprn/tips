@@ -1,0 +1,448 @@
+* Chamadas AJAX são assíncronas. Portanto, se eu passar requisições dentro de um laço "for" no backend (javascript) elas vão ser processadas fora de ordem, e não de forma procedural.
+  Portanto, evitar ao máximo passar requisições dentro de laços.
+  
+  Ex.:
+  //INEFICIENTE: Aqui eu estou passando 1 "workqueue_id" a cada iteração, o que resulta várias requisições que vão retornar cada uma a seu tempo:   
+  this.buttonReprocessar = new Ext.Button({
+    text: "Reprocessar",
+    handler: function() {
+      var records = this.gridWorkQueue.getSelectionModel().getSelections();      
+
+      for(var i=0; i< records.length; i++) {
+        var workqueue_id_value = records[i].get('workqueue_batch_files_id'); //embora o campo não esteja no grid ele está no model, e como é o model que estou lendo aqui o valor do campo aparece. 
+        console.log("  ID: " + workqueue_id_value + ", Nome do Arquivo: " + records[i].get('file_name'));
+
+          Ext.Ajax.request({
+            url: 'mmm.php/report/ReprocessWorkqueueRecord',
+            params: {
+              workqueue_id: workqueue_id_value
+            },
+            success: function( )	
+            {
+              console.log("SUCCESS!");
+            },
+            failure: function( )
+            {
+              console.log("FAILED!");        
+              Ext.example.msg( Mandic.i18n.main.strFailed, Mandic.i18n.main.strErrorRequest );
+            },
+            scope: this
+          });
+      }
+
+            
+    },
+    scope: this
+  });
+  
+  //EFICIENTE: Aqui eu vou passar uma string contendo vários...    
+  this.buttonReprocessar = new Ext.Button({
+    text: "Reprocessar",
+    handler: function() {
+      var records = this.gridWorkQueue.getSelectionModel().getSelections();      
+
+      console.log("Working...");
+
+      var workqueue_ids_str = '';
+
+      //Alimenta uma array que vai ser passada em uma única requisição AJAX:
+      for(var i=0; i< records.length; i++) {
+        var workqueue_id_value = records[i].get('workqueue_batch_files_id'); //embora o campo não esteja no grid ele está no model, e como é o model que estou lendo aqui o valor do campo aparece. 
+
+        if (i>0)
+          workqueue_ids_str = workqueue_ids_str + '|';
+        workqueue_ids_str = workqueue_ids_str + workqueue_id_value;
+          
+
+        console.log("  ID: " + workqueue_id_value + ", Nome do Arquivo: " + records[i].get('file_name'));
+      }
+
+      //Faz uma única requisição AJAX ao server com todos os registros a serem processados:
+      Ext.Ajax.request({
+        url: 'mmm.php/report/ReprocessWorkqueueRecord',
+        params: {
+          workqueue_ids: workqueue_ids_str
+        },
+        success: function( )	
+        {
+          console.log("SUCCESS!");
+        },
+        failure: function( )
+        {
+          console.log("FAILED!");        
+          Ext.example.msg( Mandic.i18n.main.strFailed, Mandic.i18n.main.strErrorRequest );
+        },
+        scope: this
+      });
+
+      console.log("MANUALLY Refreshing the grid store...");
+
+      //Reloads the store, to automatically update the GridPanel:
+      this.WorkqueueStore.load();
+
+      //Clear the selections from the GridPanel:
+      //this.gridWorkQueue.getSelectionModel().clearSelections();
+    
+      console.log("[DONE]");
+            
+    },
+    scope: this
+  });
+
+* CALL A URL PASSING A POST PARAMETER INSTEAD OF A GET ONE HARDCODED INTO THE URL (pure javascript):
+
+        function postToURL(path, params, method) {
+            method = method || "post"; // Set method to post by default, if not specified.
+
+            // The rest of this code assumes you are not using a library.
+            // It can be made less wordy if you use one.
+            var form = document.createElement("form");
+            form.setAttribute("method", method);
+            form.setAttribute("action", path);
+
+            for(var key in params) {
+                if(params.hasOwnProperty(key)) {
+                    var hiddenField = document.createElement("input");
+                    hiddenField.setAttribute("type", "hidden");
+                    hiddenField.setAttribute("name", key);
+                    hiddenField.setAttribute("value", params[key]);
+
+                    form.appendChild(hiddenField);
+                 }
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }        
+
+        Example of calling (using jquery on the calling code):
+
+        FRONTEND:
+
+            $(document).ready(function(){
+                console.log('document_ready()');
+                
+                function postToURL(path, params, method) {
+                    method = method || "post"; // Set method to post by default, if not specified.
+
+                    // The rest of this code assumes you are not using a library.
+                    // It can be made less wordy if you use one.
+                    var form = document.createElement("form");
+                    form.setAttribute("method", method);
+                    form.setAttribute("action", path);
+
+                    for(var key in params) {
+                        if(params.hasOwnProperty(key)) {
+                            var hiddenField = document.createElement("input");
+                            hiddenField.setAttribute("type", "hidden");
+                            hiddenField.setAttribute("name", key);
+                            hiddenField.setAttribute("value", params[key]);
+
+                            form.appendChild(hiddenField);
+                         }
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }        
+                
+                $('#exportar_csv_button').click(function(){
+                	var cont = 0;
+                	
+                    console.log('#exportar_csv_button - click()');
+
+                    /* Monta uma string em formato de dicionário para consumo na django view: */  
+                    {% if all_contatos %}
+                        var dump = '[';
+	                    {% for o in all_contatos %}
+	                        cont += 1;
+	                        dump += '("{{ o.nome }}","{{ o.email }}"),';
+	                    {% endfor %}
+	                    dump += ']';	            
+	                    console.log(dump);	            
+	                {% else %}    
+		                console.log('VAZIO!'); 
+                    {% endif %}            
+                    
+                    /* This will call a django view, passing to it a parameter 
+                       called 'contacts_dict' (with its value set as the 'dump' variable) 
+                       through a POST request */ 
+                    postToURL('{% url contatos_exportar_csv %}', {contacts_dict: dump});
+                });
+                
+            });
+        
+        BACKEND (Django):
+        
+            # urls.py
+            url(r'^emkt/contatos/csv$', 'email_marketing.views.contatos_exportar_csv', None, "contatos_exportar_csv"),        
+            
+            # views.py                               
+            @login_required
+            @permitir_cliente
+            @bloquear_permissao_leitura
+            def contatos_exportar_csv(request):
+                e = request.session["entidade"]
+
+                f = request.POST.copy()
+                
+                contatos_str = f['contacts_dict']
+                
+                contatos = eval(contatos_str)
+
+                print ('> contatos_exportar_csv()')
+                print ('  > NOME_EMAIL - begin...')
+
+                csv_content = [("Nome", "E-mail")]
+                for item in contatos:
+                    r = []
+                    try:
+                        #r.append(item.nome)
+                        r.append(item[0])
+                    except Exception:
+                        r.append(str())
+
+                    #r.append(item.email)
+                    r.append(item[1])
+                    
+                    print (('    > %s --- %s') % (item[0], item[1])) 
+                    
+                    csv_content.append(r)
+                    
+                print ('  > NOME_EMAIL - ...end')        
+                    
+                return _export_csv(e, csv_content)
+
+---
+
+* COMO FAZER REQUISIÇÃO POST AJAX CROSS-DOMAIN (USANDO JSONP):
+
+    FRONTEND:
+        $(document).ready(function(){
+	        $('#dadosCadastraisForm').submit(function(){
+		        console.log("Clicado no <button>!");
+		
+		        var dataobj = new Object();
+		        dataobj.email = $('#email').val();
+		        dataobj.phone = $('#phone').val();
+		        dataobj.city  = $('#city').val();
+		
+		        //var dataString = JSON.stringify(dataobj);
+		        //var DEBUG = ">>> " + dataString;					
+		        //console.log(DEBUG);
+
+		        var _postrequesturi = 'http://mysymfonyproject.com/app_dev.php/postrequest';
+		
+		        console.log('POST URL: [' + _postrequesturi + ']');
+
+		        $.ajax({
+				        url: _postrequesturi,
+				        dataType: 'jsonp', 
+				        crossDomain: true, 
+				        jsonp: false, 
+				        jsonpCallback: 'postRequest', /* Devo retornar esta callback na string JSON de retorno do backend */
+				        data: dataobj, 
+				        success: function(data){
+					        console.log(data);
+					        alert(data.retorno_backend);
+				        }
+			        });								
+	        });
+        });
+
+        <form id="dadosCadastraisForm" action="" method="POST" onSubmit="return false"> <!-- onSubmit="return false" because I want to override the browser's default form submit -->
+            <p">E-mail:</p>
+            <input id="email" type="text" value="{{ company_contact_email }}">
+
+            <p>Cidade:</p>
+            <input id="city" type="text" value="{{ company_address_city }}">
+
+            <p>Comercial (Número):</p>
+            <input id="phone" type="text" value="{{ company_phone_commercial }}">
+
+            <button id="dadosCadastraisPostToAPI" type="submit"> POST_TO_API </button>
+        </form>
+
+
+    BACKEND (SYMFONY2):
+      public function postRequestAction()
+      {
+      	$request = $this->getRequest();
+	
+      	$request_type = $request->getMethod(); 
+
+      	error_log(' >>>> postRequestAction() - REQUEST TYPE: ' . $request_type);
+
+	    $data = $request->request->get('data');
+      		
+	    error_log(' >>>> postRequestAction() - JSON PRINT_R: ' . print_r($data));  		
+	    error_log(' >>>> postRequestAction() - JSON VAR_DUMP: ' . var_dump($data));  		
+      	
+      	
+	    $return = array(
+		    'success' => true,
+		    'retorno_backend' => 'FUNCIONANDO!'
+	    );	
+	
+	    error_log("RETURN >>> " . json_encode($return)); //transforma o array em uma string json
+
+            /*TODO: se não funcionar, preciso descobrir como setar o content-type da response no symfony2 
+                    para "application/json" ou "text/javascript", assim como faço no symfony1.
+	    */ 
+	    $response = new Response('postRequest('.json_encode($return).')'); //retorna o json, junto com o nome da callback informada no frontend (jsonpCallback: 'SetClientData')
+
+	    return $response;
+      }
+      
+      
+    BACKEND (SYMFONY 1):
+      public function executePostRequest(sfWebRequest $request)
+      {
+        $this->email =  $request->getParameter( 'email' );
+        $this->phone =  $request->getParameter( 'phone' );
+        $this->city  =  $request->getParameter( 'city' );
+
+        /* ISTO É MUITO IMPORTANTE (o setContentType). Em caso de erros posso usar, ao invés de
+           "application/json", "text/javascript". */ 
+        $this->getResponse()->setContentType( 'application/json; charset=UTF-8' ); 
+
+        echo 'postRequest('.json_encode(array('success' => $this->success,'retorno_backend' => $this->message )).")";
+        return sfView::NONE;
+      }
+
+---
+
+* Aplicar funções em campos input (javascript / jquery):
+
+	<script type="text/javascript">
+		function validateInputChars(input, MaximumChars) {
+		    /* VALIDA SE ULTRAPASSOU A QUANTIDADE DE CARACTERES MaximumChars em um INPUT:
+		       Também posso fazer essa validação adicionando o atributo "maxlength" no campo input. 
+		       Ex.: <input type="text" id="Textbox" name="Textbox" maxlength="10" />
+		    
+		     */
+			var inputLength = $(input).val().length;
+			if (inputLength > MaximumChars)	return false; else return true;
+		}
+		
+		function stripHiphensFromPhoneInput(input) {
+			var phone = $(input).val();
+			var normalized = phone.replace("-", "");
+			$(input).val(normalized);
+		}			
+	
+		$(document).ready(function(){
+		
+			$('#dadosCadastraisForm').submit(function(){
+				console.log("Clicado no <button>!");
+
+				stripHiphensFromPhoneInput($('#phone_company'));
+				stripHiphensFromPhoneInput($('#phone'));
+				stripHiphensFromPhoneInput($('#mobile'));
+				
+				if (! validateInputChars($('#name_email'), 50)) {
+					alert("O máximo de caracteres permitido para 'Informações Pessoais -> Nome é '" + String(50) + "'.");
+					exit;	
+				}	 
+					
+			});
+		});
+	</script>
+
+---
+
+* Recarregar a página atual (javascript):
+
+    window.location.reload();
+
+---
+
+* Abrir uma nova aba no browser:
+
+  $('#mybutton').click(function(){
+    window.open( '/my_url/' );    
+  }); 
+
+---
+
+* Strings multilinha em javascript (simulação utilizando arrays, e o método "join", como no Python, para converter para uma string no final do processo):
+
+    var importMapper   = [];
+    importMapper.push("<div class='table-responsive'>");
+    importMapper.push("<table class='table table-condensed'>");
+    $('#import-mapper').append(importMapper.join(""));
+
+    SINTAXE ALTERNATIVA: 
+
+    var fields = [
+        "<div class='btn-group'>",
+            "<button type='button' class='btn btn-default selected-import-fields' name='unmapped' id='selected-import-field-" + ColumnId + "'> Não mapear </button>",
+            "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown'><span class='caret'></span></button>",
+            "<ul id='definicao_campos_list' class='dropdown-menu' role='menu'>",
+                "<li class='import-field' name='nome'          id='" + "nome-"          + ColumnId + "'> <a href='#'> Nome   </a> </li>",
+                "<li class='import-field' name='email'         id='" + "email-"         + ColumnId + "'> <a href='#'> E-mail </a> </li>",
+            "</ul>",
+        "</div>"
+    ];
+
+    var strMultiLinha = fields.join("");
+
+---
+
+* Fazer uma requisição AJAX (Versão 1.9+ do JQuery):
+
+                var jsonData = { };
+                for (i=0; i < $inputs.length; i++) {
+                    jsonData[$inputs[i].id] = $inputs[i].value;
+                }
+
+                request = $.ajax({
+                    url: "/mandicemkt_login/",
+                    type: "POST",
+                    data: jsonData
+                });
+
+                // callback handler that will be called on success
+                request.done(function (response, textStatus, jqXHR){
+                    // redirects the user to the "Inicio Rapido" page
+                    window.location.replace('/panel/mandicemkt/dashboard/');
+                });
+
+                // callback handler that will be called on failure
+                request.fail(function (jqXHR, textStatus, errorThrown){
+                    error_decoded = JSON.parse(jqXHR.responseText);
+                    alert(error_decoded.responseText);
+                });
+
+                // callback handler that will be called regardless if the request failed or succeeded
+                request.always(function () {
+                });
+
+
+---
+
+Como iterar em um objeto JSON com nomes de chaves dinâmicas (com JQuery):
+
+    var responseAsString = {"20": "Com campo personalizado", "16": "nome 556", "17": "nome 557", "19": "Template importado de arquivo"};
+
+    var responseAsJSON = JSON.parse(responseAsString);
+
+    $.each(responseAsJSON, function(key,value) {
+        alert(key + '>' + value);
+        //now below here, I want to perform action, based on the values i got as key and values
+    });
+
+---
+
+How to remove "&quot;" from a string, and transform it into a JSON object:
+
+var jsonContactsStr = "{{ all_campos_cadastro_contatos }}".replace(/&quot;/g, '"');
+myJSONobject = JSON.parse(jsonContactsStr);
+
+---
+
+How to get a variable type:
+
+typeof [my_variable_here]
+
+---

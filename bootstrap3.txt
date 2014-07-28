@@ -1,0 +1,92 @@
+BOOTSTRAP 3 GRID INTRODUCTION
+    (REFERENCE: http://www.helloerik.com/bootstrap-3-grid-introduction)
+
+* MOBILE FIRST IS EVERYTHING ASSUMES THAT YOU ARE DESIGNING FOR A MOBILE, EXTRA SMALL VIEWPORT. 
+
+* Everything you set by default is to be applied to MOBILE FIRST (font sizes, paddings, etc...);
+
+    EXAMPLE: 
+
+        h1 {
+          /* Base style (mobile devices): */  
+          font-size: 22px;
+          margin: bottom 10px;
+
+          /* To desktop devices (starting from tablets, behave differently:  */  
+          @media min-width(@screen-tablet) {
+            font-size: 40px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+          }
+        }
+
+    "It’s only when you see specific needs at the larger sizes that you have to add in the adjustments"
+
+* 4 column size class variants (= "4 SCREEN SIZE BREAKPOINTS" = "4 VIEWPORTS"):
+    col-xs-* (eXtra Small screen    - PHONES OR "MOBILE EXTRA SMALL")
+    col-sm-* (SMall screen          - TABLETS OR "MOBILE SMALL")
+    col-md-* (MeDium screen         - "DESKTOPS")
+    col-lg-* (LarGe screen          - "LARGER DESKTOPS")
+
+* "The premise is that the grid is controlled by the viewport size via the media queries and that as the browser width gets wider, the different column class will overwrite the previous. So at the phone width, the “xs (extra small)” column is active. But if you stretch your browser out wide, then the “lg (large)” class is active and overwrites the smaller sizes."
+
+* The grid still has 12 columns
+
+* EXAMPLES
+
+    "YOU CHANGE THE COLUMN WIDTHS AT THE BREAKPOINT"
+
+    EXAMPLE 1) You have 2 divs you want to be each 50% of the total container:
+        <div class="">I’m on the left</div>
+        <div class="">I’m on the right</div>
+    Now, in Bootstrap 2, we would have used the class .span6 for both. This would have given us the 50%/50% split at the tablet and up sizes, and then it would snap to the 100% width columns at the mobile breakpoint. Not so in Bootstrap 3. SINCE THIS IS A MOBILE FIRST FRAMEWORK, ALL OF THE BASE COLUMNS ARE ASSUMED TO BE 100% WIDTH, STACKED VERTICALLY.
+
+    EXAMPLE 2) If you wanted these 2 divs to be 50%/50%, you would FIRST have to decide at which breakpoints. If you say “I want them to be 50%/50% down to the desktop size, but not tablet or phone”, it would be written like this:
+        <div class="col-md-6">I'm on the left</div>
+        <div class="col-md-6">I'm on the right</div>
+    This says “Make me a 6 column at the medium size and up.” Anything smaller than medium, it goes back to the 100% width stacked layout. 
+
+    EXAMPLE 3) So, let’s say you want it to be a 50%/50% split all the way down to the smallest phone width, no matter what. You use a different class for that, one that says “keep me as a 50% column all the way down to the phone size.”  You would use the new “xs” extra small class:
+        <div class="col-xs-6">I’m on the left</div>
+        <div class="col-xs-6">I’m on the right</div>
+    This basically says “keep me at a 6 column width all the way down to the phone size, don’t ever switch me to the stacked mobile layout.” That means on a phone, it will still be a 50%/50% split on the columns since you used the specific col-xs-6 class. 
+
+    EXAMPLE 4) To take it the other direction, say you want to have the same divs be 50%/50% at the largest snapping point, and ONLY at that point. It’s just as easy:
+        <div class="col-lg-6">I’m on the left</div>
+        <div class="col-lg-6">I’m on the right</div>
+    That tells it to apply the “6 column” size at only the large size and up. As soon as you hit the break point going narrower, it will again assume that it’s a mobile design and take it to 100% width. I have made examples pages for this post, so Example 1 is demonstrating this most basic concept.
+
+    EXAMPLE 5) What about: 
+        <div class="col-sm-3 col-md-6 col-lg-4">I’m on the left</div>
+        <div class="col-sm-9 col-md-6 col-lg-8">I’m on the right</div>
+    This gives us 3 different column layouts at each point. On a phone, it will be 25% on the left, and 75% on the right. On a tablet, it will be 50%/50% again, and on a large viewport, it will be 33%/66%. 3 different layouts for each of the 3 responsive sizes.
+
+* MIXINS: They are a way to avoid the 3 classes-like approach used on Example 5. You need to know LESS to create those mixins. The article ends explaining all the possible mixins.
+
+---
+
+BREAKPOINTS DO BOOTSTRAP (media queries):
+    - Extra small devices (phones, up to 480px) - No media queries since this is the default in Bootstrap
+    - Small devices (tablets, 768px and up)
+    - Medium devices (desktops, 992px and up)
+    - Large devices (large desktops, 1200px and up)
+
+    Ex. de aplicação no css:
+
+        #login_form {
+            padding-left: 10%;
+            padding-right: 10%;
+            color: #FF0000;
+
+        }
+
+        @media screen and (min-width:768px) {
+            #login_form {
+                padding-left: 25%;
+                padding-right: 25%;
+                color: #0000FF;
+            }
+        }
+
+
+---

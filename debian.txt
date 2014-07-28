@@ -1,0 +1,2 @@
+OBTER O NOME DE TODOS OS PACOTES INSTALADOS:
+      $ dpkg --get-selections

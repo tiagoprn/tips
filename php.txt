@@ -1,0 +1,148 @@
+* Descobrir o nome de uma classe ("get_class"):
+   error_log('NOME DESTA CLASSE: ' . get_class($this));
+
+
+* Descobrir se um método existe em uma classe:
+      if (method_exists($this, 'getUser')) {
+        //do something....
+      }
+
+      
+* Como passar um parâmetro do tipo "string" para um método de uma classe:
+  //Método a ser chamado
+  private function getUserFromWorkqueueRecord( $workqueue_id ) //parâmetro do tipo string - NÃO informar o tipo do parâmetro!
+  {
+    echo 'hello ' . $workqueue_id;
+  }        
+
+
+  public function executeRemoveWorkqueueRecord( sfWebRequest $request )
+  {
+    //...
+      //Chamada ao método:
+      $workqueueUser = $this->getUserFromWorkqueueRecord($fields['workqueue_id']);    
+    
+    //...    
+  }
+  
+  Note que não declarei o método a ser chamado como "private function getUserFromWorkqueueRecord( string $workqueue_id )". 
+  Se eu fizer isto, o php irá travar na chamada ao método e não irá gerar nenhum erro ou exceção. 
+  
+  
+* Convertendo entre strings e arrays:
+    //de string para array:
+    $string = "joão, maria, josé, pedro";
+    $array  = explode(',', $string);
+    print_r($array);
+
+    //de array para string:    
+    $array[] = "www.adianti.com.br";
+    $array[] = "www.pablo.blog.br";
+    $array[] = "www.php-gtk.com.br";
+    print_r(implode(':', $array));
+        
+        
+* Foreach no php:
+    $str_ids = $fields['workqueue_ids'];      
+
+    $pos = strpos($str_ids,'|');
+    if ($pos === false) {        
+      $ids[] = $str_ids;
+    }
+    else 
+      $ids  = explode('|', $str_ids);
+    
+    foreach ($ids as $id) {
+      error_log("    >> ID: ".$id);
+      //...
+    }
+
+* No exemplo abaixo, eu pego o domínio a partir do próprio endereço de e-mail (UID). Ele também explica como usar a função explode. 
+
+
+  public function executeRetrieveByServiceTypeClass( sfWebRequest $request )
+  {
+    //...
+
+    $uid = $request->getParameter( 'uid' );
+
+    //...
+
+    list($username,$domain)  =  explode("@",$uid);
+      
+    $domain_id   =  DomainPeer::retrieveByName( $domain ); //o domain é uma string
+  }
+  
+* Logar uma array no log de erros do apache:  
+    MÉTODO 1 (Imprime em formato de array):
+      error_log(print_r(minha_array, true));
+    MÉTODO 2 (Imprime em formato de JSON string, posso levar para 'http://jsonformatter.curiousconcept.com/' para ter uma visualização melhor):
+      error_log(json_encode(minha_array));
+  
+* Para habilitar o envio de e-mails pelo php (biblioteca "Mail" - include "Mail"):
+    $ pear channel-update pear.php.net
+    $ pear install Mail
+
+* VERIFICAR SE ELEMENTO ESTÁ EM UMA ARRAY:
+
+if (in_array( 'abc', array( 'adc', 'cba', 'abc', 'edf'))) {
+  //do something...
+}
+
+* BOA PRÁTICA:
+  Usar expressões regulares ao invés de "pos" em substrings:
+    strrpos($theusername, "@") === false ? $change_user_password_on = 'database1' : $change_user_password_on = 'database2';
+    preg_match( '/@/i', $theusername ) ? $change_user_password_on = 'database2' : $change_user_password_on = 'database1';
+
+* SUPORTE À LISTAS NO PHP:
+  list($username,$domain) = explode("@", 'tiagoprn@gmail.com' );
+
+* Acessar uma variável "protected" (protegida) de um objeto:
+      
+    OBS.: Útil para, por exemplo, pegar o ID de um objeto depois de salvo no Propel do Symfony 1.
+
+    $object = new ModelClass();
+    $object->setCampo1( 'blabla' );
+    $object->setCampo2( 'blabla2' );
+    $object->setCampo3( 'blabla3' );        
+    $object->save();
+
+    $protected_object_id = new ReflectionProperty( $object, 'protected_variable_name');
+    $protected_object_id->setAccessible(true);
+    $object_id = $protected_object_id->getValue( $object );
+
+    error_log('OBJECT_ID = ' . $object_id);
+
+
+* CAPTURA DE EXCEÇÕES:
+    try {
+        if (something) {
+          throw new Exception( 'Valor inválido para o parâmetro "dia". Valores possíveis: dia_corte, dia_vencimento e dia_fatura.' );
+        }
+    } catch ( Exception $e ) {
+          error_log( __METHOD__ . ': Exceção: "' . $e->getMessage() . '"' );
+    }
+
+
+* COMO INTERROMPER A EXECUÇÃO DE UM PROGRAMA PHP: 
+    die();
+    
+
+* ITERAR EM UM ARRAY:
+    foreach($array as $val) {
+        print $val;
+    }
+
+    foreach ($array as $key => $val) {
+        print "$key = $val\n";
+    }    
+
+
+* CASTING: 
+    $data_corte = (string)(date( 'Y-m-d' ))  //casts date to string
+    
+    
+* EXTRAIR ANO DE UMA DATA:
+    $date= '2013-05-01';
+    $year = date('Y', strtotime($date));
+    error_log('ANO = ' . $year);
