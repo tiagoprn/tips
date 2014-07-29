@@ -200,3 +200,6 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 * To get 2Gb of space for files in RAM, edit /etc/fstab to add the following line:
     tmpfs     /var/ramspace       tmpfs     defaults,size=2048M     0     0
     After that, /var/ramspace is now the place to store your files in memory.
+
+* Equivalente ao baobab, em modo texto (dialog):
+    ncdu
