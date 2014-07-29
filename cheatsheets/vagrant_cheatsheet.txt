@@ -1,0 +1,53 @@
+- Instalar o vagrant
+
+- Instalar um plugin que irá rodar sempre que o VirtualBox for atualizado:
+    $ vagrant plugin install vagrant-vbguest
+    (agora, toda vez que for feito vagrant up, ele será executado para manter shared folders e outros recursos compartilhados)
+
+- Criar uma nova máquina (centos 7 com eth1):
+    $ vagrant init jayunit100/centos7
+
+    Isso irá gerar um arquivo chamado Vagrantfile. Edite ele redirecionando as portas necessárias como, por exemplo:
+
+        VAGRANTFILE_API_VERSION = "2"
+
+        Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+          config.vm.box = "hellobits"
+          config.vm.box_url = "http://files.hellobits.com/vagrant/hellobits-64bits-virtualbox.box"
+
+          config.vm.provider :virtualbox do |vb|
+            vb.customize [
+                "modifyvm", :id, "--memory", "2048",
+                "setextradata", :id,
+                "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1",
+                "VBoxInternal/Devices/ahci/0/LUN#[0]/Config/IgnoreFlush", "1"                                
+            ]
+          end
+
+          config.vm.synced_folder ".", "/Projects", id: "vagrant-root"
+          config.vm.synced_folder "~/projects", "/Repos", id: "vagrant-repos"
+
+          config.vm.network :forwarded_port, guest: 5432, host: 5432    # postgresql
+          config.vm.network :forwarded_port, guest: 9200, host: 9200    # elasticsearch
+          config.vm.network :forwarded_port, guest: 80, host: 8080      # apache/nginx
+        end
+
+- Iniciar seu vagrant:
+    $ vagrant up
+    (vai demorar um pouco na primeira vez que for executado)
+
+- Atualizar suas imagens locais:
+    $ vagrant box outdated
+
+- Logar por ssh no vagrantbox:
+    $ vagrant ssh 
+    (ou, no windows, no putty, conforme: http://simplesideias.com.br/usando-o-vagrant-como-ambiente-de-desenvolvimento-no-windows)
+
+- Pausar / retomar sua máquina virtual: 
+    $ vagrant suspend
+    $ vagrant resume
+
+- Destruir e recriar a vm:
+    $ vagrant destroy
+    $ vagrant up
+    (os arquivos compartilhados não serão removidos)    
