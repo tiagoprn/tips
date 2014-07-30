@@ -1,4 +1,74 @@
-A configuration to make apache serve django projects through mod_wsgi and static content (django settings.py, django project wsgi loader script, apache httpd.conf):
+This process assumes the most difficult case (Installation on MS-Windows.)
+
+WHAT YOU WILL NEED
+    Apache 2.2 64-bit
+    Python 2.7 64-bit
+    Django 1.6
+    mod_wsgi 64-bit for apache 2.2 and python 2.7
+    postgresql 9.3 64-bit
+    psycopg2 2.5 64-bit for python 2.7
+
+
+INSTALLATION
+    Install Apache, mod_wsgi and Python from your distro or in the case of Windows, a little googling can help from where to get them.
+    OBS.:
+        Windows:
+            - Python, mod_wsgi and Apache have to be all 32-bit, or all 64-bit, for Apache to load correctly with wsgi support.
+               And, in the case of mod_wsgi, you have to download them according to your Python and Apache version installed.
+            - 32-bit version of Apache will be installed at: "C:\Program Files (x86)\Apache Software Foundation\Apache2.2",
+            while 64-bit version of Apache will be installed at: "C:\Program Files\Apache Software Foundation\Apache2.2"
+
+
+CONFIGURATION
+    Windows:
+        1) Extract the mod_wsgi apache module an put it under "C:\Program Files\Apache Software Foundation\Apache2.2\modules".
+          The file must be named "mod_wsgi.so". Once again, take care of the instructions from the INSTALLATION section above.
+
+        2) To test your installation, you can put this under "D:\production\wsgi_app_test\wsgi_test_for_webservers.py":
+            def application(environ, start_response):
+                status = '200 OK'
+                output = 'Your wsgi is working fine!'
+                response_headers = [('Content-type', 'text/plain'),
+                                    ('Content-Length', str(len(output)))]
+                start_response(status, response_headers)
+                return [output]
+
+        3) Now we will configure Apache ( C:\Program Files\Apache Software Foundation\Apache2.2\conf\httpd.conf )
+        activating the mod_wsgi module and creating a /wsgi URL pointing to the file created at step [2] above:
+
+            # ...
+            # After the last "LoadModule" item, put the configuration below:
+            LoadModule wsgi_module modules/mod_wsgi.so
+
+            # ...
+            # After the last "Directory" section, put the configuration below:
+            ############################################################################ A test for the WSGI module
+            ## On a UNIX environment, you'd better put this under [APACHE-DIR]/sites-enabled/wsgi_app_test.conf
+            <VirtualHost *:80>
+                DocumentRoot D:/production/wsgi_app_test
+
+                <Directory D:/production/wsgi_app_test>
+                    Order allow,deny
+                    Allow from all
+                </Directory>
+                WSGIScriptAlias /wsgi D:/production/wsgi_app_test/wsgi_test_for_webservers.py
+            </VirtualHost>
+            ############################################################################
+
+        4) stop and start apache again (via "services.msc" or the applet apache installed at the windows notification area)
+
+        5) Test your application on the browser at "http://localhost/wsgi". It should print "Your wsgi is working fine!", and you're done.
+
+    Linux:
+        The same configuration as described for windows above, just adapt the paths and look at the comments above.
+
+A full configuration will be described below.
+
+---
+
+FULL CONFIGURATION:
+
+Configuration to make apache serve django projects through mod_wsgi and static content (django settings.py, django project wsgi loader script, apache httpd.conf):
 
 ##### django settings.py (django 1.6)
     ...
