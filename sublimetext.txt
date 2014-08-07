@@ -1,7 +1,17 @@
+Paleta de comandos:
+    [CTRL + SHIFT + P]
+Abrir um arquivo do projeto:
+    [CTRL + P]
+Procurar por um método no arquivo atual...:
+    [CTRL + P, @]
+Ativa / Desativa um bookmark no código:
+    [CTRL + F2]
+Navegar entre bookmarks:
+    [F2]
+
+
+---
 CREATE/SAVE A PROJECT
 * Project->Close Project (just to make sure)
 * Drag some folder into Sublime.
 * Project->Save Project As...
-
----
-
