@@ -111,7 +111,7 @@ EQUIVALENTE AO "SELECT ... INTO OUTFILE" DO MYSQL:
 COPY (
     SELECT * FROM tabela
 )
-TO 'tabela.csv' WITH CSV HEADER;
+TO 'tabela.csv' WITH CSV HEADER DELIMITER ';' ;
 
 PS: Outra alternativa pode ser rodar o comando pelo console, passando o comando pelo psql e redirecionando a saída para arquivo com o ">".
     Ex.: psql [conexão_info] [query] > /tmp/saida.txt
@@ -321,4 +321,4 @@ Como descobrir tamanhos de bases, tabelas:
 
 ***
 
-- Query plan in postgresql example: http://michael.otacoo.com/postgresql-2/postgres-9-5-feature-highlight-where-pushdown-with-window-function/    
+- Query plan in postgresql example: http://michael.otacoo.com/postgresql-2/postgres-9-5-feature-highlight-where-pushdown-with-window-function/
