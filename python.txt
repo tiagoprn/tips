@@ -384,3 +384,20 @@ para:
 re.sub(r'(?P<valor1>\w+)=(?P<valor2>\w+)', r'\1="\2"', texto)
 
 ---
+
+py2exe: Gerar executáveis com um ambiente python auto-contido no windows
+
+    * 0- Instalar o pywin32 no pip
+    * 1- Montar um setup.py no projeto a ser distribuído
+    * 2- Baixar o py2exe no site
+    * 3- Dar um easy_install no EXE baixado no passo [2]
+    * 4- python setup.py build (na pasta do projeto onde está o setup.py do passo [1])
+    * 5- Distribuir o conteúdo do dir "output"
+
+    *OBS:
+        * _build: pasta onde constrói o executável
+        * output: pasta onde gera o exe compilado
+
+    OBS.: Como alternativa multiplataforma, temos o cx_freeze.
+
+---
