@@ -401,3 +401,12 @@ py2exe: Gerar executáveis com um ambiente python auto-contido no windows
     OBS.: Como alternativa multiplataforma, temos o cx_freeze.
 
 ---
+
+Formatting e-mail dates parsed with python email parser to "normal" dates:
+
+from email.utils import parsedate_tz, mktime_tz
+# Ex.: Mon, 18 Aug 2014 06:02:26 +0300
+message_date = datetime.fromtimestamp(mktime_tz(parsedate_tz(message_date))).strftime('%Y%m%d_%H%M%S')
+# Above, "message_date" will be generated already converted to your localtime
+
+---
