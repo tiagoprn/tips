@@ -471,3 +471,14 @@ CREATE TABLE logs (
     `timestamp` BIGINT UNSIGNED,
     `mensagem`  TEXT
 );
+
+
+---
+
+27) MARIADB ON CENTOS 7:
+  $ yum install mariadb-server mariadb
+  $ systemctl start mariadb.service
+  $ systemctl enable mariadb.service
+  $ /usr/bin/mysql_secure_installation
+
+---
