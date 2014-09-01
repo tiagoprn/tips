@@ -2,15 +2,15 @@
     $ dd if=/dev/zero of=/dev/sdc bs=1M count=1
     $ mkudffs -b 512 --media-type=hd /dev/sdc
 
-* CHROOT NO SYSTEMRESCUECD: 
+* CHROOT NO SYSTEMRESCUECD:
   * Preparar o binding no chroot:
     $ mount --bind /dev <chroot dir>/dev
     $ mount --bind /proc <chroot dir>/proc
     $ mount --bind /sys <chroot dir>/sys
 
   * Como fazer chroot no SystemRescueCD:
-    $ SHELL=/bin/bash chroot <ponto_de_montagem>  
-    OU     
+    $ SHELL=/bin/bash chroot <ponto_de_montagem>
+    OU
     $ exec bash
     $ chroot /mnt/<mountpoint> /bin/bash
 
@@ -22,15 +22,15 @@
 
 * 2 formas de ver se uma porta está ativa no linux (por exemplo, a porta 9000 do php5-fpm):
     $ netstat -apn | grep ':9000'
-    $ lsof -i tcp:9000 -n  
+    $ lsof -i tcp:9000 -n
 
 * Bootar um pendrive bootável ou iso pelo qemu:
     $ qemu-system-x86_64 -hda /dev/sdx
     $ qemu-system-x86_64 -cdrom filename.iso
 
-    
+
 * Total de linhas de um arquivo:
-    $ wc -l [nome_arquivo]    
+    $ wc -l [nome_arquivo]
 
 
 * Substituir todas as vírgulas em um arquivo com uma linha grande por quebras de linha:
@@ -45,7 +45,7 @@
 
 * Testar se a resolução de nomes (DNS) está funcionando na máquina:
   $ dig [nome_do_dominio]
-  (se não estiver resolvendo os DNS não vai retornar nada)  
+  (se não estiver resolvendo os DNS não vai retornar nada)
 
 * Como fazer uma máquina responder por vários IPs:
     Após subir a interface "eth0" , ou equivalente:
@@ -69,13 +69,13 @@
         ifconfig eth0:15 165.1.200.252 netmask 255.255.254.0
         ifconfig eth0:16 165.1.200.253 netmask 255.255.254.0
         ifconfig eth0:17 165.1.200.254 netmask 255.255.254.0
-        ifconfig eth0:18 165.1.200.132 netmask 255.255.254.0        
-        IMPORTANTE: É melhor colocar os IPs de eth0:0 até o último em um range de IPs diferente do ip que está na eth0 principal.        
-    Para confirmar, após setar os IPs, execute:    
-        # ifconfig -a        
+        ifconfig eth0:18 165.1.200.132 netmask 255.255.254.0
+        IMPORTANTE: É melhor colocar os IPs de eth0:0 até o último em um range de IPs diferente do ip que está na eth0 principal.
+    Para confirmar, após setar os IPs, execute:
+        # ifconfig -a
     Posso colocar esse script "multi_ips.sh" no meu /etc/rc.local, por exemplo.
 
-    ALTERNATIVE WAY: EDIT THE IPs CONFIGURATION FILE: 
+    ALTERNATIVE WAY: EDIT THE IPs CONFIGURATION FILE:
 
         $ vim /etc/network/interfaces:
 
@@ -104,10 +104,10 @@
             iface eth0:2 inet static
             address 192.168.0.3
             netmask 255.255.255.0
-            broadcast 192.168.0.255    
+            broadcast 192.168.0.255
 
 * Exemplo de uso simples do rsync:
-    /* 
+    /*
     PARÂMETROS DO RSYNC:
       r: recursivo
       c: usa checksum para detectar se um arquivo mudou
@@ -134,7 +134,7 @@
     RSYNC COMO DAEMON: http://kezhong.wordpress.com/2010/12/01/rsync-backup-in-daemon-mode/
 
 * Exemplo de grep com match antes do primeiro pipe e não match após:
-    $ grep -rn 'string_to_find' . | grep -v 'cache' | grep -v '.svn'     
+    $ grep -rn 'string_to_find' . | grep -v 'cache' | grep -v '.svn'
     Neste exemplo, ele vai procurar 'string_to_find' recursivamente na pasta mostrando o número das linhas onde a string foi encontrada, mas vai ignorar os resultados onde ele encontrar as strings "cache" e ".svn".
 
 * Exemplo de wget recursivo para navegar offline:
@@ -180,9 +180,9 @@ export http_proxy="http://username:password@proxy.example.com:8080"
 
 * Scripts no cron:
 
-    $ crontab -e 
+    $ crontab -e
 
-    59 23 * * * /home/tiago/script.sh > /home/tiago/script.log 2>&1 
+    59 23 * * * /home/tiago/script.sh > /home/tiago/script.log 2>&1
 
     OBS.: the '2>&1' parameters indicates that the standard error (2>) é redirecionado para o mesmo arquivo apontado pela saída padrão (&1) --- ou seja, a saída padrão e os erros do script estarão em /home/tiago/script.log.
 OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do próprio cron), estão em /var/log/cron.
@@ -194,7 +194,7 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 * Mudar o shell de um usuário:
     - Logar como o usuário desejado;
     - Rodar o comando chsh passando o caminho do shell.
-        Ex.: 
+        Ex.:
             $ chsh -s /bin/bash
 
 * To get 2Gb of space for files in RAM, edit /etc/fstab to add the following line:
@@ -203,3 +203,10 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 
 * Equivalente ao baobab, em modo texto (dialog):
     ncdu
+
+* crontab configuration sample:
+
+
+# Minute   Hour   Day of Month       Month          Day of Week        Command
+# (0-59)  (0-23)     (1-31)    (1-12 or Jan-Dec)  (0-6 or Sun-Sat)
+0        5          *             *                *            /home/user/my_command.sh
