@@ -322,3 +322,14 @@ Como descobrir tamanhos de bases, tabelas:
 ***
 
 - Query plan in postgresql example: http://michael.otacoo.com/postgresql-2/postgres-9-5-feature-highlight-where-pushdown-with-window-function/
+
+
+*** 
+
+How to make a SELECT DISTINCT on more than one field:
+
+SELECT DISTINCT ON (period, year)
+period, year
+FROM mytable
+
+***
