@@ -324,12 +324,20 @@ Como descobrir tamanhos de bases, tabelas:
 - Query plan in postgresql example: http://michael.otacoo.com/postgresql-2/postgres-9-5-feature-highlight-where-pushdown-with-window-function/
 
 
-*** 
+***
 
 How to make a SELECT DISTINCT on more than one field:
 
 SELECT DISTINCT ON (period, year)
 period, year
 FROM mytable
+
+***
+
+How to load data into table from a csv file (equivalent to mysql's LOAD DATA INFILE):
+
+COPY datawarehouse_prstoswf FROM '/tmp/datawarehouse_prstoswf.csv' DELIMITER ';' CSV;
+
+It has a "no-destructive" behavior, since it will not drop any data that is already on the table.
 
 ***
