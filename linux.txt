@@ -206,7 +206,10 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 
 * crontab configuration sample:
 
-
 # Minute   Hour   Day of Month       Month          Day of Week        Command
 # (0-59)  (0-23)     (1-31)    (1-12 or Jan-Dec)  (0-6 or Sun-Sat)
 0        5          *             *                *            /home/user/my_command.sh
+
+* COPY A SSH KEY TO ANOTHER SERVER:
+    $ ssh-copy-id -i ~/.ssh/id_rsa.pub -p [remote_ssh_port] remoteuser@192.168.0.200
+
