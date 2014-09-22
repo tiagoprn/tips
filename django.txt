@@ -601,3 +601,22 @@ from app.models import *
 last_instance = my_model.objects.latest('id')
 
 ---
+
+Como trocar de select para um campo de busca quando tiver muitos registros no Django Admin (para ter ganho de velocidade):
+
+    Tive uma situação onde havia um select no model que fazia o form do admin levar mais de 3 minutos carregar, porque ele tinha muitos registros.
+
+    Para corrigir, basta acrescentar uma cláusula "raw_id_fields" no ModelAdmin e adicionar o campo desejado.
+
+    Ex.:
+
+    # -*- coding: utf-8 -*-
+    from django.contrib import admin
+
+    class MyModelAdmin(admin.ModelAdmin):
+        list_display = ('field1', 'field2', 'select_field')
+        raw_id_fields = ('select_field',)  # THIS is what will change from select to a "lookup" field
+        search_fields = ('field1', 'field2',)
+        ordering = ('field2',)
+
+---
