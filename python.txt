@@ -410,3 +410,8 @@ message_date = datetime.fromtimestamp(mktime_tz(parsedate_tz(message_date))).str
 # Above, "message_date" will be generated already converted to your localtime
 
 ---
+
+Python SimpleHttpServer (can be user, for example, as a simple FTP server also):
+    $ python -m SimpleHTTPServer 8080
+
+---
