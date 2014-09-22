@@ -620,3 +620,8 @@ Como trocar de select para um campo de busca quando tiver muitos registros no Dj
         ordering = ('field2',)
 
 ---
+
+How to programatically script the django shell (python manage.py shell):
+    http://django-extensions.readthedocs.org/en/latest/runscript.html
+
+---
