@@ -411,7 +411,11 @@ message_date = datetime.fromtimestamp(mktime_tz(parsedate_tz(message_date))).str
 
 ---
 
-Python SimpleHttpServer (can be user, for example, as a simple FTP server also):
+Python SimpleHttpServer:
     $ python -m SimpleHTTPServer 8080
+
+HINT: This can also be used to quick share files like on a FTP server. You just have to change to the directory where the files are and execute the command above.
+
+---
 
 ---
