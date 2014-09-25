@@ -418,4 +418,6 @@ HINT: This can also be used to quick share files like on a FTP server. You just 
 
 ---
 
+Para lidar com valores decimais (principalmente MONETÁRIOS) em python é melhor usar o tipo de dado Decimal ao invés do float. O float só é indicado quando você realmente precisar de um número enorme de casas após a vírgula (ou seja, precisão de várias casas decimais).
+
 ---
