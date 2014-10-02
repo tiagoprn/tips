@@ -341,3 +341,16 @@ COPY datawarehouse_prstoswf FROM '/tmp/datawarehouse_prstoswf.csv' DELIMITER ';'
 It has a "no-destructive" behavior, since it will not drop any data that is already on the table.
 
 ***
+
+Funções "NOSQL" no PostgreSQL:
+
+Um caso de uso para um campo desse tipo seria uma tabela de metadados (por exemplo, uma tabela com "campos" dinâmicos e/ou não estruturados).
+
+Para isso eu tenho 3 tipos de campos disponíveis: HSTORE, JSONFIELD, JSONB (este último a partir da versão 9.4 do postgres). O único ponto que deve ser levado em consideração é que você pode ter que abrir mão ou do suporte a índices ou do suporte à validação, dependendo do campo escolhido.
+
+Os tradeoffs são os seguintes:
+    * HSTORE: possui suporte a índices mas não tem suporte a validação
+    * JSONFIELD: não possui suporte a índices mas possui suporte à validação.
+    * JSONB: possui suporte a índices e validação.
+
+***
