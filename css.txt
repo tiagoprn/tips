@@ -243,3 +243,24 @@ Como centralizar a div principal na janela do browser:
 </style>
 
 ---
+
+Exemplo de stylesheet de impressão:
+
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/print.css" type="text/css" media="print" />
+
+  Ela deve estar abaixo de todas as outras stylesheets.
+
+  Se eu quiser debugar sem precisar ficar clicando em "imprimir"
+  (e para poder usar o "Inspect Element" do browser), basta remover o media="print" - mas devo lembrar
+  de por de volta após terminar os testes.
+
+  Dicas para o CSS:
+
+    Para ocultar elementos que eu não quero que sejam mostrados, bastar usar o "display: none;".
+
+    Também recomendável tirar o background dos elementos: "background-image: none";
+
+    OBS.: Perceber que, para os elementos que tem display None, embora eles não sejam mostrados, eles ainda
+    ocupam espaço na página. Então tb pode ser necessário mudar width, height, margin e padding para 0px para pegar de volta o espaço que eles ocupavam.
+
+---
