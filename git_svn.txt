@@ -4,3 +4,7 @@ Como exportar um repositório do hg (mercurial) para o git:
     $ cd git_repo_to_keep_the_hg_clone
     $ git init
     $ ../fast-export/hg-fast-export.sh -r [path_of_hg_repo] --force
+    $ git add .
+    $ git commit -a -m "starting repo from hg export"
+    Isso irá criar um repositório git do tipo "bare".
+    Aí basta eu cloná-lo e fazer push para o github.
