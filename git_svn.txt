@@ -1,0 +1,6 @@
+Como exportar um repositório do hg (mercurial) para o git:
+    $ git clone https://github.com/frej/fast-export
+    $ mkdir git_repo_to_keep_the_hg_clone
+    $ cd git_repo_to_keep_the_hg_clone
+    $ git init
+    $ ../fast-export/hg-fast-export.sh -r [path_of_hg_repo] --force
