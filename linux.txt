@@ -133,6 +133,20 @@
 
     RSYNC COMO DAEMON: http://kezhong.wordpress.com/2010/12/01/rsync-backup-in-daemon-mode/
 
+    RSYNC WITH EXCLUDE FILE:
+        EXCLUDE_FILE
+            /dev/*
+            /proc/*
+            /sys/*
+            /media/*
+            /mnt/*
+            /run/*
+            /tmp/*
+        rsync -avc --exclude-from=EXCLUDE_FILE / /mnt 
+
+	
+
+
 * Exemplo de grep com match antes do primeiro pipe e não match após:
     $ grep -rn 'string_to_find' . | grep -v 'cache' | grep -v '.svn'
     Neste exemplo, ele vai procurar 'string_to_find' recursivamente na pasta mostrando o número das linhas onde a string foi encontrada, mas vai ignorar os resultados onde ele encontrar as strings "cache" e ".svn".
