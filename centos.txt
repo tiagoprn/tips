@@ -1,20 +1,26 @@
-REPOSITÓRIOS ADICIONAIS (PÓS INSTALAÇÃO):
-  - epel
-  - rpmforce
-
 LISTAR TODOS OS PACOTES INSTALADOS:
     $ yum list installed
-    
+
 MUDAR O HOSTNAME:
     Arquivo /etc/sysconfig/network.
-    
-GRUPO DE PACOTES COM AS FERRAMENTAS DE DESENVOLVIMENTO (equivalente ao "build-essential" do ubuntu): 
+
+GRUPOS DE PACOTES:
+  - Ferramentas de desenvolvimento (equivalente ao "build-essential" do ubuntu):
     $ yum groupinstall "Development Tools"
-    
-DEPENDÊNCIAS PARA COMPILAR O python-mysql no virtualenv:    
+  - MATE Desktop (centos 7):
+    $ yum groupinstall "MATE Desktop"
+    Depois, em cada um dos users, fazer o seguinte:
+      $ echo "exec /usr/bin/mate-session" >> ~/.xinitrc
+
+
+GRUPO DE PACOTES COM AS FERRAMENTAS DE DESENVOLVIMENTO (equivalente ao "build-essential" do ubuntu):
+    $ yum groupinstall "Development Tools"
+
+
+DEPENDÊNCIAS PARA COMPILAR O python-mysql no virtualenv:
   $ yum -y install mysql-devel mysql zlib zlib-devel openssl
   $ pip install MySQL-python
-  
+
 INSTALAÇÃO VIA YUM PEDINDO PARA IGNORAR CHAVES GNUPG:
   $ yum --nogpg install sshfs
 
@@ -29,9 +35,8 @@ RUNLEVELS NO CENTOS/FEDORA/RHEL:
     Para mudar de runlevel:
         $ init [runlevel]
 
-COMO RECONFIGURAR AS INTERFACES eth* (Ex.: para ativar o compartilhamento de rede Bridge ao invés de NATno VirtualBox):
+COMO RECONFIGURAR AS INTERFACES eth* (Ex.: para ativar o compartilhamento de rede Bridge ao invés de NAT no VirtualBox):
     $ mv /etc/udev/rules.d/70-persistent-net.rules /etc/udev/rules.d/70-persistent-net.rules.OLD
     $ reboot
     Após reiniciar, ele irá re-detectar as eth a partir das interfaces disponíveis no VirtualBox e assumir o IP da rede interna.
-    
-  
+
