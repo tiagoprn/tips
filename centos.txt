@@ -40,3 +40,6 @@ COMO RECONFIGURAR AS INTERFACES eth* (Ex.: para ativar o compartilhamento de red
     $ reboot
     Após reiniciar, ele irá re-detectar as eth a partir das interfaces disponíveis no VirtualBox e assumir o IP da rede interna.
 
+
+Limpar metadados de repositórios de pacotes:
+  $ yum --enablerepo=updates clean metadata
