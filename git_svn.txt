@@ -8,5 +8,59 @@ Como exportar um repositório do hg (mercurial) para o git:
     $ git status
     O git status não deve mostrar nada a ser feito.
     Após isso, basta criar um repositório em branco com o mesmo nome no github, bitbucket, gitlab, e finalmente adicionar o remote nessa cópia local do repositório. Ex.:
-        - git remote add origin https://github.com/nokiadev/gpo_backend.git
+        - git remote add origin https://github.com/githubuser/cool_repository.git
         - git push -u origin master
+
+---
+
+HOW TO WORK ON A FORK OF A GITHUB REPOSITORY:
+
+    Fork a repository on github.
+    Example: https://github.com/githubuser/cool_repository.
+
+    The idea is that we will work on any branch of our forked repository and, when ready, we will merge the changes to our fork's master. Then we make a pull request from our fork's master to githubuser/cool_repository master branch.
+
+    Your forked repository remote is called "remote origin", and the githubuser official repository remote is called "remote cool_repository".
+
+    WORKFLOW
+
+    On your repository (remote origin) you can do whatever you want and even work on your separate branches. After finishing up, you must consolidate all of your changes into your master branch.
+
+    After that, you must make a pull request on Github to githubuser/cool_repository. Your work will be reviewed and then rebased into githubuser/cool_repository master branch, which then will be ready to be deployed on production.
+
+    To get the master branch from your local fork:
+            $ git pull origin master
+
+    To get the master branch from the official githubuser/cool_repository:
+            $ git fetch cool_repository
+            $ git rebase cool_repository/master
+
+    Your git config file (found on the project root, under ".git/config") must be like below - just change "tiagoprn" to your Github's account name:
+
+    [core]
+        repositoryformatversion = 0
+        fileMode = false
+        bare = false
+        logallrefupdates = true
+    [remote "origin"]
+        url = https://github.com/tiagoprn/cool_repository.git
+        fetch = +refs/heads/*:refs/remotes/origin/*
+    [branch "master"]
+        remote = origin
+        merge = refs/heads/master
+    [remote "cool_repository"]
+        url = https://github.com/githubuser/cool_repository.git
+        fetch = +refs/heads/*:refs/remotes/cool_repository/*
+
+---
+
+GIT ALIASES:
+    No .git/config do seu repositório, acrescente no final do arquivo:
+
+    [alias]
+        br = symbolic-ref --short HEAD
+        hist = log -10 --pretty=format:'%h %ad | %s%d [%an]' --graph --
+
+    To use:
+        git br
+        git hist
