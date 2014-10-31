@@ -41,5 +41,36 @@ COMO RECONFIGURAR AS INTERFACES eth* (Ex.: para ativar o compartilhamento de red
     Após reiniciar, ele irá re-detectar as eth a partir das interfaces disponíveis no VirtualBox e assumir o IP da rede interna.
 
 
-Limpar metadados de repositórios de pacotes:
+LIMPAR METADADOS DE REPOSITÓRIOS DE PACOTES:
   $ yum --enablerepo=updates clean metadata
+
+GERENCIAMENTO DE SERVICOS
+
+    - STATUS DE TODOS OS SERVIÇOS:
+        $ systemctl -t service
+
+    - HABILITAR/DESABILITAR/PARAR/INICIAR/REINICIAR UM SERVIÇO:
+        $ systemctl [enable/disable/stop/start/restart/is-active] [nome_servico].service
+      Ex.
+        $ systemctl enable cups.service
+        $ systemctl enable sshd.service
+
+DESLIGAR / REINICIAR VIA SYSTEMD:
+    $ systemctl halt
+    $ systemctl reboot
+
+ADICIONAR ROTAS:
+    - TEMPORÁRIA:
+        $ route add -net [ip] gw [gateway]
+
+    - FIXA:
+        OBS.: Para descobrir o nome da interface:
+            $ ifconfig -a
+            (se não estiver instalado: $ yum install net-tools)
+            Este exemplo pressupõe "eth0"
+        $ cd /etc/sysconfig/network-scripts/
+        $ vim route-eth0
+            (troque "eth0" pela sua interface aqui)
+            GATEWAY0=[ip do gateway]
+            NETMASK0=[máscara de rede. Ex.: 255.255.255.0]
+            ADDRESS0=[ip desejado]
