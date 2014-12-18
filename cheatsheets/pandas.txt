@@ -1,0 +1,31 @@
+- Create a dataframe from a csv file, choosing randomly 10 records. Then the data will be saved to a json txt file
+
+import pandas as pd
+import numpy as np
+import json
+
+dataframe = pd.read_csv(input.csv, sep='\t')
+dataframe.fillna(value='N/A')
+
+# choose the first 10 lines from the dataframe:
+# samples_dataframe = dataframe.head(10)
+
+# randomly choose ten rows from the dataframe
+rows = np.random.choice(dataframe.index.values, 10)
+samples_dataframe = dataframe.ix[rows]
+
+dataframe_as_dict = samples_dataframe.to_dict(orient='records')
+
+with open(output.json, mode='w+') as f:
+    json.dump(dataframe_as_dict, f)
+
+---
+
+
+
+
+
+
+
+
+
