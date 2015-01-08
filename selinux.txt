@@ -1,0 +1,8 @@
+Configuration file:
+    /etc/selinux/config
+
+Mudar o status em realtime:
+    $ setenforce [Enforcing | Permissive]
+
+Obter o status (por exemplo, antes e após de mudar o status):
+    $ getenforce
