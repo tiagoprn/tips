@@ -1,6 +1,6 @@
 1) Importar arquivo CSV dentro de tabela do MySQL:
 
-	LOAD DATA INFILE 'NomeDoArquivo.csv' 
+	LOAD DATA INFILE 'NomeDoArquivo.csv'
 	INTO TABLE nome_tabela
 	CHARACTER SET [latin1/utf8]
 	FIELDS TERMINATED BY 'separadorCampos'
@@ -11,9 +11,9 @@
 
 2) Selecionar todos os registros onde o campo string tem um determinado tamanho:
 
-SELECT * 
+SELECT *
 FROM cep
-WHERE length(cep)=7 
+WHERE length(cep)=7
 
 (Neste caso, que o cep tenha tamanho 7).
 
@@ -21,9 +21,9 @@ WHERE length(cep)=7
 
 3) Concatenar valores em um determinado campo:
 
-UPDATE cep_crescente 
-SET cep = CONCAT("0",cep) 
-WHERE length(cep)=7 
+UPDATE cep_crescente
+SET cep = CONCAT("0",cep)
+WHERE length(cep)=7
 
 (Neste caso, acrescenta um “0” na frente do campo cep em todos os registros onde o cep tem 7 posições.)
 
@@ -31,7 +31,7 @@ WHERE length(cep)=7
 
 4) Casting de um tipo string para integer:
 
-	ORDER BY CAST(cep AS UNSIGNED INTEGER ) ASC 
+	ORDER BY CAST(cep AS UNSIGNED INTEGER ) ASC
 
 	(Neste caso, converte para trazer ordenado por ordem crescente de número.)
 
@@ -47,7 +47,7 @@ FIELDS TERMINATED BY ';'
 OPTIONALLY ENCLOSED BY '”'
 LINES TERMINATED BY '\r\n'
 
-	OBS.: Usando as funções de manipulação de string “LPAD”  e “RPAD” (ver referência abaixo), posso transformar os campos em largura fixa na hora de exportar. 
+	OBS.: Usando as funções de manipulação de string “LPAD”  e “RPAD” (ver referência abaixo), posso transformar os campos em largura fixa na hora de exportar.
 
 ---
 
@@ -55,58 +55,58 @@ LINES TERMINATED BY '\r\n'
 
 A) DUMP:
 
-mysqldump -h <nome/ip do host> -u root -p<SENHA> --add-drop-database --add-drop-table --no-data --databases db1 db2 db3 > /tmp/dbs.sql 
+mysqldump -h <nome/ip do host> -u root -p<SENHA> --add-drop-database --add-drop-table --no-data --databases db1 db2 db3 > /tmp/dbs.sql
 
 OBS 1: O segredo aqui para não fazer backup dos dados é usar a flag “--no-data”. Desta forma é feito backup apenas da estrutura das tabelas. Já se eu remover esta flag, o backup será feito tanto da estrutura das tabelas quanto dos seus dados.
 
-OBS 2: No parâmetro -p (password), a senha deve ser digitada “coladinha” no -p. Desta forma não será aberto o prompt para informar a senha manualmente. 
+OBS 2: No parâmetro -p (password), a senha deve ser digitada “coladinha” no -p. Desta forma não será aberto o prompt para informar a senha manualmente.
 
 OBS 3: Se for rodar, por exemplo, este script em um cron job em uma máquina, e o servidor mysql for o mesmo do cronjob, e o usuário root do mysql não tiver senha, não adianta colocar nada depois do -p, porque qualquer string após irá mostrar o prompt para informar a senha. A alternativa neste caso é criar um arquivo “.my.cnf” no home do usuário que irá executar o script com permissão 600, para que outros usuários não possam lê-lo. Este arquivo irá conter o usuário e senha para o mysqldump. Exemplo de conteúdo deste arquivo:
-[mysqldump] 
-user = root 
-password = 
+[mysqldump]
+user = root
+password =
 
-Então basta rodar o comando mysqldump sem informar os parâmetros “-u” e “-p”.  
+Então basta rodar o comando mysqldump sem informar os parâmetros “-u” e “-p”.
 
-OBS 4: Para fazer o backup de TODAS as databases, ao invés de listar as databases com “--databases”, basta usar o parâmetro “--all-databases” em seu lugar.	
+OBS 4: Para fazer o backup de TODAS as databases, ao invés de listar as databases com “--databases”, basta usar o parâmetro “--all-databases” em seu lugar.
 
 
-B) RESTORE: 
+B) RESTORE:
 
-mysql -h <nome/ip do host> -u root -p<SENHA> < /tmp/dbs.sql	
+mysql -h <nome/ip do host> -u root -p<SENHA> < /tmp/dbs.sql
 
-OBS: No parâmetro -p (password), a senha deve ser digitada “coladinha” no -p. Desta forma não será aberto o prompt para informar a senha manualmente. 
+OBS: No parâmetro -p (password), a senha deve ser digitada “coladinha” no -p. Desta forma não será aberto o prompt para informar a senha manualmente.
 
 ---
 
 7) Funções de manipulação de strings:
 
-A) RPAD(str,len,padstr) 
-Returns the string str, right-padded with the string padstr to a length of len characters. If str is longer than len, the return value is shortened to len characters. 
+A) RPAD(str,len,padstr)
+Returns the string str, right-padded with the string padstr to a length of len characters. If str is longer than len, the return value is shortened to len characters.
 mysql> SELECT RPAD('hi',5,'?');
         -> 'hi???'
 mysql> SELECT RPAD('hi',1,'?');
         -> 'h'
 
-B) RTRIM(str) 
-Returns the string str with trailing space characters removed. 
+B) RTRIM(str)
+Returns the string str with trailing space characters removed.
 mysql> SELECT RTRIM('barbar   ');
         -> 'barbar'
 
-C) LPAD(str,len,padstr) 
-Returns the string str, left-padded with the string padstr to a length of len characters. If str is longer than len, the return value is shortened to len characters. 
+C) LPAD(str,len,padstr)
+Returns the string str, left-padded with the string padstr to a length of len characters. If str is longer than len, the return value is shortened to len characters.
 mysql> SELECT LPAD('hi',4,'??');
         -> '??hi'
 mysql> SELECT LPAD('hi',1,'??');
         -> 'h'
 
-D) LTRIM(str) 
-Returns the string str with leading space characters removed. 
+D) LTRIM(str)
+Returns the string str with leading space characters removed.
 mysql> SELECT LTRIM('  barbar');
         -> 'barbar'
 
-E) LOCATE(substr,str), LOCATE(substr,str,pos) 
-The first syntax returns the position of the first occurrence of substring substr in string str. The second syntax returns the position of the first occurrence of substring substr in string str, starting at position pos. Returns 0 if substr is not in str. 
+E) LOCATE(substr,str), LOCATE(substr,str,pos)
+The first syntax returns the position of the first occurrence of substring substr in string str. The second syntax returns the position of the first occurrence of substring substr in string str, starting at position pos. Returns 0 if substr is not in str.
 mysql> SELECT LOCATE('bar', 'foobarbar');
         -> 4
 mysql> SELECT LOCATE('xbar', 'foobar');
@@ -115,13 +115,13 @@ mysql> SELECT LOCATE('bar', 'foobarbar', 5);
         -> 7
 
 
-F) LOWER(str) 
-Returns the string str with all characters changed to lowercase according to the current character set mapping. The default is latin1 (cp1252 West European). 
+F) LOWER(str)
+Returns the string str with all characters changed to lowercase according to the current character set mapping. The default is latin1 (cp1252 West European).
 mysql> SELECT LOWER('QUADRATICALLY');
         -> 'quadratically'
 
-G) UPPER(str) 
-Returns the string str with all characters changed to uppercase according to the current character set mapping. The default is latin1 (cp1252 West European). 
+G) UPPER(str)
+Returns the string str with all characters changed to uppercase according to the current character set mapping. The default is latin1 (cp1252 West European).
 mysql> SELECT UPPER('Hej');
         -> 'HEJ'
 
@@ -129,11 +129,11 @@ mysql> SELECT UPPER('Hej');
 
 8) Liberar qualquer usuário em qualquer host para acessar uma base de dados mysql:
 
-	A) No arquivo 'my.cnf' (ou 'my.ini'), alterar a linha: 
+	A) No arquivo 'my.cnf' (ou 'my.ini'), alterar a linha:
 		bind-address = 127.0.0.1
 	para
 		bind-address = 187.33.0.179
-	OBS.: ou seja, o bind-address dever ser o IP real da máquina. 
+	OBS.: ou seja, o bind-address dever ser o IP real da máquina.
 
 	B) No console do MySQL, executar:
 		$ GRANT ALL ON *.* TO 'root'@'%' identified by 'senha';
@@ -145,34 +145,34 @@ mysql> SELECT UPPER('Hej');
 
 (referência: http://www.plugmasters.com.br/sys/materias/51/1/Como-salvar-o-resultado-de-uma-consulta-MySQL-em-um-txt )
 
-SELECT id, mailserver, group_size, 
-  message_interval, group_interval, datetime 
-FROM email_marketing_throttlelog 
-INTO OUTFILE 'email_marketing_throttlelog.dados.csv' 
-FIELDS 
-  TERMINATED BY ',' 
-  OPTIONALLY ENCLOSED BY '"' 
-LINES TERMINATED BY '\r\n' 
+SELECT id, mailserver, group_size,
+  message_interval, group_interval, datetime
+FROM email_marketing_throttlelog
+INTO OUTFILE 'email_marketing_throttlelog.dados.csv'
+FIELDS
+  TERMINATED BY ','
+  OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\r\n'
 
-Neste caso, como não especifiquei o caminho, o arquivo estará na pasta “data” do myql, subpasta “nome_da_database”. 
+Neste caso, como não especifiquei o caminho, o arquivo estará na pasta “data” do myql, subpasta “nome_da_database”.
 
-	Se precisarmos especificar delimitadores de campos no arquivo de consulta, devemos utilizar o parâmetro FIELDS. A sintaxe é a que segue: 
+	Se precisarmos especificar delimitadores de campos no arquivo de consulta, devemos utilizar o parâmetro FIELDS. A sintaxe é a que segue:
 
-FIELDS 
-TERMINATED BY 'caracter_x' 
-OPTIONALLY ENCLOSED BY 'caracter_y' 
-ESCAPED BY 'caracter_escape' 
-LINES TERMINATED BY 'caracter_termino' 
- 
-	Sobre a cláusula FIELDS, como vimos nos exemplos anteriores, ela é opcional. Mas uma vez que seja declarada, é necessário preencher um dos parâmetros. Seus parâmetros são os seguintes: 
+FIELDS
+TERMINATED BY 'caracter_x'
+OPTIONALLY ENCLOSED BY 'caracter_y'
+ESCAPED BY 'caracter_escape'
+LINES TERMINATED BY 'caracter_termino'
 
-. TERMINATED: indica qual caracter será o delimitador de campos do arquivo. 
-Se for o 'TAB', não precisamos declará-lo (por ser padrão). Aqui podemos definir outro padrão, como por exemplo o ' ; '; 
+	Sobre a cláusula FIELDS, como vimos nos exemplos anteriores, ela é opcional. Mas uma vez que seja declarada, é necessário preencher um dos parâmetros. Seus parâmetros são os seguintes:
 
-. ENCLOSED BY: indica o caracter que será usado para envolver os campos no arquivo. Se não colocarmos o parâmetro OPTIONALLY, todos os campos começarão e terminarão com o caracter especificado. Colocando o OPTIONALLY, apenas os campos CHAR, VARCHAR e TEXT começarão e terminarão com este caracter especificado; 
+. TERMINATED: indica qual caracter será o delimitador de campos do arquivo.
+Se for o 'TAB', não precisamos declará-lo (por ser padrão). Aqui podemos definir outro padrão, como por exemplo o ' ; ';
 
-. ESCAPED BY: controla a forma como determinados caracteres foram gravados 
-no arquivo. É válido quando queremos que a consulta informe um valor alternativo a determinados valores (por exemplo campos com conteúdo NULL); 
+. ENCLOSED BY: indica o caracter que será usado para envolver os campos no arquivo. Se não colocarmos o parâmetro OPTIONALLY, todos os campos começarão e terminarão com o caracter especificado. Colocando o OPTIONALLY, apenas os campos CHAR, VARCHAR e TEXT começarão e terminarão com este caracter especificado;
+
+. ESCAPED BY: controla a forma como determinados caracteres foram gravados
+no arquivo. É válido quando queremos que a consulta informe um valor alternativo a determinados valores (por exemplo campos com conteúdo NULL);
 
 . LINES TERMINATED BY: este parâmetro, opcional, indica qual deve ser o caracter que indica o fim de linha.
 
@@ -203,7 +203,7 @@ PS: Para EXCLUIR um índice:
 
   $ mysqladmin -u root -psenhamysql processlist
 
-  ou 
+  ou
 
   $ echo "show full processlist\G" | mysql -u root -psenhamysql
 
@@ -254,8 +254,8 @@ echo "SELECT * FROM TABELA WHERE fim BETWEEN '2012-04-01 00:00:00' AND '2012-04-
 CREATE TABLE fila (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     qtde BIGINT NOT NULL,
-    momento TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-); 
+    momento TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 ---
 
@@ -282,41 +282,41 @@ ORDER BY TABLE_SCHEMA,
 19) Erro: 'ascii codec can't decode byte X in position x: ordinal not in range(X)' ao aplicar unicode() em uma string:
 
 SOLUÇÃO: Se eu estiver lendo de uma coluna do banco, verificar a codificação dessa coluna (OBS.: se a origem da leitura for outra - por exemplo, arquivo, o problema pode ser o mesmo).
-         Tive um caso onde acontecia esse erro, e o problema era que a codificação original da coluna (CHARACTER_SET_NAME ) era 'latin1'. 
-    
+         Tive um caso onde acontecia esse erro, e o problema era que a codificação original da coluna (CHARACTER_SET_NAME ) era 'latin1'.
+
          Então, ao invés de:
-                entidade_nome = unicode(line[8])                     
-         
-         , o correto é usar:         
+                entidade_nome = unicode(line[8])
+
+         , o correto é usar:
                 entidade_nome = unicode(line[8], 'latin-1')
-                
+
          , nesse caso.
-                
+
          Na query executada no banco, a codificação do campo contato_nome estava apontando como:
-         
-         | TABLE_SCHEMA   | TABLE_NAME                                 | DEFAULT_CHAR_SET | COLUMN_NAME                       | COLUMN_TYPE   | CHARACTER_SET_NAME |         
+
+         | TABLE_SCHEMA   | TABLE_NAME                                 | DEFAULT_CHAR_SET | COLUMN_NAME                       | COLUMN_TYPE   | CHARACTER_SET_NAME |
          | emailmarketing | email_marketing_entidade                   | utf8             | nome                              | varchar(120)  | latin1             |
-         
+
          E a query era:
-         
-            SELECT campo0, 
-                campo1, 
-                campo2, 
-                campo3, 
-                campo4, 
-                campo5, 
-                campo6, 
-                campo7,  
+
+            SELECT campo0,
+                campo1,
+                campo2,
+                campo3,
+                campo4,
+                campo5,
+                campo6,
+                campo7,
                 e.nome AS entidade_nome  /* observe o CHARACTER_SET_NAME do COLUMN_NAME 'nome'  */
             FROM email_marketing_acao a
             ...
-                  
----       
+
+---
 20)
 
 /* SE EU GRAVAR EM UMA TABELA REGISTROS A CADA MEIA HORA, E PRECISAR SELECIONAR
     TODOS OS REGISTROS DE TODOS OS DIAS QUE ESTIVEREM NA FAIXA DE HORÁRIO ATUAL (ENTRE A HORA ATUAL E A PRÓXIMA HORA):
-    
+
      DESCRIBE fila;
     +---------+---------------------+------+-----+-------------------+----------------+
     | Field   | Type                | Null | Key | Default           | Extra          |
@@ -327,7 +327,7 @@ SOLUÇÃO: Se eu estiver lendo de uma coluna do banco, verificar a codificação
     +---------+---------------------+------+-----+-------------------+----------------+
 */
 
-SELECT NOW(), momento, qtde FROM fila 
+SELECT NOW(), momento, qtde FROM fila
 WHERE (EXTRACT(HOUR FROM momento) BETWEEN EXTRACT(HOUR FROM NOW()) AND EXTRACT(HOUR FROM NOW()) + 1)
     AND (EXTRACT(DAY FROM momento) <> EXTRACT(DAY FROM NOW()));
 
@@ -360,10 +360,10 @@ WHERE (EXTRACT(HOUR FROM momento) BETWEEN EXTRACT(HOUR FROM NOW()) AND EXTRACT(H
 
 /* MÉDIA HISTÓRICA DE DISPAROS NA FILA DENTRO DO HORÁRIO ATUAL, A PARTIR DE UM MOMENTO "X"  */
 SELECT CONCAT(EXTRACT(HOUR FROM NOW()), ':', EXTRACT(MINUTE FROM NOW())) AS hora_atual,
-    SUM(qtde) / COUNT(id) AS media_disparos_horario, 
-    CONCAT(EXTRACT(HOUR FROM NOW()), ':00') AS periodo_inicio_calculo, 
+    SUM(qtde) / COUNT(id) AS media_disparos_horario,
+    CONCAT(EXTRACT(HOUR FROM NOW()), ':00') AS periodo_inicio_calculo,
     CONCAT(EXTRACT(HOUR FROM NOW()) + 1, ':30') AS periodo_final_calculo
-FROM fila 
+FROM fila
 WHERE (momento > '2012-10-01 20:00:00')
     AND (EXTRACT(HOUR FROM momento) BETWEEN EXTRACT(HOUR FROM NOW()) AND EXTRACT(HOUR FROM NOW()) + 1)
     AND (EXTRACT(DAY FROM momento) <> EXTRACT(DAY FROM NOW()));
@@ -372,7 +372,7 @@ WHERE (momento > '2012-10-01 20:00:00')
 
 21) Descobrir se há tabelas que necessitam de repair table (myisam):
 
-mysqldump -h <nome/ip do host> -u root -p<SENHA> --add-drop-database --add-drop-table --no-data --databases db1 db2 db3 > /tmp/dbs.sql 
+mysqldump -h <nome/ip do host> -u root -p<SENHA> --add-drop-database --add-drop-table --no-data --databases db1 db2 db3 > /tmp/dbs.sql
 
 Se alguma tabela estiver com problemas, vai retornar:
 
@@ -396,23 +396,23 @@ mysqldump: Got error: 144: Table './database/my_table' is marked as crashed and 
 
 23) COMO RESETAR A SENHA DO USER ROOT DO MYSQL:
 
-    Importante: é preciso acesso de root ao server. 
+    Importante: é preciso acesso de root ao server.
 
-        1) Criar um arquivo com os comandos para rodar a troca da senha: 
+        1) Criar um arquivo com os comandos para rodar a troca da senha:
             UPDATE mysql.user SET Password=PASSWORD('v3t3x2y2') WHERE User='root';
             FLUSH PRIVILEGES; /* aplica as novas permissões */
 
         2) Derrubar o daemon do mysql
-        
+
         3) Iniciar o daemon do mysql manualmente, apontando o arquivo criado em [1] como "init file":
             # su - mysql
             $ mysqld_safe --init-file=my_file_da_etapa_1.txt
-            
-        4) Testar a conexão com a nova senha (Ex.: pelo próprio client do mysql)    
-            
+
+        4) Testar a conexão com a nova senha (Ex.: pelo próprio client do mysql)
+
         5) Derrubar o daemon manual do mysql
-        
-        6) Iniciar o daemon normal do mysql.      
+
+        6) Iniciar o daemon normal do mysql.
 
 
 
@@ -443,15 +443,15 @@ mysqldump -h host -u root -pPASSWORD --add-drop-table --databases db1 --tables t
                     ,",",IFNULL(CONCAT("""",data_confirmacao,""""),"NULL")
                     ,",",IFNULL(CONCAT("""",ip_confirmacao,""""),"NULL")
                 ,");"
-              ) 
+              )
     FROM tabela
     INTO OUTFILE "/tmp/contatos.txt";
 
     /* TABELALISTA */
-    SELECT 
+    SELECT
         CONCAT("INSERT INTO db1.tabelalista (id,contato_id,lista_id,data_inclusao,ip_inclusao) VALUES (",id,", ",contato_id,", ",lista_id,",""",data_inclusao,""",",IFNULL(CONCAT("""",ip_inclusao,""""),"NULL"),");")
-    FROM tabelalista 
-    INTO OUTFILE "/tmp/contatos_listas.sql";        
+    FROM tabelalista
+    INTO OUTFILE "/tmp/contatos_listas.sql";
 
 ---
 
@@ -461,7 +461,7 @@ SELECT load_file("/etc/passwd")
 
 ---
 
-26) FULL CREATE TABLE EXAMPLE: 
+26) FULL CREATE TABLE EXAMPLE:
 
 CREATE DATABASE IF NOT EXISTS  my_database;
 USE  my_database;
@@ -480,5 +480,11 @@ CREATE TABLE logs (
   $ systemctl start mariadb.service
   $ systemctl enable mariadb.service
   $ /usr/bin/mysql_secure_installation
+
+---
+
+Checar o número de conexões abertas:
+
+http://www.cyberciti.biz/faq/howto-show-mysql-open-database-connections-on-linux-unix/
 
 ---
