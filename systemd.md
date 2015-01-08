@@ -19,3 +19,7 @@ The parameters supported by a systemd unit file:
 http://www.freedesktop.org/software/systemd/man/systemd.service.html
 
 ---
+
+How to view journalctl log in real-time (for example, to monitor docker logs):
+
+    # journalctl -xn -f
