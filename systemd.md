@@ -1,3 +1,18 @@
+- STATUS DE TODOS OS SERVIÇOS:
+    $ systemctl -t service
+
+- HABILITAR/DESABILITAR/PARAR/INICIAR/REINICIAR UM SERVIÇO:
+    $ systemctl [enable/disable/stop/start/restart/is-active] [nome_servico][.service]
+  Ex.
+    $ systemctl enable cups
+    $ systemctl disable sshd.service
+
+- DESLIGAR / REINICIAR VIA SYSTEMD:
+    $ systemctl halt
+    $ systemctl reboot
+
+---
+
 How to make a daemon automatically restart on systemd (previouly you needed to use something like supervisord):
 
 Edit the daemon unit file and add the configuration below:

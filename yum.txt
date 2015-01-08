@@ -1,0 +1,8 @@
+LISTAR TODOS OS PACOTES INSTALADOS:
+    $ yum list installed
+
+INSTALAÇÃO VIA YUM PEDINDO PARA IGNORAR CHAVES GNUPG:
+  $ yum --nogpg install sshfs
+
+LIMPAR METADADOS DE REPOSITÓRIOS DE PACOTES:
+  $ yum --enablerepo=updates clean metadata

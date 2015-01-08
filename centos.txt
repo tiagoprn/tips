@@ -1,6 +1,3 @@
-LISTAR TODOS OS PACOTES INSTALADOS:
-    $ yum list installed
-
 MUDAR O HOSTNAME:
     Arquivo /etc/sysconfig/network.
 
@@ -21,9 +18,6 @@ DEPENDÊNCIAS PARA COMPILAR O python-mysql no virtualenv:
   $ yum -y install mysql-devel mysql zlib zlib-devel openssl
   $ pip install MySQL-python
 
-INSTALAÇÃO VIA YUM PEDINDO PARA IGNORAR CHAVES GNUPG:
-  $ yum --nogpg install sshfs
-
 RUNLEVELS NO CENTOS/FEDORA/RHEL:
     0 Halt
     1 Single-user mode
@@ -39,25 +33,6 @@ COMO RECONFIGURAR AS INTERFACES eth* (Ex.: para ativar o compartilhamento de red
     $ mv /etc/udev/rules.d/70-persistent-net.rules /etc/udev/rules.d/70-persistent-net.rules.OLD
     $ reboot
     Após reiniciar, ele irá re-detectar as eth a partir das interfaces disponíveis no VirtualBox e assumir o IP da rede interna.
-
-
-LIMPAR METADADOS DE REPOSITÓRIOS DE PACOTES:
-  $ yum --enablerepo=updates clean metadata
-
-GERENCIAMENTO DE SERVICOS
-
-    - STATUS DE TODOS OS SERVIÇOS:
-        $ systemctl -t service
-
-    - HABILITAR/DESABILITAR/PARAR/INICIAR/REINICIAR UM SERVIÇO:
-        $ systemctl [enable/disable/stop/start/restart/is-active] [nome_servico].service
-      Ex.
-        $ systemctl enable cups.service
-        $ systemctl enable sshd.service
-
-DESLIGAR / REINICIAR VIA SYSTEMD:
-    $ systemctl halt
-    $ systemctl reboot
 
 ADICIONAR ROTAS:
     - TEMPORÁRIA:
