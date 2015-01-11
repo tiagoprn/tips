@@ -1,0 +1,26 @@
+- Communication using ports between host->container and container->container (fig.yml):
+
+gitlab:
+  image: sameersbn/gitlab:7.6.0
+  links:
+   - redis:redisio
+   - postgresql:postgresql
+  ports:
+   - "10080:80"
+   - "10022:22"
+  environment:
+    - GITLAB_HTTPS=false
+pymark:
+  build: .
+  command: /bin/start.sh
+  volumes:
+    - .:/code
+  links:
+    - gitlab
+    - postgresql
+
+The "ports" section on fig.yml as "10080:80" means the docker host will use port 10080 to communicate with the container, but the "pymark" container will communicate with the "gitlab" container through port 80, and NOT port 10080. 
+
+- 
+
+
