@@ -1,5 +1,5 @@
 LISTAR TODOS OS PACOTES INSTALADOS:
-    $ yum list installed
+  $ yum list installed
 
 INSTALAÇÃO VIA YUM PEDINDO PARA IGNORAR CHAVES GNUPG:
   $ yum --nogpg install sshfs
@@ -9,3 +9,7 @@ LIMPAR METADADOS DE REPOSITÓRIOS DE PACOTES:
 
 MOSTRAR A VERSÃO DE UM PACOTE NO REPOSITÓRIO:
   $ yum info docker-io
+
+INSTALAR APENAS UM PACOTE DO REPOSITÓRIO TESTING:
+  $ yum install docker-io --enablerepo=updates-testing
+
