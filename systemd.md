@@ -38,3 +38,10 @@ http://www.freedesktop.org/software/systemd/man/systemd.service.html
 How to view journalctl log in real-time (for example, to monitor docker logs):
 
     # journalctl -xn -f
+
+---
+
+systemd slow boot: http://littledaemons.tumblr.com/post/106832805315
+
+---
+
