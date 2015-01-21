@@ -1,0 +1,1 @@
+http://www.nginxtips.com/upgrade-fedora-20-to-fedora-21-using-fedup/
