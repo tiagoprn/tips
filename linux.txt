@@ -203,12 +203,12 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 
 * Criação de usuários:
 
-    $ useradd -m -d /home/newuser -g users -G wheel newuser
+    $ useradd -m -d /home/newuser -g users -G wheel,admin,docker newuser
 
     Where:
         -d: the user home directory
         -g: the user default group
-        -G: outros(s) grupo(s)
+        -G: outros(s) grupo(s), separados por vírgula
         "newuser": nome (login) do usuário
 
     Depois, você pode mudar a senha dele com:
