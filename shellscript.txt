@@ -1,16 +1,22 @@
 VARIÁVEIS:
- 
-DATE=$(date +"%Y%m%d_%H%M_%N")
-mysqldump -h localhost -u root -p --databases mydb > dump.$DATE.sql
- 
+
+    EXAMPLE 1:
+
+        DATE=$(date +"%Y%m%d_%H%M_%N")
+        mysqldump -h localhost -u root -p --databases mydb > dump.$DATE.sql
+
+    EXAMPLE 2:
+        OUTPUT_FILE=~/dumps/mysql_mydatabasename.$(date +%Y%m%d_%H%M%S).sql
+        mysqldump -h 10.0.0.2 -u mydatabasename -psupersecretpassword --add-drop-database --add-drop-table --databases mydatabasename > $OUTPUT_FILE
+
 ---
- 
+
 PERCORRER RECURSIVAMENTE UM DIRETÓRIO EM CIMA DE UM COMANDO:
- 
+
 #!/bin/bash
 for i in $(ls *.sql); do
     echo "restaurando arquivo/tabela  $i ... [WAIT]" ;
-    # mysql -u root -p'senhabanco' databasename <  "$i" 
+    # mysql -u root -p'senhabanco' databasename <  "$i"
     echo "restaurando arquivo/tabela  $i ... [DONE]" ;
 done;
 
