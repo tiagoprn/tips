@@ -249,3 +249,8 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 
     $ cat /etc/os-release
 
+* SSHFS:
+    - MOUNT:
+        $ sshfs -o IdentityFile=~/.ssh/id_rsa myuser@REMOTE_IP:/home/tparanhos/shared /remotes/REMOTE_NAME
+    - UMOUNT:
+        $ sudo umount /remotes/REMOTE_NAME
