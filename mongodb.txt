@@ -1,0 +1,24 @@
+MONGODUMP:
+
+    $ mongodump --host 10.0.200.100 --collection items --db test2
+        IMPORTANT: If it shows a "locale" related error, run:
+            $ export LC_ALL="en_US.UTF-8"
+            , and try again.
+
+MONGORESTORE:
+
+    $ mongorestore /path/of/the/mongo/dump
+        IMPORTANT: If it shows a "locale" related error, run:
+            $ export LC_ALL="en_US.UTF-8"
+            , and try again.
+
+
+MONGOEXPORT:
+
+    #!/bin/bash
+
+    fields="sku,name,url,image_url,price,special_price,instalments,instalment_value,available,brand,tyre__width,tyre__aspect_ratio,tyre__rim_diameter,tyre__load_index,tyre__speed_rating"
+
+    SPIDERS="extra gbg_pneus americanas pneu_free bridgestone casasbahia pneus_albuquerque pneustore pneu_plus pneumar kd_pneus hipervarejo pneusola colombo caçula_de_pneus tireshop dellavia walmart autoz itaro pneus_facil pontofrio magazine_luiza dpaschoal"
+
+    for spider in $SPIDERS; do mongoexport --host 10.0.200.100 -d test2 -c items -q "{\"_meta.spider_name\": \"$spider\"}" -f $fields --csv > ./$spider.csv; done

@@ -1,5 +1,5 @@
 - STATUS DE TODOS OS SERVIÇOS:
-    $ systemctl -t service
+    $ systemctl
 
 - HABILITAR/DESABILITAR/PARAR/INICIAR/REINICIAR UM SERVIÇO:
     $ systemctl [enable/disable/stop/start/restart/is-active] [nome_servico][.service]
