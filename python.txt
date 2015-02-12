@@ -421,3 +421,19 @@ HINT: This can also be used to quick share files like on a FTP server. You just 
 Para lidar com valores decimais (principalmente MONETÁRIOS) em python é melhor usar o tipo de dado Decimal ao invés do float. O float só é indicado quando você realmente precisar de um número enorme de casas após a vírgula (ou seja, precisão de várias casas decimais).
 
 ---
+
+Gera um arquivo profile com o histórico de execução das chamadas:
+    $ python -m cProfile -o log.prof [script.py]
+
+    E.g.:
+        $ python -m cProfile -o log.prof /vault/workspace/moe/virtualenv/bin/twistd  -n web --class=app.resource -p 8888 --logfile=/tmp/moe.log
+
+
+    Para poder visualizar graficamente os resultados desse profile:
+        $ yum install kcachegrind
+        $ pip install pyprof2calltree
+
+    Abre esse arquivo, por exemplo, no kcachegrind:
+        $ pyprof2calltree -k -i log.prof
+
+---
