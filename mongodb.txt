@@ -22,3 +22,11 @@ MONGOEXPORT:
     SPIDERS="extra gbg_pneus americanas pneu_free bridgestone casasbahia pneus_albuquerque pneustore pneu_plus pneumar kd_pneus hipervarejo pneusola colombo caçula_de_pneus tireshop dellavia walmart autoz itaro pneus_facil pontofrio magazine_luiza dpaschoal"
 
     for spider in $SPIDERS; do mongoexport --host 10.0.200.100 -d test2 -c items -q "{\"_meta.spider_name\": \"$spider\"}" -f $fields --csv > ./$spider.csv; done
+
+
+QUERIES (examples):
+
+    db.items.find({"_meta.spider_name": "pneumania", "sku": "163"})
+    db.items.find()
+    db.items.count()
+
