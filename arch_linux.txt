@@ -97,9 +97,41 @@ ADICIONAR SUPORTE AO ANTIGO "/etc/rc.local":
 
 COMO REMONTAR UMA PARTIÇÃO COMO RW:
     mount -t auto /dev/sda1 -o remount,rw /
-    
+
 
 IMPROVE THE STARTUP TIME OF KDE APPLICATIONS:
     - this "magic trick" to improve application start-up time by 50-150ms. To enable it, create this folder in your home:
         $ mkdir -p ~/.compose-cache/
     Note: For those curious about what is going on here, this enables an optimization which Lubos (of general KDE speediness fame) came up with some time ago and was then rewritten and integrated into libx11. Ordinarily, on startup, applications read input method information from /usr/share/X11/locale/your locale/Compose. This file is quite long (>5000 lines for the en_US.UTF-8 one) and takes some time to process. libX11 can create a cache of the parsed information which is much quicker to read subsequently, but it will only re-use an existing cache or create a new one in ~/- .compose-cache if the directory already exists.
+
+HOW TO BUILD PACKAGES FOR AUR (ARCH LINUX ARM):
+
+    1) Install the build essentials. These are needed to compile packages on Arch Linux ARM.
+
+    $ sudo pacman -S linux-armv7-headers file base-devel abs
+
+    OR
+
+    $ sudo pacman -S linux-sun7xi-headers file base-devel abs
+
+    2) Obtain the PKGBUILD. You need to download the tarball that you want. You can find the tarballs for programs at the AUR.
+
+    Make the packages. Next you need to run makepkg in order to generate a package that pacman can install.
+
+    3) $ makepkg -Acs
+    The -A option ignores the target Arch architecture. The -c option cleans up the directory after makepkg is done, and -s installs the needed dependencies.
+
+    It is advised that you do NOT run makepkg as root as it can cause permanent damage to your system. If you really need to run it as root though, use the --asroot option.
+
+    Install the package. makepkg should have create a file in the directory with the filetype .pkg.tar.xz. You should install this package by using the  -U option with pacman.
+
+    4) $ sudo pacman -U x.pkg.tar.xz
+    Make sure you replace x.pkg.tar.xz with the actual package name.
+
+ATUALIZAR PACOTES DO AUR:
+
+    Para isso, é melhor instalar o "packer":
+        $ pacman -S packer
+
+    O packer tem uma vantagem em cima do yaourt - ele pode atualizar pacotes que você instalou pelo AUR! Para isso:
+        $ packer -Syu
