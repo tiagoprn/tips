@@ -255,13 +255,13 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
     - UMOUNT:
         $ sudo umount /remotes/REMOTE_NAME
 
-* Listen to connections coming from specific IP:
+* Listen to connections coming from specific IP (tcpdump):
 
-    SYNTAX:
-        $ tcpdump -d [NETWORK_INTERFACE] host [ORIGIN_IP] -n -s 0 -vvv -w [FILE_WITH_THE_REALTIME_DUMP]
+    EXAMPLES:
+        To monitor HTTP traffic including request and response headers and ssage body from a particular source:
+            $ tcpdump -i eth0 -n -vvv -s 0 'src 172.16.1.208 and tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)' -w /tmp/tcpdump.txt
 
-    EXAMPLE:
-        $ tcpdump -i wlp6s0 host 10.0.1.116 -n -s 0 -vvv -w /usr/src/dump
+        OBS.: posso trocar "src" por "dst" para pegar requisições cujo DESTINO seja o desejado.
 
 * How to enable the login message (banner) from /etc/issue after the ssh login prompt:
     - open "/etc/ssh/sshd_config"
