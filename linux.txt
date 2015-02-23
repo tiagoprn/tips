@@ -274,3 +274,24 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
         $ parallel -j 1000 ./test.sh ::: {1..1000}
             (where "test.sh" is a script with one or more "curl" commands)
 
+* To simulate X concurrent users to load a web server:
+
+    $ yum install siege
+
+    $ siege -b -c50 -d10 -t60S -i -f urls.txt
+
+    WHERE:
+        -c: number of concurrent users.
+
+        -d: random interval between 0 and NUM that each "user" will sleep for between requests
+
+        -t: time to run the benchmark.
+            E.g.:
+                -t60S (60 seconds)
+                -t1H (1 hour)
+                -t120M (120 minutes)
+
+        -f: a file containing the URLs to be reached.
+
+        -i: randomly select the URLs from the file.
+
