@@ -305,6 +305,8 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
     NOTE:
         - For 50 hits a second you would run it like this: -c50 -d1. We’ve had people ask about configurations like -c1000 -d1. A single pre-forking apache server cannot handle such load without modification. It has a hardcoded limit of 256. (http://www.joedog.org/siege-faq)
 
+        - During the "siege", you should monitor the target machine %CPU and Memory (htop must be nice for that). Specially if you are trying to tuneup nginx / uwsgi. Try to keep all cores busy, but with some margin of free %CPU / Memory.
+
         - How to build a "urls.txt" file from an webserver access log: http://www.joedog.org/siege-faq/#a21
 
         - How to make a POST request:
