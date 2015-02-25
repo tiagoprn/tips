@@ -135,3 +135,8 @@ ATUALIZAR PACOTES DO AUR:
 
     O packer tem uma vantagem em cima do yaourt - ele pode atualizar pacotes que você instalou pelo AUR! Para isso:
         $ packer -Syu
+
+PACMAN
+
+    List which files are on package:
+        $ pacman -Ql [package_name]
