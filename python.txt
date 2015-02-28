@@ -437,3 +437,9 @@ Gera um arquivo profile com o histórico de execução das chamadas:
         $ pyprof2calltree -k -i log.prof
 
 ---
+
+Certificate problems installing pip or distro packages?
+That could mean your date (on the hardware clock!) is wrong (too old). Change it through the command-line and try again.
+
+---
+
