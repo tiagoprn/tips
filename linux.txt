@@ -144,7 +144,9 @@
             /tmp/*
         rsync -avc --exclude-from=EXCLUDE_FILE / /mnt
 
+    RSYNC OVER SSH ON NON-DEFAULT PORT:
 
+    rsync -rchzPvi --progress yum.repos.d/ -e "ssh -p9999" root@192.168.0.154:/tmp
 
 
 * Exemplo de grep com match antes do primeiro pipe e não match após:
