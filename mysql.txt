@@ -180,6 +180,12 @@ no arquivo. É válido quando queremos que a consulta informe um valor alternati
 	$ mysql -u root -p --database='simpletasks2' -e "SELECT * FROM core_task;" | sed "s/'/\'/;s/\t/\",\"/g;s/^/\"/;s/$/\"/;s/\n//g" > /tmp/select.txt
 	(referência: http://stackoverflow.com/questions/356578/how-to-output-mysql-query-results-in-csv-format)
 
+  OU
+
+  $ mysql -u root -pv3t3x2y2 --column-names --database='marge_devel' --batch --raw -e "SELECT * FROM extraction_fields" > extraction_fields_LEGADA.csv
+  (esta última irá exportar os dados linha a linha, com "<TAB>" como separador de campos.)
+
+
 ---
 
 
