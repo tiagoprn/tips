@@ -1,0 +1,3 @@
+Escalar verticalmente (scale up) significa adicionar recursos em um único nó do sistema (mais memória ou um disco rígido mais rápido).
+
+Escalar horizontalmente (scale out) significa adicionar mais nós ao sistema, tais como um novo computador com uma aplicação para clusterizar o software.
