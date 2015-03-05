@@ -1,0 +1,8 @@
+n: próxima linha
+q: aborta o script ("CTRL + C")
+c: continua o script
+l: mostra linhas em código em volta da linha atual
+s: step into (entra dentro de uma função)
+r: (return) sai de dentro da função que você está
+b: cria um breakpoint
+a: mostra os parâmetros passados para a função atual
