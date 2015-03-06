@@ -1,0 +1,6 @@
+STATUS:
+    curl http://localhost:9200
+
+SEARCH QUERY:
+    curl http://localhost:9200/_search
+
