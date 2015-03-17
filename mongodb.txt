@@ -3,6 +3,14 @@ MONGODUMP:
     $ mongodump --host 10.0.200.100 --collection items --db test2
         IMPORTANT: If it shows a "locale" related error, run:
             $ export LC_ALL="en_US.UTF-8"
+
+                OR, if that does not work:
+
+            $ apt-get install locales
+            $ locale-gen en_US.UTF-8
+            $ dpkg-reconfigure locales
+                (informe o locale número 138 - en_US.UTF-8)
+
             , and try again.
 
 MONGORESTORE:
@@ -17,7 +25,7 @@ MONGOEXPORT:
 
     #!/bin/bash
 
-    fields="sku,name,url,image_url,price,special_price,instalments,instalment_value,available,brand,tyre__width,tyre__aspect_ratio,tyre__rim_diameter,tyre__load_index,tyre__speed_rating"
+    fields="sku,name,department,category,url,image_url,price,special_price,instalments,instalment_value,available,brand,tyre__width,tyre__aspect_ratio,tyre__rim_diameter,tyre__load_index,tyre__speed_rating"
 
     SPIDERS="extra gbg_pneus americanas pneu_free bridgestone casasbahia pneus_albuquerque pneustore pneu_plus pneumar kd_pneus hipervarejo pneusola colombo caçula_de_pneus tireshop dellavia walmart autoz itaro pneus_facil pontofrio magazine_luiza dpaschoal"
 
@@ -26,7 +34,25 @@ MONGOEXPORT:
 
 QUERIES (examples):
 
-    db.items.find({"_meta.spider_name": "pneumania", "sku": "163"})
-    db.items.find()
-    db.items.count()
+    FIND / COUNT:
+        db.items.find({"_meta.spider_name": "pneumania", "sku": "163"})
+        db.items.find()
+        db.items.count()
+
+    REMOVE (DELETE):
+        db.items.remove({"_id.site": "Arcondicionado"})
+
+    GET INDEXES:
+        db.items.getIndexes()
+
+    CREATE AN INDEX ON 2 FIELDS:
+        db.items.ensureIndex({"domain": 1, "sku": 1});
+
+    MONGO CLIENT:
+        - CONECTAR A UM DB E FAZER QUERYS:
+            > mongo
+            > var crawler_data = connect('crawler_data')
+            > crawler_data.items.find({"_id.site": "PontoFrio"})
+            > crawler_data.items.count({"_id.site": "PontoFrio"})
+            > crawler_data.items.runCommand({"distinct": "items", "key": "_meta.spider_name"})
 
