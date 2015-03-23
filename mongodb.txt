@@ -1,6 +1,6 @@
 MONGODUMP:
 
-    $ mongodump --host 10.0.200.100 --collection items --db test2
+    $ mongodump --host 10.0.200.100 --collection items --db crawler_data
         IMPORTANT: If it shows a "locale" related error, run:
             $ export LC_ALL="en_US.UTF-8"
 
@@ -55,4 +55,3 @@ QUERIES (examples):
             > crawler_data.items.find({"_id.site": "PontoFrio"})
             > crawler_data.items.count({"_id.site": "PontoFrio"})
             > crawler_data.items.runCommand({"distinct": "items", "key": "_meta.spider_name"})
-
