@@ -368,25 +368,31 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 * Redirect local port through ssh tunnel:
 
     To the same machine used as "gateway":
-        $ ssh -f tparanhos@54.165.155.207 -L 8888:54.165.155.207:80 -N
+        $ ssh -f tparanhos@54.165.155.207 -L8888:54.165.155.207:80 -N
         (gateway: 54.165.155.207, target: 54.165.155.207)
 
     To another target machine, accessible by the "gateway"
-        $ ssh -f tparanhos@54.165.155.207 -L 33600:172.16.2.29:3306 -N
+        $ ssh -f tparanhos@54.165.155.207 -L33600:172.16.2.29:3306 -N
         (gateway: 54.165.155.207, target: 172.16.2.29)
 
 , where:
 
-    -f = go into the background just before it executes the command
+    -f = (optional parameter) go into the background just before it executes the command
 
     tparanhos@54.88.175.132 = username@server (you must have an account on it for the ssh connection to establish, so you then can forward the port.)
 
-    -L 8888:54.88.175.132:80: establishes the tunnel. The syntax is:
-        -L local-port:host:remote-port
+    -L8888:54.88.175.132:80: establishes the tunnel. The syntax is:
+        -Llocal-port:host:remote-port
         (NOTE: the "host" can be ANY host, assuming that it is acessible through "username@server".)
 
-    -N: do not execute a command on the remote system.
+    -N: (optional parameter) do not execute a command on the remote system.
 
 This will forward the local port 8888 to port 80 on 54.88.175.132, with the nice benefit of everything to be encrypted through ssh.
 
-Note: you can use that to redirect HTTP traffic, SMTP traffic, and basically every service that binds to a TCP port.
+Note:
+
+1) You can use that to redirect HTTP traffic, SMTP traffic, and basically every service that binds to a TCP port.
+
+2) If the above does not work, try to not passe the optional parameters above (-f -N).
+
+3) You can redirect in "chain": From my local machine to a remote one and another machine accessible by the remote one. The Note [2] above also applies.
