@@ -408,3 +408,4 @@ server {
 
 Otherwise, if I have just configured localhost or 127.0.0.1 above on nginx, I will keep receiving these channel errors. :)
 
+The same applies if the service is postgresql or mysql or another service (they have to be listening on the specified IP, not only localhost/127.0.0.1).
