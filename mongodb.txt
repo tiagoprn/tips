@@ -55,3 +55,4 @@ QUERIES (examples):
             > crawler_data.items.find({"_id.site": "PontoFrio"})
             > crawler_data.items.count({"_id.site": "PontoFrio"})
             > crawler_data.items.runCommand({"distinct": "items", "key": "_meta.spider_name"})
+            > crawler_data.items.findOne({'_meta.spider_name':'poloar'})
