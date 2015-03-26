@@ -396,3 +396,16 @@ Note:
 2) If the above does not work, try to not passe the optional parameters above (-f -N).
 
 3) You can redirect in "chain": From my local machine to a remote one and another machine accessible by the remote one. The Note [2] above also applies.
+
+4) If it returns a "channel forbidden error" (add -vvv to the ssh commands above to enable the detailed connection log) and if I have configured an nginx python uwsgi app, I must explicitly say on the nginx configuration I want to listen on the remote host IP/name I am trying to establish the tunnel to. E.g.:
+
+...
+server {
+    listen  80;
+    server_name localhost 127.0.0.1 TMC-LINUX.shm.com.br 187.11.132.104;
+    resolver 127.0.0.1;
+...
+
+Otherwise, if I have just configured localhost or 127.0.0.1 above on nginx, I will keep receiving these channel errors. :)
+
+The same applies if the service is postgresql or mysql or another service (they have to be listening on the specified IP, not only localhost/127.0.0.1).
