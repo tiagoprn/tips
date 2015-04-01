@@ -21,3 +21,17 @@ for i in $(ls *.sql); do
 done;
 
 ---
+
+COLOCAR EM UM ARRAY UMA LISTA DE STRINGS QUE PODEM TER ESPAÇO NO NOME, E ITERAR NESSE ARRAY:
+
+#!/bin/bash
+
+fields="_id.id,brand,name,product_type,price,special_price,department,category,url,available"
+
+SITES=("Walmart" "Extra" "Caçula de Pneus")
+
+for site in "${SITES[@]}"; do
+    mongoexport --host localhost -d crawler_data -c items -q "{\"_id.site\": \"$site\"}" -f $fields --csv > ./$site.csv;
+done
+
+---

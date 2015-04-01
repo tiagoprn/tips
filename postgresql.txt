@@ -354,8 +354,3 @@ Os tradeoffs são os seguintes:
     * JSONB: possui suporte a índices e validação.
 
 ***
-
-PG DUMP:
-
-    pg_dump --host localhost --port 5432 --username [db_user] --role [db_user] --format c --verbose --file [database_name.c.backup] [database_name]
-
