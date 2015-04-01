@@ -21,11 +21,18 @@ with open(output.json, mode='w+') as f:
 
 ---
 
+How to use "fillna()" with different default values for each column:
 
+df = pd.read_csv(FULL_INPUT_CSV_PATH)
 
+# specify which value to assume for each column if its' contents is blank
+blank_fields_values = {
+    'sku': '(vazio)',
+    'name': '(vazio)',
+    'price': 0,
+    'category': '(vazio)',
+    'department': '(vazio)'
+}
+df = df.fillna(value=blank_fields_values)
 
-
-
-
-
-
+---
