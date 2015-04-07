@@ -190,6 +190,29 @@ POSTGRESQL SQL CHEATSHEET:
 
 ***
 
+FILTRAR CAMPOS DUPLICADOS:
+
+    Ex. 1 (1 único campo duplicado: sku):
+        SELECT * FROM (
+          SELECT id,
+          ROW_NUMBER() OVER(PARTITION BY sku ORDER BY id asc) AS Row
+          FROM product
+        ) dups
+        WHERE
+        dups.Row > 1;
+
+    Ex. 2 (2 campos duplicados: merchant_id, url):
+        SELECT * FROM (
+          SELECT id,
+          ROW_NUMBER() OVER(PARTITION BY merchant_Id, url ORDER BY id asc) AS Row
+          FROM Photos
+        ) dups
+        WHERE
+        dups.Row > 1;
+
+
+***
+
 TROCAR O OWNER DE UMA TABELA:
 
 ALTER TABLE <tablename> OWNER TO <username>
@@ -339,6 +362,9 @@ How to load data into table from a csv file (equivalent to mysql's LOAD DATA INF
 COPY datawarehouse_prstoswf FROM '/tmp/datawarehouse_prstoswf.csv' DELIMITER ';' CSV;
 
 It has a "no-destructive" behavior, since it will not drop any data that is already on the table.
+
+Alternative way to do so (quickly, and using mysql database as a source):
+http://www.machinalis.com/blog/moving-data-between-databases/
 
 ***
 
