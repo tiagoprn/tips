@@ -56,6 +56,15 @@ QUERIES (examples):
         (Equivalent in SQL: SELECT spider_run_id, save_time FROM queues)
 
 
+    SHOW ALL DATABASES ON A MONGO INSTANCE:
+        $ show dbs;
+        - To SELECT ONE of them:
+            $ use [db_name]
+            (the current database will be on the "db" instance.
+             Than your can query for db.collection.find(), etc...)
+        - To SHOW ALL COLLECTIONS ON THE CURRENT DATABASE:
+            $ show collections
+
     MONGO CLIENT:
         - CONECTAR A UM DB E FAZER QUERYS:
             > mongo
