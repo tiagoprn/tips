@@ -68,8 +68,8 @@ QUERIES (examples):
     MONGO CLIENT:
         - CONECTAR A UM DB E FAZER QUERYS:
             > mongo
-            > var crawler_data = connect('crawler_data')
-            > crawler_data.items.find({"_id.site": "PontoFrio"})
-            > crawler_data.items.count({"_id.site": "PontoFrio"})
-            > crawler_data.items.runCommand({"distinct": "items", "key": "_meta.spider_name"})
-            > crawler_data.items.findOne({'_meta.spider_name':'poloar'})
+            > var db = connect('crawler_data')
+            > db.items.find({"_id.site": "PontoFrio"})
+            > db.items.count({"_id.site": "PontoFrio"})
+            > db.items.runCommand({"distinct": "items", "key": "_meta.spider_name"})
+            > db.items.findOne({'_meta.spider_name':'poloar'})
