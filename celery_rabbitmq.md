@@ -56,3 +56,7 @@
 
     ACTIVE CONNECTIONS:
         $ curl -i -u guest:guest  http://172.16.1.232:15672/api/overview
+
+    ALL QUEUES:
+        $ curl -i -u guest:guest  http://172.16.1.232:15672/api/queues
+
