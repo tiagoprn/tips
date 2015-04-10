@@ -414,7 +414,7 @@ SSH TUNNELS
     NAT:      54.165.155.207
     RABBITMQ: 172.16.1.232:15672
 
-    , where to reach RABBITMQ, I just can do so connecting first with NAT (instead of NAT I could use another machine, it just would have to be on the same network as RABBITMQ).
+    , where to reach RABBITMQ, I just can do so connecting first with NAT through my ssh credentials (instead of NAT I could use another machine, it just would have to be on the same network as RABBITMQ).
 
     This is how I setup the tunnel:
 
