@@ -364,48 +364,66 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 
         (reference: http://www.hpl.hp.com/research/linux/httperf/wisp98/httperf.pdf)
 
+=====
 
-* Redirect local port through ssh tunnel:
+SSH TUNNELS
+
+* SITUATION 1: You want to map directly to the remote host.
 
     To the same machine used as "gateway":
         $ ssh -f tparanhos@54.165.155.207 -L8888:54.165.155.207:80 -N
         (gateway: 54.165.155.207, target: 54.165.155.207)
 
-    To another target machine, accessible by the "gateway"
-        $ ssh -f tparanhos@54.165.155.207 -L33600:172.16.2.29:3306 -N
-        (gateway: 54.165.155.207, target: 172.16.2.29)
+    , where:
 
-, where:
+        -f = (optional parameter) go into the background just before it executes the command
 
-    -f = (optional parameter) go into the background just before it executes the command
+        tparanhos@54.165.155.207 = username@server (you must have an account on it for the ssh connection to establish, so you then can forward the port.)
 
-    tparanhos@54.88.175.132 = username@server (you must have an account on it for the ssh connection to establish, so you then can forward the port.)
+        -L8888:54.165.155.207:80: establishes the tunnel. The syntax is:
+            -Llocal-port:host:remote-port
+            (NOTE: the "host" can be ANY host, assuming that it is acessible through "username@server".)
 
-    -L8888:54.88.175.132:80: establishes the tunnel. The syntax is:
-        -Llocal-port:host:remote-port
-        (NOTE: the "host" can be ANY host, assuming that it is acessible through "username@server".)
+        -N: (optional parameter) do not execute a command on the remote system.
 
-    -N: (optional parameter) do not execute a command on the remote system.
+    This will forward the local port 8888 to port 80 on 54.165.155.207, with the nice benefit of everything to be encrypted through ssh.
 
-This will forward the local port 8888 to port 80 on 54.88.175.132, with the nice benefit of everything to be encrypted through ssh.
+    Note:
 
-Note:
+    1) You can use that to redirect HTTP traffic, SMTP traffic, and basically every service that binds to a TCP port.
 
-1) You can use that to redirect HTTP traffic, SMTP traffic, and basically every service that binds to a TCP port.
+    2) If the above does not work, try to not passe the optional parameters above (-f -N).
 
-2) If the above does not work, try to not passe the optional parameters above (-f -N).
+    3) You can redirect in "chain": From my local machine to a remote one and another machine accessible by the remote one. The Note [2] above also applies.
 
-3) You can redirect in "chain": From my local machine to a remote one and another machine accessible by the remote one. The Note [2] above also applies.
+    4) If it returns a "channel forbidden error" (add -vvv to the ssh commands above to enable the detailed connection log) and if I have configured an nginx python uwsgi app, I must explicitly say on the nginx configuration I want to listen on the remote host IP/name I am trying to establish the tunnel to. E.g.:
 
-4) If it returns a "channel forbidden error" (add -vvv to the ssh commands above to enable the detailed connection log) and if I have configured an nginx python uwsgi app, I must explicitly say on the nginx configuration I want to listen on the remote host IP/name I am trying to establish the tunnel to. E.g.:
+    ...
+    server {
+        listen  80;
+        server_name localhost 127.0.0.1 TMC-LINUX.shm.com.br 187.11.132.104;
+        resolver 127.0.0.1;
+    ...
 
-...
-server {
-    listen  80;
-    server_name localhost 127.0.0.1 TMC-LINUX.shm.com.br 187.11.132.104;
-    resolver 127.0.0.1;
-...
+    Otherwise, if I have just configured localhost or 127.0.0.1 above on nginx, I will keep receiving these channel errors. :)
 
-Otherwise, if I have just configured localhost or 127.0.0.1 above on nginx, I will keep receiving these channel errors. :)
+    The same applies if the service is postgresql or mysql or another service (they have to be listening on the specified IP, not only localhost/127.0.0.1).
 
-The same applies if the service is postgresql or mysql or another service (they have to be listening on the specified IP, not only localhost/127.0.0.1).
+* SITUATION 2: You have the scenario below:
+
+    NAT:      54.165.155.207
+    RABBITMQ: 172.16.1.232:15672
+
+    , where to reach RABBITMQ, I just can do so connecting first with NAT (instead of NAT I could use another machine, it just would have to be on the same network as RABBITMQ).
+
+    This is how I setup the tunnel:
+
+        $ ssh -f tparanhos@54.165.155.207 -L15672:172.16.1.232:15672 -N
+
+    , which gives us the formula:
+
+        $ ssh -f user@NAT -L[LOCALHOST_PORT]:[RABBITMQ_HOST]:[RABBITMQ_PORT] -N
+
+    Finishing that, I can access RABBITMQ directly, since it will be mapped to localhost:15672. And all the traffic will be encrypted through ssh.
+
+=====
