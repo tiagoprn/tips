@@ -37,4 +37,17 @@ blank_fields_values = {
 
 df = df.fillna(value=blank_fields_values)
 df.count()
+
 ---
+
+Renaming a column:
+
+    print 'Renaming column "_id.id" to "sku"...'
+    df = df.rename(columns={'_id.id': 'sku'})
+
+        , where:
+
+        "columns" is a python dict. The key is the old column name, the value is the new column name.
+
+---
+
