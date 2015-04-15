@@ -71,5 +71,13 @@ QUERIES (examples):
             > var db = connect('crawler_data')
             > db.items.find({"_id.site": "PontoFrio"})
             > db.items.count({"_id.site": "PontoFrio"})
-            > db.items.runCommand({"distinct": "items", "key": "_meta.spider_name"})
+            > db.items.runCommand({"distinct": "items", "key": "_id.site"})
             > db.items.findOne({'_meta.spider_name':'poloar'})
+
+            >
+                db.items.find({"_id.site": "GBG Pneus", "brand": /Pneu /}).forEach(function(doc) {
+                  doc.brand = doc.brand.replace(/Pneu /g, '');
+                  db.items.save(doc);
+                });
+
+            On the example above I find all documents that have the "Pneu " string on the "brand" field and that have "_id.site" as "GBG Pneus", and change that regex's occurence found to "". That will change, for example, "Pneu Maggion" to "Maggion".
