@@ -67,10 +67,6 @@ Show the total of "null" (nan) values on a dataframe field:
 
 TRANSLATING THE SQL BELOW TO A DATAFRAME "QUERY":
 
-
-
-
-
     1) SQL:
            SELECT sku, price, special_price
            FROM df
@@ -96,3 +92,10 @@ TRANSLATING THE SQL BELOW TO A DATAFRAME "QUERY":
        DATAFRAME:
            towed[(towed["state"] == "TX") | (towed["make"] == "KIA")].sort("color")
 
+---
+
+CONVERT A DATAFRAME COLUMN TO A LIST:
+
+df['skus'].tolist()
+
+---
