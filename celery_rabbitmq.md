@@ -60,3 +60,28 @@
     ALL QUEUES:
         $ curl -i -u guest:guest  http://172.16.1.232:15672/api/queues
 
+- RABBITMQ OVERVIEW:
+
+    ### Queued messages:
+        Ready
+            Is the number of messages that are available to be delivered.
+
+        Unacknowledged
+            Is the number of messages for which the server is waiting for acknowledgement(If a client recieved the message but dont send a acknowledge yet).
+
+        Total
+            Is the sum of Ready and Unacknowledged messages.
+
+    ### Message rates: 
+        Publish
+            This is the rate how many messages are incomming to the RabbitMQ server.
+
+        Deliver
+            This is the rate at which messages requiring acknowledgement are being delivered in response to basic.consume.
+
+        Acknowledge
+            Rate at which messages are being acknowledged by the client/consumer.
+
+        Redelivered
+            Rate at which messages with the 'redelivered' flag set are being delivered. For example if you dont got a acknowledge message for a delivered message, you will deliver this message again.
+
