@@ -90,4 +90,3 @@ QUERIES (examples):
             Below I sort by "id DESC":
             > db.extractions_quality_summary.find({"_site_name": "Pneus Albuquerque"}).sort({"id": -1})
 
-
