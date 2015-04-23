@@ -81,3 +81,13 @@ QUERIES (examples):
                 });
 
             On the example above I find all documents that have the "Pneu " string on the "brand" field and that have "_id.site" as "GBG Pneus", and change that regex's occurence found to "". That will change, for example, "Pneu Maggion" to "Maggion".
+
+            > db.extractions_quality_summary.runCommand({"distinct": "extractions_quality_summary", "key": "_site_name"})
+
+            Below I sort by "id":
+            > db.extractions_quality_summary.find({"_site_name": "Pneus Albuquerque"}).sort({"id": 1})
+
+            Below I sort by "id DESC":
+            > db.extractions_quality_summary.find({"_site_name": "Pneus Albuquerque"}).sort({"id": -1})
+
+
