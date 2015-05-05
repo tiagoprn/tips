@@ -443,3 +443,10 @@ That could mean your date (on the hardware clock!) is wrong (too old). Change it
 
 ---
 
+Assigning with a one-liner:
+
+http://stackoverflow.com/questions/14474168/using-statements-on-either-side-of-a-python-ternary-conditional
+
+E.g.:
+
+absolute_value = original_value if original_value >= 0 else (original_value * -1)
