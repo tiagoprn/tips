@@ -35,9 +35,57 @@ http://www.freedesktop.org/software/systemd/man/systemd.service.html
 
 ---
 
-How to view journalctl log in real-time (for example, to monitor docker logs):
+LOGS:
 
-    # journalctl -xn -f
+
+### How to view journalctl log in real-time (for example, to monitor docker logs):
+
+    $ journalctl -xn -f
+
+
+### Other examples:
+
+    $ journalctl -u nginx --since today
+    $ journalctl -b -u docker --since today -o json-pretty
+    $ journalctl -b -u docker --since today -o short
+
+### Logs disk usage:
+
+    $ journalctl --disk-usage
+
+### Deleting old logs:
+
+1) This will remove old entries until the total journal space taken up on disk is
+at the requested size:
+
+    $ journalctl --vacuum-size=1G
+
+2) To keep entries from the last year, you can type:
+
+    $ journalctl --vacuum-time=1years
+
+### Configuring journald (journalctl backend):
+
+$ vim /etc/systemd/journald.conf file.
+
+    SystemMaxUse=: Specifies the maximum disk space that can be used by the journal
+    in persistent storage.
+
+    SystemKeepFree=: Specifies the amount of space that the journal should leave
+    free when adding journal entries to persistent storage.
+
+    SystemMaxFileSize=: Controls how large individual journal files can grow to in
+    persistent storage before being rotated.
+
+    RuntimeMaxUse=: Specifies the maximum disk space that can be used in volatile
+    storage (within the /run filesystem).
+
+    RuntimeKeepFree=: Specifies the amount of space to be set aside for other uses
+    when writing data to volatile storage (within the /run filesystem).
+
+    RuntimeMaxFileSize=: Specifies the amount of space that an individual journal
+    file can take up in volatile storage (within the /run filesystem) before being
+    rotated.
 
 ---
 

@@ -429,3 +429,13 @@ SSH TUNNELS
 HOW TO MAKE A REVERSE SSH TUNNEL: http://xmodulo.com/access-linux-server-behind-nat-reverse-ssh-tunnel.html
 
 =====
+
+Send mail through the terminal:
+
+$ mail -a /opt/backup.sql -s "Backup File" user@example.com,user2@example.com < /dev/null
+
+, where:
+
+    -a is used for attachments
+    -s is used for defining subject for email.
+
