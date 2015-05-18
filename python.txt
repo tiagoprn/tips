@@ -422,7 +422,23 @@ Para lidar com valores decimais (principalmente MONETÁRIOS) em python é melhor
 
 ---
 
+Certificate problems installing pip or distro packages?
+That could mean your date (on the hardware clock!) is wrong (too old). Change it through the command-line and try again.
+
+---
+
+Assigning with a one-liner:
+
+http://stackoverflow.com/questions/14474168/using-statements-on-either-side-of-a-python-ternary-conditional
+
+E.g.:
+
+absolute_value = original_value if original_value >= 0 else (original_value * -1)
+
+---
+
 Gera um arquivo profile com o histórico de execução das chamadas:
+
     $ python -m cProfile -o log.prof [script.py]
 
     E.g.:
@@ -438,15 +454,75 @@ Gera um arquivo profile com o histórico de execução das chamadas:
 
 ---
 
-Certificate problems installing pip or distro packages?
-That could mean your date (on the hardware clock!) is wrong (too old). Change it through the command-line and try again.
+PROFILING A PYTHON FLASK APP:
+
+1) Code for profiling on a flask app __init__py, e.g. [*1]
+2) Call pyprof2calltree (pip/pypi: pyprof2calltree)
+    $ pyprof2calltree -k -i logs/profile.analysis
+    (-k will open "the kde app kcachegrind")
+3) on the left panel, click on the desired method. E.g.: __call__
+4) on the right panel, click on "Callee Map"
+5) Double click the call with most "%", or another desired one
+6) Go to the "Callers" tab (still on the right panel), and double click it 
+7) On the panel from the bottom, it'll show you where it spent the most time on
+
+
+```
+[*1] a flask app factory with profiler support
+
+def create_app():
+    from cProfile import Profile
+    pr = Profile()
+    class ProfiledFlask(Flask):
+        def __call__(self, environ, start_response):
+            ret = pr.runcall(super(ProfiledFlask, self).__call__,
+                             environ, start_response)
+            pr.dump_stats('logs/profile.analysis')
+            return ret
+
+    app = ProfiledFlask(__name__)
+    app.config.from_object('config')
+    # app.config.from_object('os.environ')
+
+    try:
+        if app.config['LOGGING_BACKEND'] == 'logstash':
+            log_handler = get_logstash_log_handler(app)
+        else:
+            log_handler = get_file_log_handler()
+    except:
+        log_handler = get_file_log_handler()
+
+
+    LOG_FORMATTER = logging.Formatter(
+        '[%(asctime)s - PID %(process)s - %(module)s.py - %(levelname)s] %(message)s')
+    log_handler.setFormatter(LOG_FORMATTER)
+    log_handler.setLevel(logging.DEBUG)
+
+    app.logger.addHandler(log_handler)
+
+    db.init_app(app)
+
+    @app.errorhandler(500)
+    def internal_error(exception):
+        app.logger.exception(exception)
+        return traceback.format_exc(), 500
+
+    bootstrap = Bootstrap(app)
+
+    # Establishes a connection with statsd for all the app lifecycle:
+    # app.statsd_instance = statsd.StatsClient(app.config['STATSD_HOSTNAME'],
+    #                                     app.config['STATSD_PORT'],
+    #                                     prefix=app.config['STATSD_NAMESPACE'])
+
+    app.register_blueprint(core_blueprint)
+    app.register_blueprint(lisa_blueprint, url_prefix='/lisa')
+    app.register_blueprint(spiders_blueprint, url_prefix='/spiders')
+    app.register_blueprint(fields_blueprint, url_prefix='/fields')
+
+    return app
+```
 
 ---
 
-Assigning with a one-liner:
 
-http://stackoverflow.com/questions/14474168/using-statements-on-either-side-of-a-python-ternary-conditional
 
-E.g.:
-
-absolute_value = original_value if original_value >= 0 else (original_value * -1)
