@@ -84,6 +84,7 @@ $ vim /etc/nginx/nginx.conf
 
 
 ---
-reference: https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration
-
-https://www.joedog.org/articles-tuning/ (that one shows step-by-step tuning of apache in a similar fashion assuming using "siege" to run the benchmarks.
+references:
+    - https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration
+    - http://blog.martinfjordvald.com/2011/04/optimizing-nginx-for-high-traffic-loads/
+    - https://www.joedog.org/articles-tuning/ (that one shows step-by-step tuning of apache in a similar fashion assuming using "siege" to run the benchmarks).
