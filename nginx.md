@@ -42,12 +42,21 @@ Here we are. "open files" has the value of 1024. That is the number of simultane
 ```
 $ vim /etc/nginx/nginx.conf
     worker_connections 1024;
-
 ```
 
 CONSIDERATIONS:
 
-    -A) In many cases the default here is 1024. If nginx hits the limit it will log the error (24: Too many open files) and return an http status code error to the client. Chances are nginx and your OS can handle a LOT more that 1024 "open files" (file descriptors). That value can be safely increased. You can do that setting the new value with ulimit ====================================== TODO: search how to set a nice "ulimit open_files" value.
+    -A) In many cases the default here is 1024. If nginx hits the limit it will log the error (24: Too many open files) and return an http status code error to the client. Chances are nginx and your OS can handle a LOT more that 1024 "open files" (file descriptors). That value can be safely increased. You can do that setting a new value with ulimit.
+        - For the current user session:
+            ```
+            $ ulimit -n 16384
+            ```
+        - Permanently, and for all users / sesssions::
+            ```
+            $ vim /etc/security/limits.conf
+                soft nofile 16384 (value the kernel enforces)
+                hard nofile 16384 (ceiling for the value above - a "maximum")
+            ```
 
     -B) A nice formula to get an idea of the MAX number of connections is:
         ```
