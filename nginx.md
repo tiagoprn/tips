@@ -14,14 +14,30 @@ $ vim /etc/nginx/nginx.conf
     worker_processes 1;
 ```
 
-2) Get the number of simultaneous connections that can be served by Nginx. Important to have in mind that every browser usually opens up at least 2 connections per server, so that number can half. So, to get the number:
+2) You must know your system limitations. Almost any one of them you can't do anything to surpass, except for one (open files). To get those limitations:
 
 ```
-$ ulimit -n
-> 1024
+$ ulimit -a
+
+> core file size          (blocks, -c) 0
+data seg size           (kbytes, -d) unlimited
+scheduling priority             (-e) 30
+file size               (blocks, -f) unlimited
+pending signals                 (-i) 23457
+max locked memory       (kbytes, -l) unlimited
+max memory size         (kbytes, -m) unlimited
+open files                      (-n) 1024
+pipe size            (512 bytes, -p) 8
+POSIX message queues     (bytes, -q) 819200
+real-time priority              (-r) 99
+stack size              (kbytes, -s) 8192
+cpu time               (seconds, -t) unlimited
+max user processes              (-u) 23457
+virtual memory          (kbytes, -v) unlimited
+file locks                      (-x) unlimited
 ```
 
-The value got there is a good starting number. Keep in mind that this number can be multiplied by the amount of cores. So:
+Here we are. "open files" has the value of 1024. That is the number of simultaneous connections that can be served by Nginx. Important to have in mind that every browser usually opens up at least 2 connections per server, so that number can half. You must also keep in mind that this halfed number can be multiplied by the amount of cores. So:
 
 ```
 $ vim /etc/nginx/nginx.conf
@@ -29,9 +45,7 @@ $ vim /etc/nginx/nginx.conf
 
 ```
 
-NOTE: that limitation can be mitigated with tuning of the "keepalive_timeout" directive, that will be explained below at [4].
-
-====================================== TODO: search for if and then how you can raise ulimit value.
+NOTE: in many cases the default here is 1024. If nginx hits the limit it will log the error (24: Too many open files) and return an http status code error to the client. Chances are nginx and your OS can handle a LOT more that 1024 "open files" (file descriptors). That value can be safely increased. You can do that setting the new value with ulimit ====================================== TODO: search how to set a nice "ulimit open_files" value.
 
 3) Configure the buffers. If anyone of them is too low, nginx will have to write to a temp file causing high I/O. There are mainly 4 directives to control that:
 
