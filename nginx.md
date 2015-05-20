@@ -49,15 +49,28 @@ CONSIDERATIONS:
     -A) In many cases the default here is 1024. If nginx hits the limit it will log the error (24: Too many open files) and return an http status code error to the client. Chances are nginx and your OS can handle a LOT more that 1024 "open files" (file descriptors). That value can be safely increased. You can do that setting a new value with ulimit.
         - For the current user session:
             ```
-            $ ulimit -n 16384
+            $ ulimit -n 600000
             ```
-        - Permanently, and for all users / sesssions::
+        - Permanently, and for all users / sessions:
             ```
             $ vim /etc/security/limits.conf
-                soft nofile 16384 (value the kernel enforces)
-                hard nofile 16384 (ceiling for the value above - a "maximum")
+                soft nofile 600000 (value the kernel enforces)
+                hard nofile 600000 (ceiling for the value above - a "maximum")
             ```
         To check the modification was applied, run "ulimit -a" again and search for the "open files" value.
+
+        And you must also set the corresponding parameter on sysctl:
+        - For the current user session:
+            ```
+            $ sysctl -w fs.file-max=600000
+            ```
+        - Permanently, and for all users / sessions:
+            ```
+            $ vim /etc/sysctl.conf
+                fs.file-max=600000
+            ```
+        To check the modification was applied, run "sysctl -a" again and search for the "open files" value. To ease finding that parameter, you can apply a grep filter:
+            $ sysctl -a | grep 'fs.file-max'
 
     -B) A nice formula to get an idea of the MAX number of connections is:
         ```
