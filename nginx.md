@@ -25,7 +25,7 @@ The value got there is a good starting number. Keep in mind that this number can
 
 ```
 $ vim /etc/nginx/nginx.conf
-    worker_processes 1024;
+    worker_connections 1024;
 
 ```
 
@@ -46,10 +46,11 @@ NOTE: that limitation can be mitigated with tuning of the "keepalive_timeout" di
 E.g.:
 
 ```
-client_body_buffer_size 10K;
-client_header_buffer_size 1k;
-client_max_body_size 8m;
-large_client_header_buffers 2 1k;
+$ vim /etc/nginx/nginx.conf
+    client_body_buffer_size 10K;
+    client_header_buffer_size 1k;
+    client_max_body_size 8m;
+    large_client_header_buffers 2 1k;
 ```
 
 4) Configure the timeouts.
@@ -65,16 +66,18 @@ The following directives are available:
 E.g.:
 
 ```
-client_body_timeout 12;
-client_header_timeout 12;
-keepalive_timeout 15;
-send_timeout 10;
+$ vim /etc/nginx/nginx.conf
+    client_body_timeout 12;
+    client_header_timeout 12;
+    keepalive_timeout 15;
+    send_timeout 10;
 ```
 
 5) If you have any other way to log every request made to server (E.g., Google Analytics), it may be good to turn off the access_log:
 
 ```
-access_log off;
+$ vim /etc/nginx/nginx.conf
+    access_log off;
 ```
 
 6) Restart the nginx service (systemd / upstart / init.d) and do your measures again (you can use siege, ab or wrk/wrk2 for that).
