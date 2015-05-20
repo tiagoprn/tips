@@ -57,6 +57,7 @@ CONSIDERATIONS:
                 soft nofile 16384 (value the kernel enforces)
                 hard nofile 16384 (ceiling for the value above - a "maximum")
             ```
+        To check the modification was applied, run "ulimit -a" again and search for the "open files" value.
 
     -B) A nice formula to get an idea of the MAX number of connections is:
         ```
