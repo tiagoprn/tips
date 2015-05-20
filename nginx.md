@@ -45,7 +45,16 @@ $ vim /etc/nginx/nginx.conf
 
 ```
 
-NOTE: in many cases the default here is 1024. If nginx hits the limit it will log the error (24: Too many open files) and return an http status code error to the client. Chances are nginx and your OS can handle a LOT more that 1024 "open files" (file descriptors). That value can be safely increased. You can do that setting the new value with ulimit ====================================== TODO: search how to set a nice "ulimit open_files" value.
+CONSIDERATIONS:
+
+    -A) In many cases the default here is 1024. If nginx hits the limit it will log the error (24: Too many open files) and return an http status code error to the client. Chances are nginx and your OS can handle a LOT more that 1024 "open files" (file descriptors). That value can be safely increased. You can do that setting the new value with ulimit ====================================== TODO: search how to set a nice "ulimit open_files" value.
+
+    -B) A nice formula to get an idea of the MAX number of connections is:
+        ```
+        max = worker_processes * worker_connections * (total_of_current_active_connections / average_request_time)
+        ```
+        If you are using nginx as a reverse proxy (e.g. using uwsgi), each request will always open up an additional connection to your backend. So, on that case, you must consider 1 connection as in fact being 2.
+
 
 3) Configure the buffers. If anyone of them is too low, nginx will have to write to a temp file causing high I/O. There are mainly 4 directives to control that:
 
@@ -94,7 +103,22 @@ $ vim /etc/nginx/nginx.conf
     access_log off;
 ```
 
-6) Restart the nginx service (systemd / upstart / init.d) and do your measures again (you can use siege, ab or wrk/wrk2 for that).
+6) Avoid disk I/O at all costs (on your backend and on the server). Take into consideration that a low ram machine will need to swap to disk, and that swap is disk I/O.
+
+
+7) Talking about Disk I/O, it is nice to cache the open file descriptors. Here are the available directives for that: http://wiki.nginx.org/HttpCoreModule#open_file_cache
+
+8) Compress the data to be transfered through the network. Don't worry with the CPU penalty because Nginx is already optimized to deal with the required amount of CPU load. To do that:
+
+```
+$ vim /etc/nginx/nginx.conf
+    gzip             on;
+    gzip_min_length  1000;
+    gzip_types       text/plain application/xml application/json;
+    gzip_comp_level 5
+```
+
+9) Restart the nginx service (systemd / upstart / init.d) and do your measures again (you can use siege, ab or wrk/wrk2 for that).
 
 
 ---
