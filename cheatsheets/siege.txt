@@ -1,0 +1,4 @@
+Using siege, and tuning up Apache to it: https://www.joedog.org/articles-tuning/
+
+
+
