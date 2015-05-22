@@ -54,8 +54,8 @@ CONSIDERATIONS:
         - Permanently, and for all users / sessions:
             ```
             $ vim /etc/security/limits.conf
-                soft nofile 600000 (value the kernel enforces)
-                hard nofile 600000 (ceiling for the value above - a "maximum")
+                * soft nofile 600000 (value the kernel enforces)
+                * hard nofile 600000 (ceiling for the value above - a "maximum")
             ```
         To check the modification was applied, run "ulimit -a" again and search for the "open files" value.
 

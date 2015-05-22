@@ -90,3 +90,8 @@ QUERIES (examples):
             Below I sort by "id DESC":
             > db.extractions_quality_summary.find({"_site_name": "Pneus Albuquerque"}).sort({"id": -1})
 
+            SELECT * FROM spider_runs WHERE finish_time is NOT NULL
+            > db.spider_runs.find({"finish_time": {"$ne": null}});
+
+            QUANTIDADE DE ITEMS EM UM SPIDER_RUN_ID:
+            > db.items.count({"spider_run_id" : ObjectId("555e2b8e0bd0d30011b21a4c")})
