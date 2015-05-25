@@ -19,8 +19,10 @@ pymark:
     - gitlab
     - postgresql
 
-The "ports" section on fig.yml as "10080:80" means the docker host will use port 10080 to communicate with the container, but the "pymark" container will communicate with the "gitlab" container through port 80, and NOT port 10080. 
+The "ports" section on fig.yml as "10080:80" means the docker host will use port 10080 to communicate with the container, but the "pymark" container will communicate with the "gitlab" container through port 80, and NOT port 10080.
 
-- 
+- Cleanup docker volumes:
+
+https://github.com/chadoe/docker-cleanup-volumes
 
 
