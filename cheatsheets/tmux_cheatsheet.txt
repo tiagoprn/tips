@@ -11,7 +11,10 @@ UNIVERSAL SHORTCUT:
 ---
 
 ## SESSIONS
-    NOTE:  the "-2" is to keep the colors
+    NOTES:
+        - the "-2" is to keep the colors
+        - detach is the same as to "disconnect" from the session, but keep it running.
+        - attach is the same as to "connect" to one of the existing sessions.
 
     Create:                             tmux -2 new -s <session-name>
     List:                               C-a s (OR: $ tmux ls)
@@ -24,10 +27,11 @@ UNIVERSAL SHORTCUT:
     Create:                 C-a c
     Rename:                 C-a ,
     List:                   C-a w
-    Horizontal Split:       C-a %ó
+    Horizontal Split:       C-a %
     Vertical Split:         C-a "
     Go to next window:      C-a n
     Go to previous window:  C-a p
+    Kill current window:    C-a &
 
 ## PANES
     New horizontal pane:        C-a %
