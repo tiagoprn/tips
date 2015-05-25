@@ -25,11 +25,11 @@ MONGOEXPORT:
 
     #!/bin/bash
 
-    fields="sku,name,department,category,url,image_url,price,special_price,instalments,instalment_value,available,brand,tyre__width,tyre__aspect_ratio,tyre__rim_diameter,tyre__load_index,tyre__speed_rating"
+    fields="_id.id,ean,name,department,category,url,image_url,price,special_price,instalments,instalment_value,available,brand,tyre__width,tyre__aspect_ratio,tyre__rim_diameter,tyre__load_index,tyre__speed_rating"
 
     SPIDERS="extra gbg_pneus americanas pneu_free bridgestone casasbahia pneus_albuquerque pneustore pneu_plus pneumar kd_pneus hipervarejo pneusola colombo caçula_de_pneus tireshop dellavia walmart autoz itaro pneus_facil pontofrio magazine_luiza dpaschoal"
 
-    for spider in $SPIDERS; do mongoexport --host 10.0.200.100 -d test2 -c items -q "{\"_meta.spider_name\": \"$spider\"}" -f $fields --csv > ./$spider.csv; done
+    for spider in $SPIDERS; do mongoexport --host 10.0.200.100 -d test2 -c items -q "{\"_meta.spider_name\": \"$spider\", \"_spider_run_id\": ObjectId(\"555f9343075ce800101dedb5\")}" -f $fields --csv > ./$spider.csv; done
 
 
 QUERIES (examples):
