@@ -6,3 +6,5 @@ Mudar o status em realtime:
 
 Obter o status (por exemplo, antes e após de mudar o status):
     $ getenforce
+
+https://www.digitalocean.com/community/tutorials/an-introduction-to-selinux-on-centos-7-part-1-basic-concepts
