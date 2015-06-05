@@ -95,3 +95,5 @@ QUERIES (examples):
 
             QUANTIDADE DE ITEMS EM UM SPIDER_RUN_ID:
             > db.items.count({"spider_run_id" : ObjectId("555e2b8e0bd0d30011b21a4c")})
+
+            > db.spider_runs.find({"finish_time":{"$ne":null}}).sort({'_id':-1}).limit(7);

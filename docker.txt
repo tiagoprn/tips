@@ -25,4 +25,6 @@ The "ports" section on fig.yml as "10080:80" means the docker host will use port
 
 https://github.com/chadoe/docker-cleanup-volumes
 
-
+- Entering a running container:
+    $ docker exec -it [myContainer] bash
+  (there is no more the need to install docker-enter or use nsenter)
