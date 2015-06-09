@@ -57,19 +57,37 @@ IMPORTANTE: A alteração na callback "login" acima é apenas para fazer o "scra
 
 ```
 product_view = response.css('.container2')
-button_buy = product_view.css(
-	'#button-buy img').xpath('@alt').extract()[0]
+try:
+    button_buy = product_view.css(
+        	'#button-buy img').xpath('@alt').extract()[0]
+except:
+    button_buy = ''
 available = True if button_buy.lower().strip() == 'comprar' else False
 item.add_value('available', available)
 ```
 
-## Gets availability based on the existance of a "buy" button "value" attribute:
+## Gets availability based on the existance of an input with "value" attribute:
 
 ```
 product_view = response.css('.single')
-button_buy = product_view.css(
-    'input.bt_green').xpath('@value').extract()[0]
+try:
+    button_buy = product_view.css(
+        'input.bt_green').xpath('@value').extract()[0]
+except:
+    button_buy = ''
 available = True if button_buy.lower().strip() == 'comprar' else False
+item.add_value('available', available)
+```
+
+## Gets availability based on the existance of an input with "name" attribute
+```
+product_view = response.css('.container')
+btn_xpath = '//*[@id="bloco_preco"]/div/form/div[2]/div/input[4]/@name'
+try:
+    button_buy = product_view.xpath(btn_xpath).extract()[0]
+except:
+    button_buy = ''
+available = True if button_buy.lower().strip() == 'submit' else False
 item.add_value('available', available)
 ```
 

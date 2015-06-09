@@ -31,7 +31,6 @@ MONGOEXPORT:
 
     for spider in $SPIDERS; do mongoexport --host 10.0.200.100 -d test2 -c items -q "{\"_meta.spider_name\": \"$spider\", \"_spider_run_id\": ObjectId(\"555f9343075ce800101dedb5\")}" -f $fields --csv > ./$spider.csv; done
 
-
 QUERIES (examples):
 
     FIND / COUNT:
@@ -98,3 +97,30 @@ QUERIES (examples):
             > db.items.count({"spider_run_id" : ObjectId("555e2b8e0bd0d30011b21a4c")})
 
             > db.spider_runs.find({"finish_time":{"$ne":null}}).sort({'_id':-1}).limit(7);
+
+---
+
+HOW TO GET A LIST OF ALL KEYS FROM A Collection:	
+(adapted from: http://stackoverflow.com/questions/2298870/mongodb-get-names-of-all-keys-in-collection)
+
+On the mongo client (mongo), type the following code:
+
+
+```
+use crawler_data;
+
+var my_collection_name = "items"
+
+mr = db.runCommand({
+  "mapreduce" : my_collection_name,
+  "map" : function() {
+    for (var key in this) { emit(key, null); }
+  },
+  "reduce" : function(key, stuff) { return null; }, 
+  "out": my_collection_name + "_keys"
+});
+
+db[mr.result].distinct("_id")	
+```
+
+---
