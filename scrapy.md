@@ -1,5 +1,7 @@
 - CRAWLER FULL:
 
+product_view.css('.produto-principal img').xpath('@src').extract()[0]
+
 $ scrapy crawl [SPIDER_NAME]
 Ex.:
     $ scrapy crawl walmart
@@ -47,3 +49,27 @@ Ex.:
         $ scrapy parse -d 5 'http://www.westwing.com.br/JOGO-DE-TACAS-DE-AGUA-MADU-360ML-668851.html?c=engrandeca-refeicoes1' --spider=westwing --callback=login --pipelines
 
 IMPORTANTE: A alteração na callback "login" acima é apenas para fazer o "scrapy parse", para usar normalmente o "scrapy crawl" eu devo deixar como está em "ORIGINAL PARA SCRAPY CRAWL."
+
+
+# SNIPPETS
+
+## Gets availability based on the existance of a "buy" button "alt" attribute:
+
+```
+product_view = response.css('.container2')
+button_buy = product_view.css(
+	'#button-buy img').xpath('@alt').extract()[0]
+available = True if button_buy.lower().strip() == 'comprar' else False
+item.add_value('available', available)
+```
+
+## Gets availability based on the existance of a "buy" button "value" attribute:
+
+```
+product_view = response.css('.single')
+button_buy = product_view.css(
+    'input.bt_green').xpath('@value').extract()[0]
+available = True if button_buy.lower().strip() == 'comprar' else False
+item.add_value('available', available)
+```
+

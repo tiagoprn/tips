@@ -72,6 +72,7 @@ QUERIES (examples):
             > db.items.find({"_id.site": "PontoFrio"})
             > db.items.count({"_id.site": "PontoFrio"})
             > db.items.runCommand({"distinct": "items", "key": "_id.site"})
+	    > db.spider_runs.runCommand({"distinct": "spider_runs", "key": "site"})	
             > db.items.findOne({'_meta.spider_name':'poloar'})
 
             >
