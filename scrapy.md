@@ -6,6 +6,12 @@ $ scrapy crawl [SPIDER_NAME]
 Ex.:
     $ scrapy crawl walmart
 
+    OU 
+
+    $ nohup scrapy crawl walmart -s CONCURRENT_REQUESTS=24 -s CONCURRENT_REQUESTS_PER_DOMAIN=24 -s CONCURRENT_REQUESTS_PER_IP=24 > /spider_out/walmart.log
+
+	
+
 # CRAWLER APENAS UMA PÁGINA:
 
 ## Página que NÃO precisa de login:
@@ -53,6 +59,9 @@ IMPORTANTE: A alteração na callback "login" acima é apenas para fazer o "scra
 
 # SNIPPETS
 
+## Verificar quantas páginas estão sendo scrapeadas (efetivamente parseadas) por minuto:
+	$ tail -f /spider_out/tireshop.log | grep scraped
+
 ## Gets availability based on the existance of a "buy" button "alt" attribute:
 
 ```
@@ -90,4 +99,20 @@ except:
 available = True if button_buy.lower().strip() == 'submit' else False
 item.add_value('available', available)
 ```
+
+CURIOSIDADE:
+
+Poderia usar o wget para descobrir todos os produtos de um site:
+
+	$ wget --wait 1 --recursive --no-clobber --convert-links --follow-tags=a --background --domains maisqpneu.com.br http://www.maisqpneu.com.br
+
+Ele gera um arquivo wget[*].log. 
+
+Nesse arquivo, eu posso aplicar um grep:
+
+	$ tail -f wget-log | grep 'http:'
+
+Para assim descobrir todas as URLs, para daí descobrir os padrões das que são de produto. 
+
+
 
