@@ -1,0 +1,4 @@
+Find all hosts on a network:
+$ nmap -sP 192.168.0.1/24
+
+
