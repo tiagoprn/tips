@@ -439,3 +439,14 @@ $ mail -a /opt/backup.sql -s "Backup File" user@example.com,user2@example.com < 
     -a is used for attachments
     -s is used for defining subject for email.
 
+=====
+
+Substituir texto recursivamente em todos os arquivos de um diretório:
+
+cd /home/www
+
+find . -type f -print0 | xargs -0 sed -i 's/subdomainA.example.com/subdomainB.example.com/g'
+
+=====
+
+
