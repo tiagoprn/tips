@@ -85,3 +85,19 @@
         Redelivered
             Rate at which messages with the 'redelivered' flag set are being delivered. For example if you don't get a acknowledge message for a delivered message, you will deliver this message again.
 
+
+- rabbitmqadmin: Admin CLI interface for rabbitmq
+
+- INSTALLATION:
+
+	1) Download from the host where it was installed: 
+		$ wget http://localhost:15672/cli/
+
+	2) Copy it as a binary and change the permissions:
+		$ chmod 755 rabbitmqadmin
+		$ cp -farv rabbitmqadmin /usr/bin
+
+- DELETE ALL QUEUES:
+	rabbitmqadmin list queues name | awk '{print $2}' | xargs -I qn rabbitmqadmin delete queue name=qn
+
+

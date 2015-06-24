@@ -3,13 +3,15 @@
 product_view.css('.produto-principal img').xpath('@src').extract()[0]
 
 $ scrapy crawl [SPIDER_NAME]
-Ex.:
-    $ scrapy crawl walmart
+Exs.:
+    - Simples: 	 
+	    $ scrapy crawl walmart
 
-    OU 
+    - Persistindo log:
+	    $ nohup scrapy crawl walmart -s CONCURRENT_REQUESTS=24 -s CONCURRENT_REQUESTS_PER_DOMAIN=24 -s CONCURRENT_REQUESTS_PER_IP=24 > /spider_out/walmart.log
 
-    $ nohup scrapy crawl walmart -s CONCURRENT_REQUESTS=24 -s CONCURRENT_REQUESTS_PER_DOMAIN=24 -s CONCURRENT_REQUESTS_PER_IP=24 > /spider_out/walmart.log
-
+    - Persistindo log, e gerando um CSV com os itens scrapeados:
+	    $ nohup scrapy crawl pontofrio -s CONCURRENT_REQUESTS=16 -s CONCURRENT_REQUESTS_PER_DOMAIN=16 -s CONCURRENT_REQUESTS_PER_IP=16 -s AUTOTHROTTLE_ENABLED=0  -o /spider_out/pontofrio.csv > /spider_out/pontofrio2.log &
 	
 
 # CRAWLER APENAS UMA PÁGINA:
