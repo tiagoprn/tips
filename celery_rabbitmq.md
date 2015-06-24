@@ -91,7 +91,8 @@
 - INSTALLATION:
 
 	1) Download from the host where it was installed: 
-		$ wget http://localhost:15672/cli/
+		On the web interface, go to "http://localhost:15672/cli/".
+		$ wget [the_url_pointed_above]
 
 	2) Copy it as a binary and change the permissions:
 		$ chmod 755 rabbitmqadmin
