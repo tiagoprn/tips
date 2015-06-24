@@ -41,6 +41,12 @@ QUERIES (examples):
     REMOVE (DELETE):
         db.items.remove({"_id.site": "Arcondicionado"})
 
+    DROP DATABASE:
+	(use with caution, it does NOT ask for confirmation!)
+	use database_to_drop
+        db.dropDatabase()
+
+
     GET INDEXES:
         db.items.getIndexes()
 
