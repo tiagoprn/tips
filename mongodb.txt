@@ -130,3 +130,16 @@ db[mr.result].distinct("_id")
 ```
 
 ---
+
+HOW TO MAKE FIELD CASTINGS: 
+
+// String to Integer
+
+db.db-name.find({field-name : {$exists : true}}).forEach( function(obj) { obj.field-name = new NumberInt( obj.field-name ); db.db-name.save(obj); } );
+
+// Integer to String
+
+db.db-name.find({field-name : {$exists : true}}).forEach( function(obj) { obj.field-name = ""+obj.field-name; db.db-name.save(obj); } );
+
+---
+
