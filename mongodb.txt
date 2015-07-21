@@ -140,6 +140,10 @@ db.db-name.find({field-name : {$exists : true}}).forEach( function(obj) { obj.fi
 // Integer to String
 
 db.db-name.find({field-name : {$exists : true}}).forEach( function(obj) { obj.field-name = ""+obj.field-name; db.db-name.save(obj); } );
+	E.g.: 
+		db.items.find({"_id.id" : {$exists : true}}).forEach( function(obj) { obj._id.id = ""+obj._id.id; db.items.save(obj); } );
+		db.items.find({"_meta.spider_name": 'casas_bahia', "_id.id" : {$exists : true}}).forEach( function(obj) { obj._id.id = ""+obj._id.id; db.items.save(obj); } );
+		db.items.find({"_meta.spider_name": 'autoz', "ean" : {$exists : true}}).forEach( function(obj) { obj.ean = ""+obj.ean; db.items.save(obj); } );
 
 ---
 
