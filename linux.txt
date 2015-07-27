@@ -449,4 +449,26 @@ find . -type f -print0 | xargs -0 sed -i 's/subdomainA.example.com/subdomainB.ex
 
 =====
 
+Swapfile:
+
+1) Create the file that will be the swapfile:
+    $ dd if=/dev/zero of=/swapfile bs=1024 count=10000000
+    In this example, it will create a swapfile as /swapfile with ~10GB in size. 
+
+2) Secure the file, otherwise it will not be used on fstab:
+    $ chown root:root /swapfile
+    $ chmod 0600 /swapfile
+
+3) Create a swap filesystem on the file:
+    $ mkswap /swapfile
+
+4) Enable the swapfile immediately:
+    $ swapon /swapfile
+
+5) Permanently add the swapfile to /etc/fstab:
+    /swapfile none swap sw 0 0
+
+=====
+
+
 
