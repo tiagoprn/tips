@@ -147,3 +147,10 @@ db.db-name.find({field-name : {$exists : true}}).forEach( function(obj) { obj.fi
 
 ---
 
+Status de um servidor mongo:
+
+	db.serverStatus()
+
+
+---
+
