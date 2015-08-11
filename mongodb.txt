@@ -42,7 +42,7 @@ QUERIES (examples):
         db.items.remove({"_id.site": "Arcondicionado"})
 
     DROP DATABASE:
-	(use with caution, it does NOT ask for confirmation!)
+        IMPORTANT: use with caution, it does not ask for confirmation.
 	use database_to_drop
         db.dropDatabase()
 
@@ -61,6 +61,9 @@ QUERIES (examples):
         });
         (Equivalent in SQL: SELECT spider_run_id, save_time FROM queues)
 
+
+    UPDATE: 
+	For that, you must use "db.collection.find_and_modify()" .
 
     SHOW ALL DATABASES ON A MONGO INSTANCE:
         $ show dbs;
