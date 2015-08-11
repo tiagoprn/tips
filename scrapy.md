@@ -120,12 +120,18 @@ Para assim descobrir todas as URLs, para daí descobrir os padrões das que são
 
 Ao debugar um item com o scrapy parse, como pegar os valores coletados para ele:
 
-Suposing:
-	item.add_css('name', '.productName::text')                                                                                                                 
-	item.add_xpath('image_url',  'id("image-main")/@src')    
+	item.load_item()
 
-I can get does values on ipdb with:
-	item.get_collected_values('name')
-	item.get_collected_values('image_url')
+	OR
+
+	Suposing:
+		item.add_css('name', '.productName::text')                                                                                                                 
+		item.add_xpath('image_url',  'id("image-main")/@src')    
+
+	I can get does values on ipdb with:
+		item.get_collected_values('name')
+		item.get_collected_values('image_url')
+
+
 
 ---
