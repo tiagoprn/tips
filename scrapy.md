@@ -132,6 +132,17 @@ Ao debugar um item com o scrapy parse, como pegar os valores coletados para ele:
 		item.get_collected_values('name')
 		item.get_collected_values('image_url')
 
+---
 
+Pegar informações das tags meta property og (Facebook Open Graph) via xpath:
+
+E.g. 1: <meta property="og:product:price:amount" content="R$2.399,00"/>
+	response.xpath('/html/head/meta[@property="og:product:price:amount"]/@content').extract()
+
+E.g. 2: <meta property="og:title" content="Roçadeira Florestal Husqvarna 345FR"/>
+	response.xpath('/html/head/meta[@property="og:title"]/@content').extract()
 
 ---
+
+
+
