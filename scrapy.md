@@ -144,5 +144,13 @@ E.g. 2: <meta property="og:title" content="Roçadeira Florestal Husqvarna 345FR"
 
 ---
 
+Pegar o text de todos os li abaixo de um ul:
+	
+E.g.:
+	response.xpath('/html/body/div/div/div[3]/div/div/div/div/ul/descendant::*/text()').extract()
+
+
+---
+
 
 
