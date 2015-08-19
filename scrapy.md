@@ -152,5 +152,14 @@ E.g.:
 
 ---
 
+Para passar uma lista de URLs para ele crawler, a boa prática parece ser sobrescrever o método "start_requests" dos spiders desejados. (ou posso adicionar essa opção na classe pai). 
+O Scrapy tem uma API para ser chamado por um outro script, por exemplo. Aqui está a API: http://doc.scrapy.org/en/latest/topics/api.html#topics-api
 
 
+---
+
+Good practices: http://doc.scrapy.org/en/latest/topics/practices.html
+
+Command-line tool: http://doc.scrapy.org/en/latest/topics/commands.html
+
+---
