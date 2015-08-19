@@ -18,10 +18,10 @@ Exs.:
 
 ## Página que NÃO precisa de login:
 
-    $ scrapy parse '[URL]' --spider=[SPIDER_NAME] --callback=[PARSE_CALLBACK_NAME] --pipelines
+    $ scrapy parse '[URL]' --spider=[SPIDER_NAME] --callback=[PARSE_CALLBACK_NAME] --pipelines --rules --depth 20
 
     Ex.:
-        $ scrapy parse 'http://www.walmart.com.br/produto/Telefonia/Smartphones/Motorola/471929-smatphone-motorola-x1-xt1097-android-4-camera-13mp-tela-5-quad-core-32gb-3g-4g-wi-fi-bluetoot' --spider=walmart --callback=parse_product --pipelines
+        $ scrapy parse 'http://www.ricardoeletro.com.br/Produto/Refrigerador-Geladeira-Electrolux-Frost-Free-2-Portas-380-Litros-Inox-DW42X/256-270-274-85169' --spider=ricardo_eletro --callback=parse_product --pipelines  --rules --depth 20
 
 ## Scrapy parse de uma callback onde a página precisa de um login:
 
