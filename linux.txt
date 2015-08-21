@@ -470,5 +470,10 @@ Swapfile:
 
 =====
 
+CHANGE HOSTNAME (centos / systemd enable distributions):
+	$ hostnamectl set-hostname mt-extracoes-business_utils
+
+	To check it really changed:
+		$ hostnamectl status
 
 
