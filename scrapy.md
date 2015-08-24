@@ -163,3 +163,12 @@ Good practices: http://doc.scrapy.org/en/latest/topics/practices.html
 Command-line tool: http://doc.scrapy.org/en/latest/topics/commands.html
 
 ---
+
+Pegar informações das tags meta via xpath:
+
+E.g.:
+	TAG.....: <meta itemprop="productID" content="sku:1025p" />
+
+	XPATH...: response.xpath('.//*[@itemprop="productID"]/@content').extract()
+
+
