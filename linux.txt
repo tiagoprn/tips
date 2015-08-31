@@ -482,4 +482,15 @@ CHANGE HOSTNAME (centos / systemd enable distributions):
 		$ vim /etc/hostname (type the hostname in the file).
 		$ hostname -F /etc/hostname
 
+===
+
+awk: usado para pegar uma "coluna" específica da saída de um comando do terminal. Combinado com o grep e o cat, pode ser uma maneira simples de fazer filtros em saídas de comando do terminal. 
+
+Ex.:
+
+	Para pegar a primeira coluna do "docker ps":
+		$ docker ps | awk '{print $1}'
+
+OBS.: O awk faz o split das colunas por espaço. Portanto, se em uma das linhas eu tiver um espaço a mais posso trazer as colunas trocadas.
+
 
