@@ -503,6 +503,9 @@ Ajustar timezone do SO Para fuso horário do Brasil e configurar NTP:
 1) Seta a timezone do SO para o fuso horário do Brasil (São Paulo)
 
 	$ ln –s /usr/share/zoneinfo/Brazil/East /etc/localtime
+    
+    Se não funcionar: 
+        $ cp -farv /usr/share/zoneinfo/Brazil/East /etc/localtime
 
 2) Instala o ntp 
 
