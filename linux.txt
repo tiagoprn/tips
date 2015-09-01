@@ -496,4 +496,31 @@ Ex.:
 
 OBS.: O awk faz o split das colunas por espaço. Portanto, se em uma das linhas eu tiver um espaço a mais posso trazer as colunas trocadas.
 
+===
+
+Ajustar timezone do SO Para fuso horário do Brasil e configurar NTP:
+
+1) Seta a timezone do SO para o fuso horário do Brasil (São Paulo)
+
+	$ ln –s /usr/share/zoneinfo/Brazil/East /etc/localtime
+
+2) Instala o ntp 
+
+	$ yum install ntp
+
+3) Edita o arquivo para usar o pool de servidores do Brasil:
+
+$ vim /etc/ntp.conf
+
+Trocar a linha "server" para:
+
+server br.pool.ntp.org
+
+4) Habilita e inicia o daemon:
+
+	$ service ntpd enable
+	$ service ntpd start 
+
+===
+
 
