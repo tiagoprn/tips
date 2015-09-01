@@ -491,6 +491,9 @@ Ex.:
 	Para pegar a primeira coluna do "docker ps":
 		$ docker ps | awk '{print $1}'
 
+	Para pegar mais de uma coluna:
+		$ ps aux | grep worker.py | awk '{print $2, $9, $10, $12, $13, $14, $15, $16, $17, $18}'
+
 OBS.: O awk faz o split das colunas por espaço. Portanto, se em uma das linhas eu tiver um espaço a mais posso trazer as colunas trocadas.
 
 
