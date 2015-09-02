@@ -28,3 +28,42 @@ https://github.com/chadoe/docker-cleanup-volumes
 - Entering a running container:
     $ docker exec -it [myContainer] bash
   (there is no more the need to install docker-enter or use nsenter)
+
+- Docker taking up too much space: 
+
+	That is due to not using the "overlay (fs)" storage driver. You can check the driver being used with:
+
+		$ docker info
+	
+		Check on that for "Storage Driver". If that is different from "overlay" (e.g. "devicemapper" ) - that is the reason. 
+
+		Now you must search your distro on how to enable "overlay (fs)" with docker (linux kernel >= 3.18 required).
+
+			- For CentOS: http://www.projectatomic.io/blog/2015/06/notes-on-fedora-centos-and-docker-storage-drivers/
+
+			- For Arch:
+				1) Stop the docker service, uninstall docker, and remove its filesystem directory:
+					$ systemctl stop docker
+					$ pacman -Rd docker
+					$ rm -fr /var/lib/docker
+
+				2) Configure the overlay:	 
+					$ modprobe overlay (enables the kernel module, available since linux kernel 3.18)
+					$ lsmod | grep overlay (must return something)
+					$ vim /usr/lib/systemd/system/docker.service
+						Change the line "ExecStart" to:	
+							ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver overlay
+
+				3) Reinstall docker:
+					$ pacman -Sy
+					$ pacman -S docker
+					$ systemctl enable docker 
+					$ systemctl start docker
+					$ docker info (you must see "Storage Driver" as "overlay").
+				
+
+
+		OBS.: Some posts advise the use of AUFS or BTRFS. As of september/2015, many posts on the internet say both are still too unstable. 
+		      CoreOS, e.g., moved from BTRFS to EXT4+OverlayFS according to https://www.phoronix.com/scan.php?page=news_item&px=CoreOS-Btrfs-To-EXT4-OverlayFS .
+
+
