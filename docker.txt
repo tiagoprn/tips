@@ -40,6 +40,14 @@ https://github.com/chadoe/docker-cleanup-volumes
 		Now you must search your distro on how to enable "overlay (fs)" with docker (linux kernel >= 3.18 required).
 
 			- For CentOS: http://www.projectatomic.io/blog/2015/06/notes-on-fedora-centos-and-docker-storage-drivers/
+				$ modprobe overlay
+				$ systemctl stop docker
+				$ rm -fr /var/lib/docker
+				$ vim /etc/sysconfig/docker
+					DOCKER_STORAGE_OPTIONS= -s overlay
+				$ systemctl start docker
+				$ docker info
+
 
 			- For Arch:
 				1) Stop the docker service, uninstall docker, and remove its filesystem directory:
@@ -61,9 +69,45 @@ https://github.com/chadoe/docker-cleanup-volumes
 					$ systemctl start docker
 					$ docker info (you must see "Storage Driver" as "overlay").
 				
-
-
 		OBS.: Some posts advise the use of AUFS or BTRFS. As of september/2015, many posts on the internet say both are still too unstable. 
 		      CoreOS, e.g., moved from BTRFS to EXT4+OverlayFS according to https://www.phoronix.com/scan.php?page=news_item&px=CoreOS-Btrfs-To-EXT4-OverlayFS .
+
+	Additional information:
+
+		When you use the storage driver "device mapper", you will have one or more loopback devices (loop*) with lsblk. E.g.:
+
+			$ sudo docker info
+			Containers: 0
+			Images: 0
+			Storage Driver: devicemapper
+			 Pool Name: docker-202:1-134217872-pool
+
+			$ lsblk
+			NAME                          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+			xvda                          202:0    0  100G  0 disk 
+			└─xvda1                       202:1    0  100G  0 part /
+			loop0                           7:0    0  100G  0 loop 
+			└─docker-202:1-134217872-pool 253:0    0  100G  0 dm   
+			loop1                           7:1    0    2G  0 loop 
+			└─docker-202:1-134217872-pool 253:0    0  100G  0 dm   
+
+		In contrast, on an Arch Linux box with the storage driver "overlay", you will see no loopback devices. E.g.:
+
+			$ docker info
+			Containers: 35
+			Images: 241
+			Storage Driver: overlay
+			 Backing Filesystem: extfs
+
+			$ lsblk
+			NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+			sda      8:0    0 931,5G  0 disk 
+			├─sda1   8:1    0 199,2G  0 part /
+			├─sda2   8:2    0     1K  0 part 
+			├─sda3   8:3    0 199,2G  0 part /crypted
+			├─sda4   8:4    0 527,2G  0 part /vault
+			└─sda5   8:5    0   5,9G  0 part 
+			sr0     11:0    1  1024M  0 rom  
+
 
 
