@@ -40,21 +40,19 @@ https://github.com/chadoe/docker-cleanup-volumes
 		Now you must search your distro on how to enable "overlay (fs)" with docker (linux kernel >= 3.18 required).
 
 			- For CentOS: http://www.projectatomic.io/blog/2015/06/notes-on-fedora-centos-and-docker-storage-drivers/
-				1) Enable the kernel module at boot:
-					$ vim /etc/modules-load.d/overlay
-						#!/bin/bash
-						exec /sbin/modprobe overlay  >/dev/null 2>&1
-					$ chmod 777 etc/modules-load.d/overlay
+				1) Enable the kernel module at boot (the conf file should just have the module name):
+					$ vim /etc/modules-load.d/overlay.conf
+						overlay
 				2) Reboot the machine				
 				3) Move on configuring overlay on docker:	
 					$ lsmod | grep overlay (to check that the module was raised)
 					$ systemctl stop docker
 					$ rm -fr /var/lib/docker
-					$ vim /etc/sysconfig/docker
-						DOCKER_STORAGE_OPTIONS= -s overlay
+					$ vim /usr/lib/systemd/system/docker.service
+						Change the line "ExecStart" to:	
+							ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver overlay
 					$ systemctl start docker
 					$ docker info
-
 
 			- For Arch:
 				1) Stop the docker service, uninstall docker, and remove its filesystem directory:
