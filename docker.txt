@@ -40,13 +40,20 @@ https://github.com/chadoe/docker-cleanup-volumes
 		Now you must search your distro on how to enable "overlay (fs)" with docker (linux kernel >= 3.18 required).
 
 			- For CentOS: http://www.projectatomic.io/blog/2015/06/notes-on-fedora-centos-and-docker-storage-drivers/
-				$ modprobe overlay
-				$ systemctl stop docker
-				$ rm -fr /var/lib/docker
-				$ vim /etc/sysconfig/docker
-					DOCKER_STORAGE_OPTIONS= -s overlay
-				$ systemctl start docker
-				$ docker info
+				1) Enable the kernel module at boot:
+					$ vim /etc/modules-load.d/overlay
+						#!/bin/bash
+						exec /sbin/modprobe overlay  >/dev/null 2>&1
+					$ chmod 777 etc/modules-load.d/overlay
+				2) Reboot the machine				
+				3) Move on configuring overlay on docker:	
+					$ lsmod | grep overlay (to check that the module was raised)
+					$ systemctl stop docker
+					$ rm -fr /var/lib/docker
+					$ vim /etc/sysconfig/docker
+						DOCKER_STORAGE_OPTIONS= -s overlay
+					$ systemctl start docker
+					$ docker info
 
 
 			- For Arch:
@@ -109,5 +116,8 @@ https://github.com/chadoe/docker-cleanup-volumes
 			└─sda5   8:5    0   5,9G  0 part 
 			sr0     11:0    1  1024M  0 rom  
 
+
+	Reasons to prefer overlay: Faster, more reliable, and it seems to be what the Docker core team are running on their own setups, so it’s likely the one that’s getting the most testing.
+	It also is in the Linux kernel proper as of 3.18. AUFS, on the other hand, was an out-of-tree kernel patchset, so each distro would have to evaluate if they would maintain it and put it into their kernel builds.
 
 
