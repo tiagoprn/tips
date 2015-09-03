@@ -43,7 +43,8 @@ https://github.com/chadoe/docker-cleanup-volumes
 				1) Enable the kernel module at boot (the conf file should just have the module name):
 					$ vim /etc/modules-load.d/overlay.conf
 						overlay
-				2) Reboot the machine				
+				2) To avoid rebooting the machine, load the kernel module manually:
+					$ modprobe overlay
 				3) Move on configuring overlay on docker:	
 					$ lsmod | grep overlay (to check that the module was raised)
 					$ systemctl stop docker
