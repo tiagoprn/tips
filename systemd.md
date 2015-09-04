@@ -44,7 +44,7 @@ http://www.freedesktop.org/software/systemd/man/systemd.service.html
 
 ### Monitoring specific daemons (e.g. docker and nginx):
 
-    $ journalctl -u nginx --since today
+    $ journalctl -o short -u nginx --since today
     $ journalctl -b -u docker --since today -o json-pretty
     $ journalctl -b -u docker --since today -o short
 
