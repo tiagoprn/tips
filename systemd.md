@@ -40,6 +40,7 @@ http://www.freedesktop.org/software/systemd/man/systemd.service.html
 ### How to view all journalctl log in real-time:
 
     $ journalctl -xn -f
+    $ journalctl -u docker -xn -f
 
 ### Monitoring specific daemons (e.g. docker and nginx):
 
