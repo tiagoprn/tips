@@ -52,6 +52,7 @@ https://github.com/chadoe/docker-cleanup-volumes
 					$ vim /usr/lib/systemd/system/docker.service
 						Change the line "ExecStart" to:	
 							ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver overlay
+					$ systemctl daemon-reload
 					$ systemctl start docker
 					$ docker info
 
@@ -67,6 +68,7 @@ https://github.com/chadoe/docker-cleanup-volumes
 					$ vim /usr/lib/systemd/system/docker.service
 						Change the line "ExecStart" to:	
 							ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver overlay
+					$ systemctl daemon-reload
 
 				3) Reinstall docker:
 					$ pacman -Sy
