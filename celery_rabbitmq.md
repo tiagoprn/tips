@@ -101,4 +101,8 @@
 - DELETE ALL QUEUES:
 	rabbitmqadmin list queues name | awk '{print $2}' | xargs -I qn rabbitmqadmin delete queue name=qn
 
+- If RabbitMQ fails to start, and you won't need to restore its persistent data, you can safely remove its mnesia database. 
+	E.g., on CentOS 7:
+		$ rm -fr /var/lib/rabbitmq/mnesia
+
 
