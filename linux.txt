@@ -526,4 +526,6 @@ server br.pool.ntp.org
 
 ===
 
+date command print with milliseconds:
 
+	$ date +%Y%m%d-%H%M%S-%N
