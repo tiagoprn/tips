@@ -27,7 +27,44 @@ Then run the following for your changes to take effect:
 # systemctl daemon-reload
 # systemctl restart [daemon_name]
 
-----
+---
+
+USING SYSTEMD TO START SOMETHING AT THE USER LOGIN. E.g.: tmux
+
+There are some notable advantages to starting a tmux server at startup.
+Notably, when you start a new tmux session, having the service already running
+reduces any delays in the startup.
+
+Furthermore, any customization attached to your tmux session will be retained
+and your tmux session can be made to persist even if you have never logged in,
+if you have some reason to do that (like a heavily scripted tmux configuration
+or shared user tmux sessions).
+
+The service below starts tmux for the specified user (i.e. start with
+tmux@username.service):
+
+/etc/systemd/system/tmux@.service
+
+[Unit]
+Description=Start tmux in detached session
+
+[Service]
+Type=forking
+User=%I
+ExecStart=/usr/bin/tmux new-session -s %u -d
+ExecStop=/usr/bin/tmux kill-session -t %u
+
+[Install]
+WantedBy=multi-user.target
+
+Tip: You may want to add WorkingDirectory=custom_path to customize working
+directory.
+
+Alternatively, you can place this file within your systemd/User directory
+(without User=%I), for example ~/.config/systemd/user/tmux.service. This way
+the tmux service will start when you log in.
+
+---
 
 The parameters supported by a systemd unit file:
 
