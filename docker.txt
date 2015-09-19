@@ -63,7 +63,10 @@ https://github.com/chadoe/docker-cleanup-volumes
 					$ rm -fr /var/lib/docker
 
 				2) Configure the overlay:	 
-					$ modprobe overlay (enables the kernel module, available since linux kernel 3.18)
+					$ vim /etc/modules-load.d/overlay.conf
+						overlay
+					(above will enable the kernel module at boot, available since linux kernel 3.18)
+					$ modprobe overlay (enables the kernel module NOW)
 					$ lsmod | grep overlay (must return something)
 					$ vim /usr/lib/systemd/system/docker.service
 						Change the line "ExecStart" to:	
