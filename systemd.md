@@ -31,6 +31,8 @@ Then run the following for your changes to take effect:
 
 USING SYSTEMD TO START SOMETHING AT THE USER LOGIN. E.g.: tmux
 
+https://wiki.archlinux.org/index.php/Systemd/User
+
 There are some notable advantages to starting a tmux server at startup.
 Notably, when you start a new tmux session, having the service already running
 reduces any delays in the startup.
