@@ -239,6 +239,10 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 * COPY A SSH KEY TO ANOTHER SERVER:
     $ ssh-copy-id -i ~/.ssh/id_rsa.pub -p [remote_ssh_port] remoteuser@192.168.0.200
 
+* I can also use a ".pem" file to ssh into a machine, like with amazon.
+    $ ssh -i my_file.pem user@remotehost
+
+
 * Current user UID / GID:
 
     $ id
