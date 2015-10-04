@@ -543,3 +543,18 @@ Toggle terminal full screen:
 [Ctrl][Shift]x
 
 ===
+
+How to avoid "broken pipe" messages on connecting to a SSH server:
+
+$ vim ~/.ssh/config
+
+Host *
+  TCPKeepAlive yes
+  ServerAliveInterval 60
+  ServerAliveCountMax 120 
+
+That will send a packet for the server (TCPKeepAlive) at each 60 seconds (ServerAliveInterval), to keep the connection active and avoid the broken pipe. This allow a total of 2 hours (ServerAliveCountMax: 120 times * 60 seconds) of inactivity in the session.
+
+===
+
+

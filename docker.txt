@@ -124,4 +124,24 @@ https://github.com/chadoe/docker-cleanup-volumes
 	Reasons to prefer overlay: Faster, more reliable, and it seems to be what the Docker core team are running on their own setups, so it’s likely the one that’s getting the most testing.
 	It also is in the Linux kernel proper as of 3.18. AUFS, on the other hand, was an out-of-tree kernel patchset, so each distro would have to evaluate if they would maintain it and put it into their kernel builds.
 
+---
 
+PUSH TO DOCKERHUB:
+
+Run your image with "compose up":
+	$ compose up -d
+
+Get the CONTAINER_ID:
+	$ docker ps | grep "your container name here"
+
+Commit the container ID and assign an image name to it:
+	$ docker commit -m "commit message" -a "your user name" [CONTAINER_ID] [YOUR_USER_NAME]/[YOUR_IMAGE_NAME]:version_number.
+	E.g.:
+		$ docker commit -m "Added json gem" -a "Kate Smith" 0b2616b0e5a8 ouruser/sinatra:v2
+
+Push your image to DockerHub:
+	$ docker push [YOUR_USER_NAME]/[YOUR_IMAGE_NAME]
+	E.g.:
+		$ docker push ouruser/sinatra
+
+---
