@@ -31,40 +31,23 @@ Then run the following for your changes to take effect:
 
 USING SYSTEMD TO START SOMETHING AT THE USER LOGIN. E.g.: tmux
 
-https://wiki.archlinux.org/index.php/Systemd/User
+PRE-REQUISITE: 
+	1) Enable the systemd user service independently of active user sessions or not:
+		$ sudo loginctl enable-linger tiago
 
-There are some notable advantages to starting a tmux server at startup.
-Notably, when you start a new tmux session, having the service already running
-reduces any delays in the startup.
+	2) Check if the systemd user instance is running:
+		$ systemctl --user status.
 
-Furthermore, any customization attached to your tmux session will be retained
-and your tmux session can be made to persist even if you have never logged in,
-if you have some reason to do that (like a heavily scripted tmux configuration
-or shared user tmux sessions).
+If you want to run services on login, execute:
+	$ systemctl --user enable service
+	E.g.:
+		$ systemctl --user enable tmux
 
-The service below starts tmux for the specified user (i.e. start with
-tmux@username.service):
+To manually start a user service:
+	$ systemctl --user start tmux
 
-/etc/systemd/system/tmux@.service
-
-[Unit]
-Description=Start tmux in detached session
-
-[Service]
-Type=forking
-User=%I
-ExecStart=/usr/bin/tmux new-session -s %u -d
-ExecStop=/usr/bin/tmux kill-session -t %u
-
-[Install]
-WantedBy=multi-user.target
-
-Tip: You may want to add WorkingDirectory=custom_path to customize working
-directory.
-
-Alternatively, you can place this file within your systemd/User directory
-(without User=%I), for example ~/.config/systemd/user/tmux.service. This way
-the tmux service will start when you log in.
+Check the current user environment variables: 
+	$ systemctl --user show-environment
 
 ---
 

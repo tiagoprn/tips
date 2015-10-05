@@ -134,6 +134,9 @@ Run your image with "compose up":
 Get the CONTAINER_ID:
 	$ docker ps | grep "your container name here"
 
+If it is your first push on the machine, you must login first:
+	$ docker login
+
 Commit the container ID and assign an image name to it:
 	$ docker commit -m "commit message" -a "your user name" [CONTAINER_ID] [YOUR_USER_NAME]/[YOUR_IMAGE_NAME]:version_number.
 	E.g.:
