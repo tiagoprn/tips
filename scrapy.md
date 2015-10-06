@@ -149,6 +149,15 @@ Pegar o text de todos os li abaixo de um ul:
 E.g.:
 	response.xpath('/html/body/div/div/div[3]/div/div/div/div/ul/descendant::*/text()').extract()
 
+---
+
+How to get the value from a hidden input from the "name" attribute. Eg.:
+
+	html:
+		<input type="hidden" name="productCodePost" value="431320">
+
+	full xpath (the input is inside a form named "addToCartForm"):
+		response.xpath('//*[@id="addToCartForm"]/input[@name="productCodePost"]/@value').extract()
 
 ---
 
