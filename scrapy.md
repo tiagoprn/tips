@@ -161,6 +161,16 @@ How to get the value from a hidden input from the "name" attribute. Eg.:
 
 ---
 
+How to get the "data-src" attribute from a img tag:
+	E.g.: 
+	<img class="lazyOwl" data-src="/medias/sys_master/media/media/hd1/h1d/h00/h00/8796739305502.jpg" alt="Pneu Goodyear Wrangler HP All Weather 235/60R18  103V " style="display: block;">
+
+	CSS Path:
+		response.css('.lazyOwl::attr("data-src")')[0].extract()
+
+---
+
+
 Para passar uma lista de URLs para ele crawler, a boa prática parece ser sobrescrever o método "start_requests" dos spiders desejados. (ou posso adicionar essa opção na classe pai). 
 O Scrapy tem uma API para ser chamado por um outro script, por exemplo. Aqui está a API: http://doc.scrapy.org/en/latest/topics/api.html#topics-api
 
