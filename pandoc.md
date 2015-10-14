@@ -28,4 +28,6 @@ from markdown to HTML, but it doesn’t hurt to include them.
 
 ## Converting from latex to a nicelly formatted pdf
 
-    $ pandoc spot_workflow.project.md -f markdown -t latex -o spot_workflow.project.pdf   
+    $ pandoc spot_workflow.project.md -f markdown -t latex -o spot_workflow.project.pdf -V geometry:"top=3cm, bottom=1.5cm, left=2cm, right=2cm"  
+
+    ("-V" specifies the document margins)
