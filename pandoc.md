@@ -1,4 +1,4 @@
-# CAN CONVERT FROM:
+# CAN CONVERT FROM AND TO:
 - markdown
 - html
 - docx
