@@ -1,4 +1,10 @@
+# INSTALLATION (ARCH LINUX, SUPPORTING LATEX AND PDF IMPORT/EXPORT):
+	
+    $ pacman -S texlive-core texlive-bin texlive-science zathura zathura-pdf-poppler
+
+
 # CAN CONVERT FROM AND TO:
+
 - markdown
 - html
 - docx
@@ -6,6 +12,7 @@
 - epub
 - html slideshows (Slidy, reveal.js, Slideous, S5, or DZSlides.)
 - etc: http://pandoc.org/index.html
+
 
 # GENERAL SYNTAX:
 
