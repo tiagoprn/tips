@@ -1,6 +1,6 @@
 # INSTALLATION (ARCH LINUX, SUPPORTING LATEX AND PDF IMPORT/EXPORT):
 	
-    $ pacman -S texlive-core texlive-bin texlive-science zathura zathura-pdf-poppler
+    $ pacman -S pandoc texlive-core texlive-bin texlive-science zathura zathura-pdf-poppler
 
 
 # CAN CONVERT FROM AND TO:
@@ -16,6 +16,8 @@
 
 # GENERAL SYNTAX:
 
+## Converting from markdown to html
+
     $ pandoc test1.md -f markdown -t html -s -o test1.html
 
 The filename test1.md tells pandoc which file to convert. The -s option says to
@@ -23,3 +25,7 @@ create a “standalone” file, with a header and footer, not just a fragment. A
 the -o test1.html says to put the output in the file test1.html. Note that we
 could have omitted -f markdown and -t html, since the default is to convert
 from markdown to HTML, but it doesn’t hurt to include them.
+
+## Converting from latex to a nicelly formatted pdf
+
+    $ pandoc spot_workflow.project.md -f markdown -t latex -o spot_workflow.project.pdf   
