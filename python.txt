@@ -524,5 +524,10 @@ def create_app():
 
 ---
 
+HOW TO FIX "InsecureWarning" on packages that use urllib3 on python: 
 
+	$ yum install openssl openssl-devel libffi libffi-devel 
+	$ pip install pyopenssl ndg-httpsclient pyasn1
+
+---
 
