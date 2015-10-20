@@ -148,3 +148,33 @@ Push your image to DockerHub:
 		$ docker push ouruser/sinatra
 
 ---
+
+TRANSPORTING IMAGES USING TAR FILES (ALTERNATIVE TO USING DOCKERHUB):
+
+The idea is to generate an image of the container, save it to a tar file, copy the tar file to the new host and load the image on the new docker server. 
+
+1) Find the id of the container
+    $ docker ps
+
+2) Commit the changes you made to the container:
+    $ docker commit [CONTAINER_ID] [DESIRED_IMAGE_NAME]
+
+3) Save the image to a tar file:
+    $ docker save [DESIRED_IMAGE_NAME] > /tmp/[DESIRED_IMAGE_NAME].tar
+
+4) Zip the tar file. Copy it to its new destination machine using scp or anything you like. 
+    $ tar cfjv /tmp/[DESIRED_IMAGE_NAME].tar.bz2 /tmp/[DESIRED_IMAGE_NAME].tar
+    $ scp /tmp/[DESIRED_IMAGE_NAME].tar.bz2 user@remote_host:/tmp
+
+5) Log to the remote_host and uncompress the file you copied to it:
+    $ ssh user@remote_host
+    $ cd /tmp && tar xfjv /tmp/[DESIRED_IMAGE_NAME].tar.bz2
+
+6) Load the uncompressed file into docker:
+    $ docker load < /tmp/[DESIRED_IMAGE_NAME].tar
+   
+7) Check the image was loaded correctly:
+    $ docker images
+    (you will see the image there alonside the others)
+
+---
