@@ -12,6 +12,8 @@
 
 	[root] pip install paramiko PyYAML Jinja2 httplib2 six
 
+	[root] make && make install
+
 
 ## UPDATE FROM SOURCE:
 
@@ -20,6 +22,8 @@
 	[root] git pull --rebase
 
 	[root] git submodule update --init --recursive
+
+	[root] make && make install
 
 
 ## MACHINES INVENTORY:
