@@ -112,13 +112,17 @@ scrapy-submarino ansible_ssh_host=172.16.0.215  ansible_connection=ssh ansible_s
 
 
 ## RUN A COMMAND ON A GROUP OF MACHINES:
+	(Attention: single and double quotes matter on that case). Use exactly as below.
 
 	$ ansible mt-scrapy -m shell -a 'echo $TERM'
 
 	$ ansible mt-scrapy -m shell -a 'sudo wc -l /opt/precifica/precifica-scrapy/scraped/*scraped.csv'
 
-(Attention: single and double quotes matter on that case). Use exactly as above.
-It can also handle running as another user, sudo, etc. Reference: http://docs.ansible.com/ansible/intro_adhoc.html#parallelism-and-shell-commands
+	How to run commands as another user (e.g., a sudo one): 
+		$ ansible -b --become-user=engdeploy scrapy-submarino -m shell -a 'cd /opt/precifica/precifica-scrapy && git reset --hard && git status'
+
+
+
 
 ## COPYING FILES TO A GROUP:
 
