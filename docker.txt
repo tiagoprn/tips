@@ -149,19 +149,22 @@ Push your image to DockerHub:
 
 ---
 
-TRANSPORTING IMAGES USING TAR FILES (ALTERNATIVE TO USING DOCKERHUB):
+BUILDING / TRANSPORTING IMAGES USING TAR FILES (ALTERNATIVE TO USING DOCKERHUB):
 
 The idea is to generate an image of the container, save it to a tar file, copy the tar file to the new host and load the image on the new docker server. 
 
-IF YOU WILL BUILD A NEW IMAGE:
+IF YOU WILL *BUILD A NEW* IMAGE:
 
 	1) Enter the directory that contains the Dockerfile:
 	    $ cd /path/to/Dockerfile	
 
 	2) Build the new image:
-	    $ docker build -t [YOUR_USER_NAME]/[DESIRED_IMAGE_NAME]:version_number .
+            A) TAG as the new incremental version
+		    $ docker build -t [YOUR_USER_NAME]/[DESIRED_IMAGE_NAME]:version_number .
+            B) TAG as "latest" (good practice, it will not waste time and space because it will use the cache of "version_number", and tag as "latest"):
+		    $ docker build -t [YOUR_USER_NAME]/[DESIRED_IMAGE_NAME]:latest .
 
-IF YOU WILL UPDATE AN EXISTING IMAGE:
+IF YOU WILL *UPDATE AN EXISTING* IMAGE:
 
 	1) Find the id of the container
 	    $ docker ps
