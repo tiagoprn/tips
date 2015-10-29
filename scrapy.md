@@ -190,4 +190,26 @@ E.g.:
 
 	XPATH...: response.xpath('.//*[@itemprop="productID"]/@content').extract()
 
+---
 
+How to strip html tags from a string to keep just the text:
+
+(requires lxml:
+    $ pip install lxml)
+
+
+import lxml
+
+# list of html tags with the element value inside of it
+breadcumb = response.xpath('/html/body/div[4]/div[2]/'
+                       'div[1]/ul/li/a').extract()
+
+# generate a string from the list, and use lxml to strip the html tags.
+# The result will be a lxml "element"
+categories_element = lxml.html.document_fromstring(
+','.join(breadcumb))
+
+# Extract just the text from the element:
+categories_txt_cleaned = categories_element.text_content()
+
+---
