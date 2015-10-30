@@ -49,7 +49,8 @@ https://github.com/chadoe/docker-cleanup-volumes
 					$ lsmod | grep overlay (to check that the module was raised)
 					$ systemctl stop docker
 					$ rm -fr /var/lib/docker
-					$ vim /usr/lib/systemd/system/docker.service
+                                        $ cp -farv /usr/lib/systemd/system/docker.service /etc/systemd/system 
+					$ vim /etc/systemd/system/docker.service
 						Change the line "ExecStart" to:	
 							ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver overlay
 					$ systemctl daemon-reload
@@ -68,7 +69,8 @@ https://github.com/chadoe/docker-cleanup-volumes
 					(above will enable the kernel module at boot, available since linux kernel 3.18)
 					$ modprobe overlay (enables the kernel module NOW)
 					$ lsmod | grep overlay (must return something)
-					$ vim /usr/lib/systemd/system/docker.service
+                                        $ cp -farv /usr/lib/systemd/system/docker.service /etc/systemd/system 
+					$ vim /etc/systemd/system/docker.service
 						Change the line "ExecStart" to:	
 							ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver overlay
 					$ systemctl daemon-reload
