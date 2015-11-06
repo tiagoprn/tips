@@ -27,7 +27,29 @@ Then run the following for your changes to take effect:
 # systemctl daemon-reload
 # systemctl restart [daemon_name]
 
-----
+---
+
+USING SYSTEMD TO START SOMETHING AT THE USER LOGIN. E.g.: tmux
+
+PRE-REQUISITE: 
+	1) Enable the systemd user service independently of active user sessions or not:
+		$ sudo loginctl enable-linger tiago
+
+	2) Check if the systemd user instance is running:
+		$ systemctl --user status.
+
+If you want to run services on login, execute:
+	$ systemctl --user enable service
+	E.g.:
+		$ systemctl --user enable tmux
+
+To manually start a user service:
+	$ systemctl --user start tmux
+
+Check the current user environment variables: 
+	$ systemctl --user show-environment
+
+---
 
 The parameters supported by a systemd unit file:
 
@@ -40,10 +62,11 @@ http://www.freedesktop.org/software/systemd/man/systemd.service.html
 ### How to view all journalctl log in real-time:
 
     $ journalctl -xn -f
+    $ journalctl -u docker -xn -f
 
 ### Monitoring specific daemons (e.g. docker and nginx):
 
-    $ journalctl -u nginx --since today
+    $ journalctl -o short -u nginx --since today
     $ journalctl -b -u docker --since today -o json-pretty
     $ journalctl -b -u docker --since today -o short
 

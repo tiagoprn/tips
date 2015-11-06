@@ -239,6 +239,10 @@ OBS2.: Os logs de execução dos scripts que estão no cron (ou seja, do própri
 * COPY A SSH KEY TO ANOTHER SERVER:
     $ ssh-copy-id -i ~/.ssh/id_rsa.pub -p [remote_ssh_port] remoteuser@192.168.0.200
 
+* I can also use a ".pem" file to ssh into a machine, like with amazon.
+    $ ssh -i my_file.pem user@remotehost
+
+
 * Current user UID / GID:
 
     $ id
@@ -438,4 +442,119 @@ $ mail -a /opt/backup.sql -s "Backup File" user@example.com,user2@example.com < 
 
     -a is used for attachments
     -s is used for defining subject for email.
+
+=====
+
+Substituir texto recursivamente em todos os arquivos de um diretório:
+
+cd /home/www
+
+find . -type f -print0 | xargs -0 sed -i 's/subdomainA.example.com/subdomainB.example.com/g'
+
+=====
+
+Swapfile:
+
+1) Create the file that will be the swapfile:
+    $ dd if=/dev/zero of=/swapfile bs=1024 count=10000000
+    In this example, it will create a swapfile as /swapfile with ~10GB in size. 
+
+2) Secure the file, otherwise it will not be used on fstab:
+    $ chown root:root /swapfile
+    $ chmod 0600 /swapfile
+
+3) Create a swap filesystem on the file:
+    $ mkswap /swapfile
+
+4) Enable the swapfile immediately:
+    $ swapon /swapfile
+
+5) Permanently add the swapfile to /etc/fstab:
+    /swapfile none swap sw 0 0
+
+=====
+
+CHANGE HOSTNAME (centos / systemd enable distributions):
+	METHOD 1:
+
+	$ hostnamectl set-hostname mt-extracoes-business_utils
+
+	To check it really changed:
+		$ hostnamectl status
+
+	METHOD 2:
+		$ vim /etc/hostname (type the hostname in the file).
+		$ hostname -F /etc/hostname
+
+===
+
+awk: usado para pegar uma "coluna" específica da saída de um comando do terminal. Combinado com o grep e o cat, pode ser uma maneira simples de fazer filtros em saídas de comando do terminal. 
+
+Ex.:
+
+	Para pegar a primeira coluna do "docker ps":
+		$ docker ps | awk '{print $1}'
+
+	Para pegar mais de uma coluna:
+		$ ps aux | grep worker.py | awk '{print $2, $9, $10, $12, $13, $14, $15, $16, $17, $18}'
+
+OBS.: O awk faz o split das colunas por espaço. Portanto, se em uma das linhas eu tiver um espaço a mais posso trazer as colunas trocadas.
+
+===
+
+Ajustar timezone do SO Para fuso horário do Brasil e configurar NTP:
+
+1) Seta a timezone do SO para o fuso horário do Brasil (São Paulo)
+
+	$ ln –s /usr/share/zoneinfo/Brazil/East /etc/localtime
+    
+    Se não funcionar: 
+        $ cp -farv /usr/share/zoneinfo/Brazil/East /etc/localtime
+
+2) Instala o ntp 
+
+	$ yum install ntp
+
+3) Edita o arquivo para usar o pool de servidores do Brasil:
+
+$ vim /etc/ntp.conf
+
+Trocar a linha "server" para:
+
+server br.pool.ntp.org
+
+4) Habilita e inicia o daemon:
+
+	$ service ntpd enable
+	$ service ntpd start 
+
+===
+
+date command print with milliseconds:
+
+	$ date +%Y%m%d-%H%M%S-%N
+
+
+===
+
+Terminator: 
+
+Toggle terminal full screen:
+[Ctrl][Shift]x
+
+===
+
+How to avoid "broken pipe" messages on connecting to a SSH server:
+
+$ vim ~/.ssh/config
+
+Host *
+  TCPKeepAlive yes
+  ServerAliveInterval 60
+  ServerAliveCountMax 120 
+
+That will send a packet for the server (TCPKeepAlive) at each 60 seconds (ServerAliveInterval), to keep the connection active and avoid the broken pipe. This allow a total of 2 hours (ServerAliveCountMax: 120 times * 60 seconds) of inactivity in the session.
+
+===
+
 

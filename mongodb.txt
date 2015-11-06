@@ -41,11 +41,18 @@ QUERIES (examples):
     REMOVE (DELETE):
         db.items.remove({"_id.site": "Arcondicionado"})
 
+    DROP DATABASE:
+        IMPORTANT: use with caution, it does not ask for confirmation.
+	use database_to_drop
+        db.dropDatabase()
+
+
     GET INDEXES:
         db.items.getIndexes()
 
     CREATE AN INDEX ON 2 FIELDS:
         db.items.ensureIndex({"domain": 1, "sku": 1});
+        db.items.ensureIndex({"compat_domain": 1, "_id.id": 1});
 
     SELECT SPECIFIC FIELDS ON A SELECT:
         db.queues.find({}, {
@@ -54,6 +61,9 @@ QUERIES (examples):
         });
         (Equivalent in SQL: SELECT spider_run_id, save_time FROM queues)
 
+
+    UPDATE: 
+	For that, you must use "db.collection.find_and_modify()" .
 
     SHOW ALL DATABASES ON A MONGO INSTANCE:
         $ show dbs;
@@ -124,3 +134,27 @@ db[mr.result].distinct("_id")
 ```
 
 ---
+
+HOW TO MAKE FIELD CASTINGS: 
+
+// String to Integer
+
+db.db-name.find({field-name : {$exists : true}}).forEach( function(obj) { obj.field-name = new NumberInt( obj.field-name ); db.db-name.save(obj); } );
+
+// Integer to String
+
+db.db-name.find({field-name : {$exists : true}}).forEach( function(obj) { obj.field-name = ""+obj.field-name; db.db-name.save(obj); } );
+	E.g.: 
+		db.items.find({"_id.id" : {$exists : true}}).forEach( function(obj) { obj._id.id = ""+obj._id.id; db.items.save(obj); } );
+		db.items.find({"_meta.spider_name": 'casas_bahia', "_id.id" : {$exists : true}}).forEach( function(obj) { obj._id.id = ""+obj._id.id; db.items.save(obj); } );
+		db.items.find({"_meta.spider_name": 'autoz', "ean" : {$exists : true}}).forEach( function(obj) { obj.ean = ""+obj.ean; db.items.save(obj); } );
+
+---
+
+Status de um servidor mongo:
+
+	db.serverStatus()
+
+
+---
+

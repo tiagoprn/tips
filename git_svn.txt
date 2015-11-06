@@ -64,3 +64,21 @@ GIT ALIASES:
     To use:
         git br
         git hist
+
+
+---
+
+
+REMOVE A LARGE FILE FROM THE GIT HISTORY:
+	(This can also be used to remove ANY FILE from the git history, definitively and once and for all)
+
+	$ git filter-branch --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch FULL/FILE/PATH/EQUIVALENT/TO/THE/PROJECT/ROOT' --tag-name-filter cat -- --all
+
+	reference: http://naleid.com/blog/2012/01/17/finding-and-purging-big-files-from-git-history
+
+---
+
+
+
+	E.g.:
+		$ git filter-branch --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch python/get_product_zip_feed_from_cnova_ftp/CB_XML_Precifica.XML' --tag-name-filter cat -- --all

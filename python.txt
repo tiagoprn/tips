@@ -524,5 +524,24 @@ def create_app():
 
 ---
 
+HOW TO FIX "InsecureWarning" on packages that use urllib3 on python: 
+
+	$ yum install openssl openssl-devel libffi libffi-devel 
+	$ pip install pyopenssl ndg-httpsclient pyasn1
+
+---
+
+Replacing multiple spaces to a single one:
+
+	' '.join(mystring.split())
+
+	That will change, e.g.: 
+
+		u'                                                                                                                                            Vassoura com Dispenser Premium                                                                                                                                         Easy Clean - 10.07.095.002                                                                                                                                                                                                                     por apenas R$ 99,50                                                                                                                                                                                                                                                                                                          ou 3X de                                                                                                                                                                                                                                           R$ 33,17                                                                                                                                                          no cart\xe3o s/ juros                                                                                                                                                                                                                    5         % de Desconto no Boleto Banc\xe1rio (Parcela \xdanica): R$ 94,53                                                                      Frete n\xe3o incluso.'
+
+	to: 
+
+		u'Vassoura com Dispenser Premium Easy Clean - 10.07.095.002 por apenas R$ 99,50 ou 3X de R$ 33,17 no cart\xe3o s/ juros 5 % de Desconto no Boleto Banc\xe1rio (Parcela \xdanica): R$ 94,53 Frete n\xe3o incluso.'
+
 
 

@@ -3,23 +3,25 @@
 product_view.css('.produto-principal img').xpath('@src').extract()[0]
 
 $ scrapy crawl [SPIDER_NAME]
-Ex.:
-    $ scrapy crawl walmart
+Exs.:
+    - Simples: 	 
+	    $ scrapy crawl walmart
 
-    OU 
+    - Persistindo log:
+	    $ nohup scrapy crawl walmart -s CONCURRENT_REQUESTS=24 -s CONCURRENT_REQUESTS_PER_DOMAIN=24 -s CONCURRENT_REQUESTS_PER_IP=24 > /spider_out/walmart.log
 
-    $ nohup scrapy crawl walmart -s CONCURRENT_REQUESTS=24 -s CONCURRENT_REQUESTS_PER_DOMAIN=24 -s CONCURRENT_REQUESTS_PER_IP=24 > /spider_out/walmart.log
-
+    - Persistindo log, e gerando um CSV com os itens scrapeados:
+	    $ nohup scrapy crawl pontofrio -s CONCURRENT_REQUESTS=16 -s CONCURRENT_REQUESTS_PER_DOMAIN=16 -s CONCURRENT_REQUESTS_PER_IP=16 -s AUTOTHROTTLE_ENABLED=0  -o /spider_out/pontofrio.csv > /spider_out/pontofrio2.log &
 	
 
 # CRAWLER APENAS UMA PÁGINA:
 
 ## Página que NÃO precisa de login:
 
-    $ scrapy parse '[URL]' --spider=[SPIDER_NAME] --callback=[PARSE_CALLBACK_NAME] --pipelines
+    $ scrapy parse '[URL]' --spider=[SPIDER_NAME] --callback=[PARSE_CALLBACK_NAME] --pipelines --rules --depth 20
 
     Ex.:
-        $ scrapy parse 'http://www.walmart.com.br/produto/Telefonia/Smartphones/Motorola/471929-smatphone-motorola-x1-xt1097-android-4-camera-13mp-tela-5-quad-core-32gb-3g-4g-wi-fi-bluetoot' --spider=walmart --callback=parse_product --pipelines
+        $ scrapy parse 'http://www.ricardoeletro.com.br/Produto/Refrigerador-Geladeira-Electrolux-Frost-Free-2-Portas-380-Litros-Inox-DW42X/256-270-274-85169' --spider=ricardo_eletro --callback=parse_product --pipelines  --rules --depth 20
 
 ## Scrapy parse de uma callback onde a página precisa de um login:
 
@@ -114,5 +116,100 @@ Nesse arquivo, eu posso aplicar um grep:
 
 Para assim descobrir todas as URLs, para daí descobrir os padrões das que são de produto. 
 
+---
+
+Ao debugar um item com o scrapy parse, como pegar os valores coletados para ele:
+
+	item.load_item()
+
+	OR
+
+	Suposing:
+		item.add_css('name', '.productName::text')                                                                                                                 
+		item.add_xpath('image_url',  'id("image-main")/@src')    
+
+	I can get does values on ipdb with:
+		item.get_collected_values('name')
+		item.get_collected_values('image_url')
+
+---
+
+Pegar informações das tags meta property og (Facebook Open Graph) via xpath:
+
+E.g. 1: <meta property="og:product:price:amount" content="R$2.399,00"/>
+	response.xpath('/html/head/meta[@property="og:product:price:amount"]/@content').extract()
+
+E.g. 2: <meta property="og:title" content="Roçadeira Florestal Husqvarna 345FR"/>
+	response.xpath('/html/head/meta[@property="og:title"]/@content').extract()
+
+---
+
+Pegar o text de todos os li abaixo de um ul:
+	
+E.g.:
+	response.xpath('/html/body/div/div/div[3]/div/div/div/div/ul/descendant::*/text()').extract()
+
+---
+
+How to get the value from a hidden input from the "name" attribute. Eg.:
+
+	html:
+		<input type="hidden" name="productCodePost" value="431320">
+
+	full xpath (the input is inside a form named "addToCartForm"):
+		response.xpath('//*[@id="addToCartForm"]/input[@name="productCodePost"]/@value').extract()
+
+---
+
+How to get the "data-src" attribute from a img tag:
+	E.g.: 
+	<img class="lazyOwl" data-src="/medias/sys_master/media/media/hd1/h1d/h00/h00/8796739305502.jpg" alt="Pneu Goodyear Wrangler HP All Weather 235/60R18  103V " style="display: block;">
+
+	CSS Path:
+		response.css('.lazyOwl::attr("data-src")')[0].extract()
+
+---
 
 
+Para passar uma lista de URLs para ele crawler, a boa prática parece ser sobrescrever o método "start_requests" dos spiders desejados. (ou posso adicionar essa opção na classe pai). 
+O Scrapy tem uma API para ser chamado por um outro script, por exemplo. Aqui está a API: http://doc.scrapy.org/en/latest/topics/api.html#topics-api
+
+
+---
+
+Good practices: http://doc.scrapy.org/en/latest/topics/practices.html
+
+Command-line tool: http://doc.scrapy.org/en/latest/topics/commands.html
+
+---
+
+Pegar informações das tags meta via xpath:
+
+E.g.:
+	TAG.....: <meta itemprop="productID" content="sku:1025p" />
+
+	XPATH...: response.xpath('.//*[@itemprop="productID"]/@content').extract()
+
+---
+
+How to strip html tags from a string to keep just the text:
+
+(requires lxml:
+    $ pip install lxml)
+
+
+import lxml
+
+# list of html tags with the element value inside of it
+breadcumb = response.xpath('/html/body/div[4]/div[2]/'
+                       'div[1]/ul/li/a').extract()
+
+# generate a string from the list, and use lxml to strip the html tags.
+# The result will be a lxml "element"
+categories_element = lxml.html.document_fromstring(
+','.join(breadcumb))
+
+# Extract just the text from the element:
+categories_txt_cleaned = categories_element.text_content()
+
+---

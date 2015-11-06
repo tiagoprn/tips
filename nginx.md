@@ -144,8 +144,73 @@ $ vim /etc/nginx/nginx.conf
 9) Restart the nginx service (systemd / upstart / init.d) and do your measures again (you can use siege, ab or wrk/wrk2 for that).
 
 
+
+---
+
+Basic http authorization with nginx:
+
+1) Create a file to hold the password (compatible with apache htpasswd format):
+
+	- Download the script to generate the file:
+		$ wget http://trac.edgewall.org/export/10791/trunk/contrib/htpasswd.py
+		$ chmod 755 htpasswd.py
+	- Execute the script: 
+		If the file does not exist yet:
+		$ htpasswd.py -c -b .htpasswd username password
+
+		If you just want to add another user on it (keeping its previous content):	
+		$ htpasswd.py -b .htpasswd anotherusername anotherpassword
+
+2) Configure the desired nginx url to use the generated passwords file:
+
+       location /test {
+                auth_basic "Restricted";
+                auth_basic_user_file /path/to/.htpasswd;
+		...
+       }
+
+---
+
+Enable nginx status page:
+
+	$ systemctl stop nginx
+
+	$ vim /etc/nginx.conf
+
+		location /nginx_status {
+			# Turn on stats
+			stub_status on;
+			access_log   off;
+			# only allow access from 192.168.1.5 #
+			allow 192.168.1.5;
+			deny all;
+		}
+
+	$ systemctl start nginx 
+
+	Now, go to "http://myshostname/nginx_status" with your browser. Sample output:
+
+		Active connections: 586
+		server accepts handled requests
+		9582571 9582571 21897888
+		Reading: 39 Writing: 3 Waiting: 544
+
+		, where:
+		
+			586 = Number of all open connections
+			9582571 = Accepted connections
+			9582571 = Handled connections
+			21897888 = Handled requests
+
+			Then, to calculate the connections per second:
+				Requests per connection = handled requests / handled connections
+				Requests per connection = 21897888/9582571 (pass this to bc -l using echo '21897888/9582571' | bc -l command)
+				Requests per connection = 2.28
+		
+
 ---
 references:
     - https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration
     - http://blog.martinfjordvald.com/2011/04/optimizing-nginx-for-high-traffic-loads/
     - https://www.joedog.org/articles-tuning/ (that one shows step-by-step tuning of apache in a similar fashion assuming using "siege" to run the benchmarks).
+    - http://www.cyberciti.biz/faq/nginx-see-active-connections-connections-per-seconds/

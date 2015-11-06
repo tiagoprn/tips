@@ -140,3 +140,9 @@ PACMAN
 
     List which files are on package:
         $ pacman -Ql [package_name]
+
+
+DISABLE CREATION OF /tmp on tmpfs (memory):
+	Systemd will do that independently of what is set on /etc/fstab. To completely disable:
+		$ systemctl mask tmp.mount
+	

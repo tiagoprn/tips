@@ -85,3 +85,24 @@
         Redelivered
             Rate at which messages with the 'redelivered' flag set are being delivered. For example if you don't get a acknowledge message for a delivered message, you will deliver this message again.
 
+
+- rabbitmqadmin: Admin CLI interface for rabbitmq
+
+- INSTALLATION:
+
+	1) Download from the host where it was installed: 
+		On the web interface, go to "http://localhost:15672/cli/".
+		$ wget [the_url_pointed_above]
+
+	2) Copy it as a binary and change the permissions:
+		$ chmod 755 rabbitmqadmin
+		$ cp -farv rabbitmqadmin /usr/bin
+
+- DELETE ALL QUEUES:
+	rabbitmqadmin list queues name | awk '{print $2}' | xargs -I qn rabbitmqadmin delete queue name=qn
+
+- If RabbitMQ fails to start, and you won't need to restore its persistent data, you can safely remove its mnesia database. 
+	E.g., on CentOS 7:
+		$ rm -fr /var/lib/rabbitmq/mnesia
+
+

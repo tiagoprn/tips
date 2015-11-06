@@ -48,3 +48,16 @@ Sample queries:
     B$ sudo chown redis: /var/lib/redis/dump.rdb
     B$ sudo service redis-server start
 
+- ENABLING REDIS TO RESPOND OUTSIDE OF LOCALHOST:
+
+	$ vim /etc/redis.conf
+	Change the line: 
+		bind 127.0.0.1
+	To:
+		bind 0.0.0.0
+	That will make it listen on all network interfaces. 
+	After changing, restart the redis daemon to the change to make effect:
+		$ systemctl stop redis
+		$ systemctl start redis
+
+
