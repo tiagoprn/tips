@@ -76,9 +76,23 @@ REMOVE A LARGE FILE FROM THE GIT HISTORY:
 
 	reference: http://naleid.com/blog/2012/01/17/finding-and-purging-big-files-from-git-history
 
----
-
-
-
 	E.g.:
 		$ git filter-branch --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch python/get_product_zip_feed_from_cnova_ftp/CB_XML_Precifica.XML' --tag-name-filter cat -- --all
+
+---
+
+HOW TO PROMOTE ANOTHER BRANCH TO MASTER - OR - HOW TO MAKE A NEW MASTER FROM A PAST COMMIT
+
+That could be used, e.g., to easily revert back changes made to master to a previous point in time. 
+What can be done in that case is to checkout an old commit hash and create a branch called, e.g, "PAST" to it:
+    $ git checkout -b PAST 9e53f78f464ceb11ef25a069a596ba40b483f634
+
+    (you can, of course, checkout any other branch you wish, don't restrict yourself to a previous commit ;)
+
+    $ git merge --strategy=ours master    # keep the content of this branch, but record a merge
+    $ git checkout master
+    $ git merge PAST             # fast-forward master up to the merge
+    $ git push origin master
+    $ git branch -d PAST   # deletes the branch used to go back
+
+---
