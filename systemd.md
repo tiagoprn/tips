@@ -110,6 +110,20 @@ $ vim /etc/systemd/journald.conf file.
 
 ---
 
+Where to put the unit files:
+
+SystemD looks for system unit files in this order:
+
+    /etc/systemd/system
+    /run/systemd/system
+    /usr/lib/systemd/system
+
+Unit files in the earlier directories override later ones. 
+Prefer to make changes in the /etc or /run directory, where configuration is expected. 
+You should avoid making changes in /usr, because your system installs package data there that’s not expected to change. 
+
+---
+
 systemd slow boot: http://littledaemons.tumblr.com/post/106832805315
 
 ---

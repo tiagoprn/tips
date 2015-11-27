@@ -15,10 +15,12 @@ MONGODUMP:
 
 MONGORESTORE:
 
-    $ mongorestore /path/of/the/mongo/dump
+    $ mongorestore -d database_name /path/of/the/mongo/dump
         IMPORTANT: If it shows a "locale" related error, run:
             $ export LC_ALL="en_US.UTF-8"
             , and try again.
+
+    NOTE: the "-d" parameter is now required from mongo 3 on.
 
 
 MONGOEXPORT:

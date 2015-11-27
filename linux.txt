@@ -557,4 +557,7 @@ That will send a packet for the server (TCPKeepAlive) at each 60 seconds (Server
 
 ===
 
+Generate an HTTP BASIC token from a user/password combination: 
+    $ echo -n user:pass | openssl enc -a
 
+===
