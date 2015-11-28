@@ -588,3 +588,33 @@ Generate an HTTP BASIC token from a user/password combination:
     $ echo -n user:pass | openssl enc -a
 
 ===
+
+How to make curl show the REQUEST/RESPONSE HEADERS and the RESPONSE BODY:
+
+Just use the "-v" parameter. E.g.: 
+    $ curl -v 'http://localhost:8888/version'
+
+OUTPUT:
+    *   Trying ::1...
+    * Connected to localhost (::1) port 8888 (#0)
+    > GET /version HTTP/1.1
+    > Host: localhost:8888
+    > User-Agent: curl/7.44.0
+    > Accept: */*
+    > 
+    < HTTP/1.1 200 OK
+    < Content-Type: application/json; charset=UTF-8
+    < Etag: "383be678ad2bafadce4482ecf7dc3c2f87203982"
+    < Server: TornadoServer/4.3
+    < Date: Sat, 28 Nov 2015 02:37:36 GMT
+    < Content-Length: 48
+    < 
+    * Connection #0 to host localhost left intact
+    {"last_build": "2015-11-28", "version": "3.5.1"}
+
+On the curl output above:
+    "*" prefixes a debug logging
+    ">" prefixes the REQUEST headers
+    "<" prefixes the RESPONSE headers.
+    The last line is the RESPONSE BODY.
+
