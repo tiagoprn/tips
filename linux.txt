@@ -544,16 +544,43 @@ Toggle terminal full screen:
 
 ===
 
-How to avoid "broken pipe" messages on connecting to a SSH server:
+SSH: How to avoid "broken pipe" messages on connecting to a SSH server - and also how to use different keys for different hosts:
 
 $ vim ~/.ssh/config
 
-Host *
-  TCPKeepAlive yes
-  ServerAliveInterval 60
-  ServerAliveCountMax 120 
+    Host *
+      TCPKeepAlive yes
+      ServerAliveInterval 60
+      ServerAliveCountMax 120 
 
-That will send a packet for the server (TCPKeepAlive) at each 60 seconds (ServerAliveInterval), to keep the connection active and avoid the broken pipe. This allow a total of 2 hours (ServerAliveCountMax: 120 times * 60 seconds) of inactivity in the session.
+    #Default GitHub ("workspace" folder)
+    Host github.com
+      HostName github.com
+      User git
+      IdentityFile ~/.ssh/id_rsa
+
+    # Github for personal project (my personal projects - "github" folder) 
+    Host github-personal
+      HostName github.com
+      User git
+      IdentityFile ~/.ssh/precifica_external
+            
+    # Github for personal project (my personal projects - "github" folder) 
+    Host bitbucket
+      HostName bitbucket.com
+      User git
+      IdentityFile ~/.ssh/my_bb_key
+
+
+That will send a packet for the server (TCPKeepAlive) at each 60 seconds (ServerAliveInterval), to keep the connection active and avoid the broken pipe. It will allow a total of 2 hours (ServerAliveCountMax: 120 times * 60 seconds) of inactivity in the session.
+
+Also, it will automatically change the ssh key required to the hosts above (including 2 different keys depending on the repository on github).
+
+NOTE: To generate a new ssh key: 
+
+    $ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+    (it will ask you for the location of the new key, which you may change if you want another one)
 
 ===
 
