@@ -618,3 +618,12 @@ On the curl output above:
     "<" prefixes the RESPONSE headers.
     The last line is the RESPONSE BODY.
 
+===
+
+nohup: turn any command "immune" to termination signals. 
+It is useful, for instance, when you don't have screen or tmux installed on a server but you must make sure that the command runs even if you logout of your session.
+You can also run in in conjunction with "&" at the end, to make any command run in background.
+
+===
+
+
