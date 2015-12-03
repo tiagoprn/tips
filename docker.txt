@@ -75,7 +75,12 @@ https://github.com/chadoe/docker-cleanup-volumes
 							ExecStart=/usr/bin/docker daemon -H fd:// --storage-driver overlay
 					$ systemctl daemon-reload
 
-				3) Reinstall docker:
+                3) There is a recurrent bug on arch that makes the docker0 network interface not get an IP. To solve it definitely, you must do:
+                    $ vim /etc/systemd/service
+                    On the "After" line, add systemd-network.socket to it:
+                        After=network.target docker.socket systemd-network.socket
+
+				4) Reinstall docker:
 					$ pacman -Sy
 					$ pacman -S docker
 					$ systemctl enable docker 
