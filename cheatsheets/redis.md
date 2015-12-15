@@ -60,4 +60,11 @@ Sample queries:
 		$ systemctl stop redis
 		$ systemctl start redis
 
+- DATA TYPES:
+    - **STRING**: String, Integer or floating point (the "smallest" data type). Operations: GET, SET, DEL.
+    - **LIST**: Ordered sequence (linked list) of strings. A string can be on the list more than once (is NOT unique). Operations: RPUSH, LRANGE, LINDEX, LPOP.
+    - **SET**: Unordered sequence table of strings. All strings on a hash table are UNIQUE. Operations: SADD, SMEMBERS, SISMEMBER (quickly check if an item is in the set), SREM, SINTER, SUNION, SDIFF.
+    - **HASH**: Similar to a document on a document store or a row on a relational database. Values that can be stored in hashes are the same then strings. If the value can be intepreted as a number, can be incremented or decremented. A hash is kinda like a "miniature" version of Redis itself. Operations: HSET, HGET, HGETALL HDEL, HINCRBY (increments a value in a hash).
+    - **ZSET**: Analogous to HASHES, but its keys (AKA members) are unique, and the values (AKA scores) are limited to floating point numbers. Items can be accessed by the sorted order and values of the scores. Operations: ZADD, ZRANGE, ZRANGEBYSCORE, ZREM, ZINCRBY (increments the score of a member).
+    **IMPORTANT: We can combine the data storage ability of HASHes with the sorting ability of ZSETs.**
 

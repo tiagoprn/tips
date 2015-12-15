@@ -59,7 +59,7 @@ http://www.freedesktop.org/software/systemd/man/systemd.service.html
 
 # LOGS:
 
-### How to view all journalctl log in real-time:
+### How to view all journalctl log (which is also the linux general system log) in real-time:
 
     $ journalctl -xn -f
     $ journalctl -u docker -xn -f
