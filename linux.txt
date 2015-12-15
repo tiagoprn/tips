@@ -626,4 +626,12 @@ You can also run in in conjunction with "&" at the end, to make any command run 
 
 ===
 
+Send emails through CLI: 
+
+    $ yum install sendmail
+    $ yum enable sendmail
+    $ yum start sendmail
+    $ echo "Este é o conteúdo do e-mail." | mail -s "Assunto do e-mail" projects@tiagoprnl.me
+
+===
 
