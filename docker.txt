@@ -198,3 +198,36 @@ IF YOU WILL *UPDATE AN EXISTING* IMAGE:
     (you will see the image there alonside the others)
 
 ---
+
+To run docker exec from crontab (e.g., to enable backups from postgres), I have to do the following:
+    - On /etc/users, comment "requiretty". 
+    - Do not use "docker run -it", but just "docker run -i".
+
+E.g.: 
+
+$ vim pg_dump.sh
+
+```
+#!/bin/bash
+HOST="localhost"
+PORT=5432
+USERNAME="postgres"
+PASSWORD="v3t3x2y2"
+DATABASE="postgres"
+ROLE=$USERNAME
+FORMAT="c"
+CONTAINERFILE="/BACKUPS/${DATABASE}.${FORMAT}.backup"
+HOSTFILE="/vault/BACKUPS/databases/taiga/${DATABASE}.${FORMAT}.backup"
+
+TIMESTAMP=$(date +%Y%m%d-%H%M%S-%N)
+TARFILE="/vault/BACKUPS/databases/taiga/${TIMESTAMP}.tar.bz2"
+
+sudo docker exec -i $(sudo docker ps | grep 'postgres'| awk '{print $1}') pg_dump --username $USERNAME --role $ROLE --format $FORMAT --verbose --file $CONTAINERFILE $DATABASE
+
+sudo tar cfjv $TARFILE $HOSTFILE
+sudo chown tiago.users $TARFILE
+sudo chmod 777 $TARFILE
+sudo rm $HOSTFILE
+```
+
+---
