@@ -633,5 +633,9 @@ Send emails through CLI:
     $ yum start sendmail
     $ echo "Este é o conteúdo do e-mail." | mail -s "Assunto do e-mail" projects@tiagoprnl.me
 
+You can use that, for instance, to send e-mails from cronjob execution automatically. For that, add below to the first line of your crontab: 
+
+MAILTO=projects@tiagoprnl.me
+
 ===
 
