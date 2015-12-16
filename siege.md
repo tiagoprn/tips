@@ -3,8 +3,9 @@ Using siege, and tuning up Apache to it: https://www.joedog.org/articles-tuning/
     $ siege -v -c 500 -d 1 -t60S -i -f urls.txt -l
 
         -v: verbose mode
-        -c: concurrent users (not sessions)
-        -d: random delay between 1 and x seconds. Recommended is "1" to benchmark performance (the default is 3). 
+        -c: number of requests / concurrent users (not sessions)
+        -d: random delay on the requests between 1 and x seconds. Recommended is "1" to benchmark performance (the default is 3).
+        -b: no delay betweeen the requests
         -t: runs for x [S]econds
         -i: internet mode (randomizes the URLs on the file) 
         -f: file to get the urls from
