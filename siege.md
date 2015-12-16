@@ -8,7 +8,7 @@ siege -v -c 500 -d 1 -t60S -i -f urls.txt -l
 -t: runs for x [S]econds
 -i: internet mode (randomizes the URLs on the file) 
 -f: file to get the urls from
--l: output to log file
+-l: output to log file (outputs the results into a csv file. It adds a new line to the file for each new run.)
 
 HOW TO INTERPRET THE RESULTS: 
 
