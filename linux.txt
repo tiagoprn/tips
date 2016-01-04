@@ -639,3 +639,10 @@ MAILTO=projects@tiagoprnl.me
 
 ===
 
+CHANGE ENVIRONMENT VARIABLES (per user): 
+
+$ vim ~/.bashrc (on Arch Linux)
+$ vim ~/.bash_profile (on other distros?)
+
+===
+
