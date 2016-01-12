@@ -213,3 +213,17 @@ categories_element = lxml.html.document_fromstring(
 categories_txt_cleaned = categories_element.text_content()
 
 ---
+
+Descobrir quantidade mínima de produtos de um e-commerce (e.g. netshoes):
+
+Fazer a seguinte query na busca do google:
+
+    site:netshoes.com.br/produto
+
+A lógica é: usar o prefixo "site:", seguido da URL geral de produtos do site.
+
+Para descobrir a quantidade de urls do site (produtos ou não): 
+
+    site:netshoes.com.br 
+
+---
