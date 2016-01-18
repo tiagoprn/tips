@@ -1,0 +1,149 @@
+Criar VPCs na Amazon: 
+    (referencia: https://www.youtube.com/watch?v=TlHZBlRpXyU)
+
+VPC
+
+    - Create VPC:
+        - Your VPCs, Create VPC
+            - Name: Oregon VPC
+            - CIDR BLock: 172.16.0.0/16 (class B VPC)
+
+        VPC spans an entire AWS Region. 
+        Ideally one VPC for Availability Zone. 
+
+    - Create Subnet: 
+
+        - Outside:
+            - Name: Oregon Outside 2c ("2c" because it will sit on the availability zone 2c. Feel free to choose any other but stick to it). 
+            - VPC: choose the one created on the previous step. 
+            - Availability Zone: 2c
+            - CIDR Block: 172.16.0.0/24 
+
+        - Inside:
+            - Name: Oregon Inside 2c ("2c" because it will sit on the availability zone 2c. Feel free to choose any other but stick to it). 
+            - VPC: choose the one created on the previous step. 
+            - Availability Zone: 2c
+            - CIDR Block: 172.16.1.0/24         
+        
+        - Databases:
+            - Name: Oregon Database 2c ("2c" because it will sit on the availability zone 2c. Feel free to choose any other but stick to it). 
+            - VPC: choose the one created on the previous step. 
+            - Availability Zone: 2c
+            - CIDR Block: 172.16.2.0/24         
+        
+        - Applications:
+            - Name: Oregon Applications 2c ("2c" because it will sit on the availability zone 2c. Feel free to choose any other but stick to it). 
+            - VPC: choose the one created on the previous step. 
+            - Availability Zone: 2c
+            - CIDR Block: 172.16.3.0/24     
+
+        - Core Services: 
+            - Name: Oregon Core Services 2c ("2c" because it will sit on the availability zone 2c. Feel free to choose any other but stick to it). 
+            - VPC: choose the one created on the previous step. 
+            - Availability Zone: 2c
+            - CIDR Block: 172.16.4.0/24     
+            (here you could put a Domain Controller, Internal DNS Services, File sharing etc...)
+
+        - WAN: 
+            - Name: Oregon WAN 2c ("2c" because it will sit on the availability zone 2c. Feel free to choose any other but stick to it). 
+            - VPC: choose the one created on the previous step. 
+            - Availability Zone: 2c
+            - CIDR Block: 172.16.5.0/24     
+            (provides region to region conectivity between VPCs)
+
+        VPN instances could be on the WAN subnet - or you could put the VPN instances on the Outside Subnet.
+
+    - Internet Gateway: 
+        Used by the VPCs to go to the internet.     
+
+        - Create Internet Gateway: 
+            Name: Oregon VPC IGW (Yes, Create)
+
+        Then, click on it and "Attach to VPC". Attach it to the "Oregon VPC".
+
+        Now the VPC has internet conectivity. 
+
+    - Routing Tables: 
+        We will creating a routing table to the "Outside" and "WAN" Subnets. 
+        
+        - Create Route Table
+            - Name tag: Outside and WAN Internet Routing Table for 2c
+            - VPC: Oregon VPC
+            
+            Click on the "Routes" Sheet of the route table. 
+            It will just have one named "local".
+            We will click "Edit", and configure it for the created instances to have access to the internet. 
+            Add a new entry: 
+                Destination: 0.0.0.0/0 ; Target: type "igw" and wait for it to auto-complete to the Internet Gateway we configured on the previous step. 
+            Click "Save".
+
+            Click on the "Subnet Associations" Sheet now. 
+            Select on the "Associate" column the subnets "Oregon Outside 2c" and "Oregon WAN 2c" and click "Save". 
+
+
+        - Also, with our route table created on the previous step (unlabelled), Amazon has auto-created one for us pointing the destination just to the VPC. 
+          So, we can put a name tag on it as "Default Internal VPC Routing Table for 2c". 
+          Also, click on its "Subnet Associations" Sheet and select the other subnets EXCEPT the Outside and WAN (since they are on the other routing table).  
+        
+EC2
+
+- Security Groups
+
+        Name: Outside 2c
+        Description: Outside internet-facing subnet for 2c
+        VPC: Oregon VPC
+        Inbound rules: 
+            HTTP, TCP, 80, Anywhere (0.0.0.0/0)
+            HTTPS, TCP, 443, Anywhere (0.0.0.0/0)
+
+        Name: Inside 2c
+        Description: Inside subnet for 2c 
+        VPC: Oregon VPC
+        Inbound rules: 
+           All traffic, All, 0-65535, Custom IP: 172.16.1.0/24
+           All traffic, All, 0-65535, Custom IP: 172.16.2.0/24                     
+           All traffic, All, 0-65535, Custom IP: 172.16.3.0/24
+           All traffic, All, 0-65535, Custom IP: 172.16.4.0/24
+           All traffic, All, 0-65535, Custom IP: 172.16.5.0/24
+
+        Name: Database 2c
+        Description: Database subnet for 2c
+        VPC: Oregon VPC
+        Inbound rules: 
+           SSH, TCP, 22, Custom IP: 172.16.2.0/24
+           Custom TCP Rule, TCP, 3306, Custom IP: 172.16.2.0/24
+
+        Name: Application 2c
+        Description: Application subnet for 2c
+        VPC: Oregon VPC
+        Inbound rules: 
+           SSH, TCP, 22, Custom IP: 172.16.3.0/24
+           Custom TCP Rule, TCP, 3306, Custom IP: 172.16.3.0/24
+           HTTP, TCP, 80, Custom IP: 172.16.3.0/24
+           HTTPS, TCP, 443, Custom IP: 172.16.3.0/24
+
+        ( On the security group below, any subnet can contact the "Core Services" subnet )
+        Name: Core Services 2c
+        Description: Core Services subnet for 2c
+        VPC: Oregon VPC
+        Inbound rules: 
+            All Traffic, All, 0-65535, Custom IP: 172.16.1.0/24
+            All Traffic, All, 0-65535, Custom IP: 172.16.2.0/24   
+            All Traffic, All, 0-65535, Custom IP: 172.16.3.0/24
+            All Traffic, All, 0-65535, Custom IP: 172.16.4.0/24
+            All Traffic, All, 0-65535, Custom IP: 172.16.5.0/24
+
+        Name: WAN 2c
+        Description: WAN internet-facing subnet for 2c
+        VPC: Oregon VPC
+        Inbound rules: 
+            All Traffic, All, 0-65535, Custom IP: 172.16.1.0/24
+            All Traffic, All, 0-65535, Custom IP: 172.16.2.0/24   
+            All Traffic, All, 0-65535, Custom IP: 172.16.3.0/24
+            All Traffic, All, 0-65535, Custom IP: 172.16.4.0/24
+            All Traffic, All, 0-65535, Custom IP: 172.16.5.0/24
+
+---
+
+
+
