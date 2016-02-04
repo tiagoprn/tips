@@ -227,3 +227,11 @@ Para descobrir a quantidade de urls do site (produtos ou não):
     site:netshoes.com.br 
 
 ---
+
+If you spider is slowly consuming all memory available, it may be that it's finding too many links to follow and therefore having to store them all in the interim period. 
+So, the problem is that it is storing all of those links in memory instead of on disk and it eventually fills up all my memory.
+The solution was to run scrapy with a job directory, and that forces them to be stored on disk where there is plenty of space.
+
+$ scrapy crawl spider -s JOBDIR=somedirname
+
+---
