@@ -212,6 +212,20 @@ categories_element = lxml.html.document_fromstring(
 # Extract just the text from the element:
 categories_txt_cleaned = categories_element.text_content()
 
+
+NOTE: if you need to parse a real XML (not HTML), and get an attribute value,
+you must use another method: lxml.etree.fromstring(). 
+
+E.g.: 
+    import lxml.etree
+    xml_string = '<meta itemprop="seller/partnerName" content="MegaMamute"></meta>'
+    # (if it complains of syntax error, remember XML needs a tag opening and 
+    #  closing. E.g.: <meta></meta>. If you do not have the closing, you can 
+    #  simply concatenate it. ;)
+    meta_element = lxml.etree.fromstring(xml_string)                                                                                                                                                                                                        
+    # suppose I want to get the value of the "content" attribute (which is "Megamamute"):
+    print meta_element.get('content')
+
 ---
 
 Descobrir quantidade mínima de produtos de um e-commerce (e.g. netshoes):
