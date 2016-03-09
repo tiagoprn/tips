@@ -72,6 +72,22 @@ CONSIDERATIONS:
         To check the modification was applied, run "sysctl -a" again and search for the "open files" value. To ease finding that parameter, you can apply a grep filter:
             $ sysctl -a | grep 'fs.file-max'
 
+    **IMPORTANT:** Ensuring changes to ulimit parameters persist:
+
+            There are two places where changes need to be recorded:
+
+            /etc/sysctl.conf
+            /etc/security/limits.conf
+
+            sysctl.conf is for setting a system wide ceiling:
+                # max open files (systemic limit)
+                fs.file-max = 65536
+
+            limits.conf is for setting a user space floor and ceiling:
+                /etc/security/limits.conf
+                Ensure both a hard limit and a soft limit are set, otherwise the setting will not become active.
+
+
     -B) A nice formula to get an idea of the MAX number of connections is:
         ```
         max = worker_processes * worker_connections * (total_of_current_active_connections / average_request_time)
@@ -128,7 +144,6 @@ $ vim /etc/nginx/nginx.conf
 
 6) Avoid disk I/O at all costs (on your backend and on the server). Take into consideration that a low ram machine will need to swap to disk, and that swap is disk I/O.
 
-
 7) Talking about Disk I/O, it is nice to cache the open file descriptors. Here are the available directives for that: http://wiki.nginx.org/HttpCoreModule#open_file_cache
 
 8) Compress the data to be transfered through the network. Don't worry with the CPU penalty because Nginx is already optimized to deal with the required amount of CPU load. To do that:
@@ -142,6 +157,9 @@ $ vim /etc/nginx/nginx.conf
 ```
 
 9) Restart the nginx service (systemd / upstart / init.d) and do your measures again (you can use siege, ab or wrk/wrk2 for that).
+
+
+
 
 
 
