@@ -249,3 +249,61 @@ The solution was to run scrapy with a job directory, and that forces them to be 
 $ scrapy crawl spider -s JOBDIR=somedirname
 
 ---
+
+Como pegar um valor dentro de uma string de código javascript. 
+
+Ex. (javascript): 
+
+<script type="text/javascript">
+    dataLayer.push({
+        'event': 'productDetail',
+        'ecommerce': {
+            'detail': {
+                'products': [{
+                    'id': '11939',
+                    'name': 'Gel de Espuma Dermo Lavante',
+                    'category': '',
+                    'price': '69.79',
+                    'brand': 'Mustela',
+                    'variant': '500 ml'
+                }]
+            },
+            'impressions': []
+        }
+    });
+</script>
+
+Para extrair os dados com python, o segredo é eu manipular a string da função "dataLayer.push" para ficar somente com o valor entre chaves, que corresponde exatamente à um dict do python (basta eu aplicar um eval na string para extrair o dict e manipulá-lo). Ex.: 
+
+    for script in response.xpath('//script/text()').extract():
+        if 'dataLayer.push' in script:
+            script_data = script.replace(
+                'dataLayer.push(', '').replace(');', '').replace('\n','')
+            script_data_as_dict = eval(script_data)
+            try:
+                price = script_data_as_dict[
+                    'ecommerce']['detail']['products'][0]['price']
+            except:
+                price = ''
+
+            try:
+                brand = script_data_as_dict[
+                    'ecommerce']['detail']['products'][0]['brand']
+            except:
+                brand = ''
+
+            break
+        else:
+            continue
+
+    if price:
+        item.add_value('price', price)
+
+    if brand:
+        item.add_value('brand', brand)
+
+
+
+
+
+
