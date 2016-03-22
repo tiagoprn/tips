@@ -646,3 +646,15 @@ $ vim ~/.bash_profile (on other distros?)
 
 ===
 
+chown / chmod - copy permissions/owner from another file: 
+
+$ chmod --reference=haproxy.cfg.ORIG haproxy.cfg
+$ chmod --reference=haproxy.cfg.ORIG haproxy.cfg
+
+Above, will copy the same owner/permissions from haproxy.cfg.ORIG into haproxy.cfg. 
+
+===
+
+
+
+===
