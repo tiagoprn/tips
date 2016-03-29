@@ -302,8 +302,89 @@ Para extrair os dados com python, o segredo é eu manipular a string da função
     if brand:
         item.add_value('brand', brand)
 
+---
+
+Exemplo de como filtrar os links coletados por um crawler de uma forma mais precisa do que com simples regras "allow", "deny": 
 
 
+```
+# -*- coding: utf-8 -*-
+import re
+from functools import partial
+from operator import methodcaller
 
+from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.contrib.loader.processor import Identity, MapCompose, TakeFirst
+
+from ...item_loader import PrecificaItemLoader as ItemLoader
+from ..items import ProductItem
+from . import ExtraURLsSitemapSpider, PrecificaSpider
+
+
+class PneuPlusOnlineSpider(PrecificaSpider, ExtraURLsSitemapSpider,
+                           CrawlSpider):
+    name = "pneu_plus_online"
+    site = "Pneu Plus Online"
+    compat_domain = "www.pneuplusonline.com.br"
+    allowed_domains = ['pneuplusonline.com.br']
+    start_urls = ['http://www.pneuplusonline.com.br/exibirpesquisa.php?'
+                  'texto_pesquisa=pneu']
+    sitemap_urls = ['http://www.pneuplusonline.com.br/sitemap.xml']
+
+    duplicate_url_patterns = ['preco_ini', 'preco_fim',
+                              'id_fabricante', 'rank',
+                              'catalog']
+
+    rules = [
+        Rule(LinkExtractor(allow=['pesquisa'],
+             deny=duplicate_url_patterns), follow=True,
+             process_links='filter_links'),
+        Rule(LinkExtractor(allow=['Pneu', 'Amortecedor', 'Camara', 'Roda'],
+                           deny=duplicate_url_patterns),
+             callback='parse_product',
+             follow=True,
+             process_links='filter_links'),
+    ]
+
+    # Fine tuning of the collected links, there are some I want to discard
+    def filter_links(self, links):
+        # baseDomain = self.get_base_domain( self.response_url)
+        filteredLinks = []
+        for link in links:
+            pattern = re.compile('(id=\d+)', re.UNICODE | re.IGNORECASE)
+            matches = re.findall(pattern, link.url)
+            # More than 1 id means more than one filter, duplicating
+            # requests and delaying the execution time. So, a url with
+            # more than one id is ignored.
+            if len(matches) < 2:
+                filteredLinks.append(link)
+
+        return filteredLinks
+
+    def parse_product(self, response):
+        item = ItemLoader(ProductItem(), response)
+        item.default_output_processor = TakeFirst()
+
+        item.add_css('name', '.titulo_h1_verproduto::text',
+                     MapCompose(methodcaller('strip')))
+
+        sku_info = response.css('#produtoCodigo::text').extract()
+        for el in sku_info:
+            matched = re.search(r'([digo])\s(?P<sku>.+)', el.strip())
+            if matched:
+                item.add_value('sku', matched.groupdict()['sku'])
+
+        item.add_css('image_url', '#imagemMaior::attr(href)')
+
+        item.add_css('description', '.new_produtoExtrastxt3.span::text')
+
+        available = True if response.css('#btnAdicionar') else False
+        item.add_value('available', available)
+
+        yield item.load_item()
+```
+
+---
 
 
