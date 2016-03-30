@@ -387,4 +387,10 @@ class PneuPlusOnlineSpider(PrecificaSpider, ExtraURLsSitemapSpider,
 
 ---
 
+Maneira correta de fazer um seletor css explicitando toda a hierarquia dos
+elementos: 
+
+response.css('#fbits-breadcrumb>ol>li>a>span::text').extract()
+
+---
 
