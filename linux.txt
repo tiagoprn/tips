@@ -659,6 +659,20 @@ Above, will copy the same owner/permissions from haproxy.cfg.ORIG into haproxy.c
 
 ===
 
+AUTOSSH: 
+
+    Automatically restart SSH sessions and tunnels. Can be called at boot time - creating a systemd init file to automatically establish a tunnel.
+This can be useful, e.g., to access your home connection from DigitalOcean or another cloud provider (using a Reverse tunnel).
+
+IMPORTANTE: Autenticação por chave sem senha tem que estar funcionando para que funcione corretamente. 
+
+Túnel "normal" (mapear portas de um servidor remoto em uma máquina local - parâmetro "-L"): 
+    $ autossh -M 10984 -o "ExitOnForwardFailure=yes" -o "PubkeyAuthentication=yes" -o "PasswordAuthentication=no" -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3"  -L 22131:localhost:22131 tiago@159.203.160.142
+
+Túnel "reverso" (mapear portas da máquina local em um servidor remoto - 159.203.160.142 - parâmetro "-R"): 
+    $ autossh -M 10984 -o "ExitOnForwardFailure=yes" -o "PubkeyAuthentication=yes" -o "PasswordAuthentication=no" -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3"  -R 22131:localhost:22131 tiago@159.203.160.142
+
+(more at: http://www.debianadmin.com/howto-use-ssh-local-and-remote-port-forwarding.html)
 
 
 ===
