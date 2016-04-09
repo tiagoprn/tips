@@ -20,8 +20,12 @@
     initrd /boot/kernel26.img
     boot
 
+
+* Ver todas as portas ativas em um host: 
+    $ netstat -netlp
+
 * 2 formas de ver se uma porta está ativa no linux (por exemplo, a porta 9000 do php5-fpm):
-    $ netstat -apn | grep ':9000'
+    $ netstat -netlp | grep '9000'
     $ lsof -i tcp:9000 -n
 
 * Bootar um pendrive bootável ou iso pelo qemu:
