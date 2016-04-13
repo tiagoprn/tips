@@ -34,8 +34,12 @@ from markdown to HTML, but it doesn’t hurt to include them.
 
 IMPORTANT: 
     Libreoffice can be used headless to convert documents to and
-    from all formats it supports. E.g., to convert from odt to pdf: 
+    from all formats it supports. E.g., to convert "00001.odt" from odt to pdf: 
 
-    $ libreoffice --headless --convert-to pdf 00001.odt
+    $ libreoffice --headless --convert-to pdf --outdir '/tmp' 00001.odt
 
-    (with the option "--headless", it works through the CLI)
+    (With the option "--headless", it works through the CLI.
+     The output file will be at "/tmp/00001.pdf"i)
+
+    To convert, e.g., to MS Excel 95 you must use:
+        ... --convert-to xls:"MS Excel 95"
