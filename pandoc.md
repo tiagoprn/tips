@@ -31,3 +31,11 @@ from markdown to HTML, but it doesn’t hurt to include them.
     $ pandoc spot_workflow.project.md -f markdown -t latex -o spot_workflow.project.pdf -V geometry:"top=3cm, bottom=1.5cm, left=2cm, right=2cm"  
 
     ("-V" specifies the document margins)
+
+IMPORTANT: 
+    Libreoffice can be used headless to convert documents to and
+    from all formats it supports. E.g., to convert from odt to pdf: 
+
+    $ libreoffice --headless --convert-to pdf 00001.odt
+
+    (with the option "--headless", it works through the CLI)
