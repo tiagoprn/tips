@@ -22,3 +22,13 @@
 - Filter by "ContaCorrente.cliente.apelido" (Filtering by Relationship Attribute):
 
     ContaCorrente.query.join(ContaCorrente.cliente).filter(Cliente.apelido.ilike("%da%"))
+
+- Complex query (filter + order_by relationship attribute):
+
+      PreFatura.query.join(PreFatura.cliente).filter(                                                                                                                                                                         
+         PreFatura.periodo_referencia_mes==mes,                                                                                                                                                                                            
+         PreFatura.periodo_referencia_ano==ano,                                                                                                                                                                                            
+         PreFatura.status=='A').order_by(                                                                                                                                                                                                  
+             PreFatura.periodo_referencia_ano.desc(),                                                                                                                                                                                      
+             PreFatura.periodo_referencia_mes.desc(),                                                                                                                                                                                      
+             Cliente.codigo)            
