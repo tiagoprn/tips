@@ -394,3 +394,14 @@ response.css('#fbits-breadcrumb>ol>li>a>span::text').extract()
 
 ---
 
+Pegar o valor a partir de um name de um elemento. Ex.: 
+
+<input type="hidden" name="idproduto" value="82802" /> 
+ipdb> response.xpath("//input[contains(@name, 'idproduto')]//@value").extract_first()
+u'82802'
+
+<input type="hidden" name="valor" value="1.299,90" />
+ipdb> response.xpath("//input[contains(@name, 'valor')]//@value").extract()
+u'1.299,90'
+
+---
