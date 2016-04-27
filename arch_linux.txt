@@ -141,6 +141,9 @@ PACMAN
     List which files are on package:
         $ pacman -Ql [package_name]
 
+    Update without asking for confirmation:
+        $ pacman -Syu --noconfirm
+
 
 DISABLE CREATION OF /tmp on tmpfs (memory):
 	Systemd will do that independently of what is set on /etc/fstab. To completely disable:

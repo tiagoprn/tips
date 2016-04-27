@@ -231,3 +231,8 @@ sudo rm $HOSTFILE
 ```
 
 ---
+
+How to run a container accessing the host on its entirety (useful for zabbix and others):
+    $ docker run --rm -it --privileged --pid=host --net=host ...
+
+
