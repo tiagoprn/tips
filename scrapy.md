@@ -404,4 +404,8 @@ u'82802'
 ipdb> response.xpath("//input[contains(@name, 'valor')]//@value").extract()
 u'1.299,90'
 
+<meta name="og:image" content="http://www.cdiscount-imagens.com.br/Control/ArquivoExibir.aspx?IdArquivo=178025669">
+ipdb> response.xpath("//meta[contains(@name, 'og:image')]//@content").extract_first()                                                                                                                                                                                           
+u'http://www.cdiscount-imagens.com.br/Control/ArquivoExibir.aspx?IdArquivo=178025669'
+
 ---
