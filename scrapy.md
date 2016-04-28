@@ -408,4 +408,9 @@ u'1.299,90'
 ipdb> response.xpath("//meta[contains(@name, 'og:image')]//@content").extract_first()                                                                                                                                                                                           
 u'http://www.cdiscount-imagens.com.br/Control/ArquivoExibir.aspx?IdArquivo=178025669'
 
+<span itemprop="sku">180</span>
+ipdb> response.xpath("//span[contains(@itemprop, 'sku')]//text()").extract_first()
+u'180'
+
+
 ---
