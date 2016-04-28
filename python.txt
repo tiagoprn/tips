@@ -543,5 +543,12 @@ Replacing multiple spaces to a single one:
 
 		u'Vassoura com Dispenser Premium Easy Clean - 10.07.095.002 por apenas R$ 99,50 ou 3X de R$ 33,17 no cart\xe3o s/ juros 5 % de Desconto no Boleto Banc\xe1rio (Parcela \xdanica): R$ 94,53 Frete n\xe3o incluso.'
 
+---
 
+On requirements.txt, how to point to a specific git branch / tag: 
 
+-e git://github.com/scrapy/scrapy.git@1.1#egg=scrapy
+
+This, for the package "scrapy", will use the branch or tag "1.1" from the repository.
+
+---
