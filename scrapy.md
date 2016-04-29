@@ -412,5 +412,70 @@ u'http://www.cdiscount-imagens.com.br/Control/ArquivoExibir.aspx?IdArquivo=17802
 ipdb> response.xpath("//span[contains(@itemprop, 'sku')]//text()").extract_first()
 u'180'
 
-
 ---
+
+HANDLE SCRAPY STATUS SUMMARY / ERRORS (OR: HOW TO ADD NEW STATUSES): 
+
+
+
+from scrapy.spider import BaseSpider
+from scrapy.xlib.pydispatch import dispatcher
+from scrapy import signals
+
+class MySpider(BaseSpider):
+    handle_httpstatus_list = [404] 
+    name = "myspider"
+    allowed_domains = ["example.com"]
+    start_urls = [
+        'http://www.example.com/thisurlexists.html',
+        'http://www.example.com/thisurldoesnotexist.html',
+        'http://www.example.com/neitherdoesthisone.html'
+    ]
+
+    def __init__(self, category=None):
+        self.failed_urls = []
+
+    def parse(self, response):
+        if response.status == 404:
+            self.crawler.stats.inc_value('failed_url_count')
+            self.failed_urls.append(response.url)
+
+    def handle_spider_closed(spider, reason):
+        self.crawler.stats.set_value('failed_urls', ','.join(spider.failed_urls))
+
+    def process_exception(self, response, exception, spider):
+        ex_class = "%s.%s" % (exception.__class__.__module__, exception.__class__.__name__)
+        self.crawler.stats.inc_value('downloader/exception_count', spider=spider)
+        self.crawler.stats.inc_value('downloader/exception_type_count/%s' % ex_class, spider=spider)
+
+    dispatcher.connect(handle_spider_closed, signals.spider_closed)
+
+
+>>> Output (the downloader/exception_count* stats will only appear if exceptions are actually thrown - I simulated them by trying to run the spider after I'd turned off my wireless adapter):
+
+2012-12-10 11:15:26+0000 [myspider] INFO: Dumping Scrapy stats:
+    {'downloader/exception_count': 15,
+     'downloader/exception_type_count/twisted.internet.error.DNSLookupError': 15,
+     'downloader/request_bytes': 717,
+     'downloader/request_count': 3,
+     'downloader/request_method_count/GET': 3,
+     'downloader/response_bytes': 15209,
+     'downloader/response_count': 3,
+     'downloader/response_status_count/200': 1,
+     'downloader/response_status_count/404': 2,
+     'failed_url_count': 2,
+     'failed_urls': 'http://www.example.com/thisurldoesnotexist.html, http://www.example.com/neitherdoesthisone.html'
+     'finish_reason': 'finished',
+     'finish_time': datetime.datetime(2012, 12, 10, 11, 15, 26, 874000),
+     'log_count/DEBUG': 9,
+     'log_count/ERROR': 2,
+     'log_count/INFO': 4,
+     'response_received_count': 3,
+     'scheduler/dequeued': 3,
+     'scheduler/dequeued/memory': 3,
+     'scheduler/enqueued': 3,
+     'scheduler/enqueued/memory': 3,
+     'spider_exceptions/NameError': 2,
+     'start_time': datetime.datetime(2012, 12, 10, 11, 15, 26, 560000)}
+
+(reference: http://www.unknownerror.org/opensource/scrapy/scrapy/q/stackoverflow/13724730/how-to-get-the-scrapy-failure-urls)
