@@ -138,6 +138,9 @@ ATUALIZAR PACOTES DO AUR:
 
 PACMAN
 
+    Discover which package provides a file: 
+        $ pacman -Qo /usr/include/xlocale.h
+
     List which files are on package:
         $ pacman -Ql [package_name]
 
