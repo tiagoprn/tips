@@ -10,7 +10,11 @@ Sample queries:
 
 - Get all keys:
     $ SCAN 0
-    PS: suposing db0 here
+        ( PS: suposing db0 here)
+
+    OR
+
+    $ KEYS * 
 
 - Get all keys values:
     $ GET [key_name]
