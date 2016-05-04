@@ -504,6 +504,23 @@ Ex.:
 
 OBS.: O awk faz o split das colunas por espaço. Portanto, se em uma das linhas eu tiver um espaço a mais posso trazer as colunas trocadas.
 
+- Como concatenar string entre variáveis no awk:
+
+    Ex.: Como concatenar as 2 primeiras colunas e separar por ":":
+
+        $ docker images | grep scrapy 
+            precifica/scrapy                          latest              79fba72e40c7        23 minutes ago      317.9 MB
+            precifica/scrapy                          20160504.0929.59    4f7853f49d3d        29 minutes ago      317.9 MB
+            precifica/scrapy                          20160504.0914.17    2ffa69250fab        44 minutes ago      320.4 MB
+            precifica/precifica-scrapy-freelas        20151026.1739.24    ac3624be9d6e        6 months ago        793 MB
+
+        $ docker images | grep scrapy | awk '{v=$1":"$2; print v}' 
+            precifica/scrapy:latest
+            precifica/scrapy:20160504.0929.59
+            precifica/scrapy:20160504.0914.17
+            precifica/precifica-scrapy-freelas:20151026.1739.24
+
+
 ===
 
 Ajustar timezone do SO Para fuso horário do Brasil e configurar NTP:
@@ -674,5 +691,56 @@ Túnel "reverso" (mapear portas da máquina local em um servidor remoto - 159.20
 
 (more at: http://www.debianadmin.com/howto-use-ssh-local-and-remote-port-forwarding.html)
 
+
+===
+
+Example Makefile with parameters to some commands: 
+
+help:
+	@echo -e "\nHELP:\n"
+	@echo -e " make clean \n\tDeletes the *.pyc files\n"
+	@echo -e " make crawl-normal SPIDERNAME=amazon \n\tRun scrapy (normal speed).\n"
+	@echo -e " make crawl-slow SPIDERNAME=amazon \n\tRun scrapy (slow speed to avoid blocking).\n"
+	@echo -e " make config-devel \n\tUpdate the config files to run the app on this environment.\n"
+	@echo -e " make config-homol \n\tUpdate the config files to run the app on this environment.\n"
+	@echo -e " make config-prod \n\tUpdate the config files to run the app on this environment.\n"
+	@echo -e " make config-freelas \n\tUpdate the config files to run the app on this environment.\n"
+	@echo -e " make exec \n\t Enter the container.\n"
+
+clean:
+	@echo -e "\nDeleting pyc files...\n";
+	rm -fr `find . -name "*.pyc"`;
+	@echo -e "\nDeleting pyc files...[DONE]\n";
+
+crawl-normal:
+	@printf "Crawling $(SPIDERNAME) (normal) ...[WAIT]\n"
+	@printf "Crawling $(SPIDERNAME) (normal) ...[DONE]\n"
+
+crawl-slow:
+	@printf "Crawling $(SPIDERNAME) (slow) ...[WAIT]\n"
+	@printf "Crawling $(SPIDERNAME) (slow) ...[DONE]\n"
+
+config-devel:
+	echo 'Updating configuration...[WAIT]'
+	cp -farv scrapy_project/spiders/settings.py.development scrapy_project/spiders/settings.py
+	echo 'Updating configuration...[DONE]'
+
+config-homol:
+	echo 'Updating configuration...[WAIT]'
+	cp -farv scrapy_project/spiders/settings.py.homologation scrapy_project/spiders/settings.py
+	echo 'Updating configuration...[DONE]'
+
+config-prod:
+	echo 'Updating configuration...[WAIT]'
+	cp -farv scrapy_project/spiders/settings.py.production scrapy_project/spiders/settings.py
+	echo 'Updating configuration...[DONE]'
+
+config-freelas:
+	echo 'Updating configuration...[WAIT]'
+	cp -farv scrapy_project/spiders/settings.py.freelas scrapy_project/spiders/settings.py
+	echo 'Updating configuration...[DONE]'
+
+exec:
+	docker exec -it $$(docker ps | grep scrapy | awk '{print $$1}') bash
 
 ===

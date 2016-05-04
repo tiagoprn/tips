@@ -147,6 +147,8 @@ PACMAN
     Update without asking for confirmation:
         $ pacman -Syu --noconfirm
 
+    Remove orphan packages:
+        # pacman -Rns $(pacman -Qtdq)
 
 DISABLE CREATION OF /tmp on tmpfs (memory):
 	Systemd will do that independently of what is set on /etc/fstab. To completely disable:
