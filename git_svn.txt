@@ -96,3 +96,11 @@ What can be done in that case is to checkout an old commit hash and create a bra
     $ git branch -d PAST   # deletes the branch used to go back
 
 ---
+
+HOW TO SEE THE FILES ADDED/REMOVED/CHANGED FROM THE LAST 15 DAYS ON:
+
+    $ git diff --stat @{15.days.ago}
+
+---
+
+
