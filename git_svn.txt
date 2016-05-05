@@ -103,4 +103,6 @@ HOW TO SEE THE FILES ADDED/REMOVED/CHANGED FROM THE LAST 15 DAYS ON:
 
 ---
 
+GIT LOG ON ONE LINE:
 
+    $ git log --pretty=oneline
