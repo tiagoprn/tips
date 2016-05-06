@@ -235,4 +235,23 @@ sudo rm $HOSTFILE
 How to run a container accessing the host on its entirety (useful for zabbix and others):
     $ docker run --rm -it --privileged --pid=host --net=host ...
 
+---
+
+How to build a docker container that runs multiple commands and keeps showing the logs: 
+
+
+seafile:
+  # build: .
+  image: tiagoprn/seafile
+  ports:
+    - 8082:8082
+    - 8000:8000
+  command: bash -c "./start.sh && tail -f /seafile/logs/seahub.log"
+
+
+PS: The tail command below can also be used to keep a container running forever, 
+if I pass a file that exists on the container. 
+
+---
+
 
