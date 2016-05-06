@@ -744,3 +744,9 @@ exec:
 	docker exec -it $$(docker ps | grep scrapy | awk '{print $$1}') bash
 
 ===
+
+Forçar atualização dos DNS no linux (no caso de eu mudar o IP de um DNS e demorar para atualizar): 
+
+    $ sudo systemctl restart nscd
+
+===
