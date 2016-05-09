@@ -16,8 +16,62 @@ Sample queries:
 
     $ KEYS * 
 
-- Get all keys values:
-    $ GET [key_name]
+
+- Setting / Getting keys:
+
+    - STRING keys:
+        - Set key value: 
+            $ SET [key_name] [value]
+                
+            E.g.:
+                $ SET teste "aaaa"
+
+        - Get key value:
+            $ GET [key_name]
+
+            E.g.:
+                $ GET teste
+
+    - HASH keys:
+        - Set key value: 
+            $ HSET [key_name] [hash_name] [hash_value]
+                
+            E.g.:
+                $ HSET "myhash" field01" "aaaa"
+
+        - Get key value:
+            $ HGET [key_name] [hash_name]
+
+            E.g.:
+                $ HGET "myhash" "field01"
+
+        - Get all key hash names: 
+            $ HKEYS [key_name]
+
+            E.g.:
+                $ HKEYS "myhash"
+
+        - Get all key hash names/values: 
+            $ HGETALL [key_name]
+            
+             E.g.:
+                $ HGETALL "myhash"
+
+   
+- Incrementing / Decrementing STRING / HASH key counters:
+
+    - STRING keys:
+        $ INCR "var1"
+        $ INCR "var1"
+        $ INCR "var1"
+        $ DECR "var1"
+
+    - HASH keys:
+        $ HINCRBY "myhash" "counter" 1
+        $ HINCRBY "myhash" "counter" 1
+        $ HINCRBY "myhash" "counter" 1
+        $ HINCRBY "myhash" "counter" -1  # this one decreases the counter
+
 
 - Get the type of a key:
     $ TYPE [key_name]
