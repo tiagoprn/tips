@@ -750,3 +750,14 @@ Forçar atualização dos DNS no linux (no caso de eu mudar o IP de um DNS e dem
     $ sudo systemctl restart nscd
 
 ===
+
+# Overriding system binaries with the user ones (e.g., to have a newer tmux version on my home folder):
+
+    $ vim ~/.bashrc
+
+        export PATH=$HOME/local/bin:$PATH
+
+, then:
+
+    $ source ~/.bashrc
+
