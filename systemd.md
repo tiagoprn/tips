@@ -124,6 +124,34 @@ You should avoid making changes in /usr, because your system installs package da
 
 ---
 
+A systemd user file to automatically start dropbox for the user "tiago": 
+
+    $ vim /etc/systemd/system/dropbox.service
+
+    [Unit]
+    Description=Dropbox for user tiago
+    After=network.target sshd.service
+    Requires=network.target
+
+    [Service]
+    # "TimeoutStartSec=0" to turn off timeouts, 
+    # as dropboxd may take a while.
+    TimeoutStartSec=0 
+    Type=forking
+    User=tiago
+    Group=users
+    Restart=on-failure
+    RestartSec=10s
+    TimeoutSec=300
+    ExecStart=/bin/nohup /opt/dropbox/dropboxd
+    ExecStop=/bin/ps aux | /usr/bin/grep dropbox | /usr/bin/grep opt | /usr/bin/awk
+    '{print $2}' | /usr/bin/xargs /usr/bin/kill -9
+
+    [Install]
+    WantedBy=multi-user.target
+
+---
+
 systemd slow boot: http://littledaemons.tumblr.com/post/106832805315
 
 ---
