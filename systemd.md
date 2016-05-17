@@ -152,6 +152,113 @@ A systemd user file to automatically start dropbox for the user "tiago":
 
 ---
 
+How to configure systemd to start docker containers: 
+
+$ vim /etc/systemd/systemd/myapp.service
+
+    [Unit]
+    Description=TMC Financeiro V2
+    After=network.target docker.service
+    Requires=network.target docker.service
+
+    [Service]
+    Type=oneshot
+    # PIDFile=/var/run/tmcfv2.pid
+    User=tmc
+    Group=users
+    # Restart=on-failure
+    # RestartSec=10s
+    # TimeoutSec=300
+    ExecStart=/opt/tmcfv2/tmc_financeiro_v2_flask/conf/systemd/tmcfv2-start.sh
+    ExecStop=/opt/tmcfv2/tmc_financeiro_v2_flask/conf/systemd/tmcfv2-stop.sh
+    NotifyAccess=all
+
+    [Install]
+    WantedBy=multi-user.target
+
+        IMPORTANT: 
+            1) "Type=oneshot" means that the service doesn't have a process of its
+        own for systemd to monitor. Then you'll need to set the restart=always behaviour in
+        docker-compose-yml. The meta-service just ensures that all your containers
+        will come back up after a system restart, and the restart= statement on docker-compose.yml tells systemd
+        what to do if a container exits prematurely.
+            2) On the "Require" and "After" parameters, you can also list other 
+        containers (each one having its' own systemd unit file, of course). 
+        That way, you can say a container depends on another one and also 
+        control the order on which they must be started. 
+
+$ vim /opt/tmcfv2/tmc_financeiro_v2_flask/docker-compose.yml
+
+    tmcfv2src:
+    image: tiagoprn/python2-development-base:v0.2
+    volumes:
+        - .:/code
+    command: /bin/true
+    tmcfv2runtime:
+    build: .
+    command: /code/start_uwsgi_server.sh
+    ports:
+    - "5000:5000"
+    - "8888:8888"
+    volumes_from:
+    - tmcfv2src
+    environment:
+    C_FORCE_ROOT: "true"
+    links:
+        - database
+    restart: always
+    dbdata:
+    image: postgres:9.5
+    volumes:
+        - /var/lib/postgresql
+    command: /bin/true
+    database:
+    image: postgres:9.5
+    volumes:
+        - "./tmp:/shared"
+        - "./utils:/utils"
+    volumes_from:
+        - dbdata
+    expose:
+        - 5432
+    ports:
+        - "5432:5432"
+    environment:
+        - POSTGRES_USER=tmc
+        - POSTGRES_PASSWORD=v3t3x2y2
+        - POSTGRES_DB=tmc_financeiro
+    restart: always
+    nginx:
+    image: nginx
+    command: nginx
+    volumes:
+    - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+    - ./conf/nginx/tmcfv2.enabled:/etc/nginx/conf.d/tmcfv2.enabled
+    - ./scripts:/scripts
+    - ./logs:/logs
+    ports:
+        - "80:80"
+        - "443:443"
+    links:
+        - tmcfv2runtime
+    restart: always
+
+$ vim /opt/tmcfv2/tmc_financeiro_v2_flask/tmcfv2-start.sh
+ 
+    #!/bin/bash
+    echo 'Raising the tmcfv2 docker container...[WAIT]'
+    cd /opt/tmcfv2/tmc_financeiro_v2_flask && docker-compose up
+    echo 'Raising the tmcfv2 docker container...[DONE]'
+
+$ vim /opt/tmcfv2/tmc_financeiro_v2_flask/tmcfv2-stop.sh 
+
+    #!/bin/bash
+    echo 'Stopping tmcfv2... [WAIT]'
+    cd /opt/tmcfv2/tmc_financeiro_v2_flask && docker-compose stop
+    echo 'Stopping tmcfv2... [DONE]'
+
+---
+
 systemd slow boot: http://littledaemons.tumblr.com/post/106832805315
 
 ---
@@ -161,3 +268,4 @@ https://medium.com/@johannes_gehrs/getting-started-with-systemd-on-debian-jessie
 ---
 
 https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files
+
