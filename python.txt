@@ -552,3 +552,8 @@ On requirements.txt, how to point to a specific git branch / tag:
 This, for the package "scrapy", will use the branch or tag "1.1" from the repository.
 
 ---
+
+python 3 - how to convert bytes to str:
+
+    byte_var_name.decode('utf-8')
+
