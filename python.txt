@@ -557,3 +557,25 @@ python 3 - how to convert bytes to str:
 
     byte_var_name.decode('utf-8')
 
+---
+
+How to get a python dict sorted by its key names:
+
+    >>> from collections import OrderedDict
+    >>> d = {'banana': 3, 'apple':4, 'pear': 1, 'orange': 2}
+    >>> new_d = OrderedDict(sorted(d.items()))
+    >>> new_d
+    OrderedDict([('apple', 4), ('banana', 3), ('orange', 2), ('pear', 1)])
+
+    Here we create our OrderedDict by sorting it on the fly using Python’s sorted built-in function.
+    The sorted function takes in the dictionary’s items, which is a list of tuples that represent the key pairs of the dictionary. 
+    It sorts them and then passes them into the OrderedDict, which will retain their order.
+
+    IMPORTANT: This method can also be used to convert a tuple to a python dict easily and on the fly:
+
+        >>> from collections import OrderedDict
+        >>> my_tuple = [('apple', 4), ('banana', 3), ('orange', 2), ('pear', 1)]
+        >>> OrderedDict(my_tuple)
+        OrderedDict([('apple', 4), ('banana', 3), ('orange', 2), ('pear', 1)])
+
+---
