@@ -761,3 +761,15 @@ Forçar atualização dos DNS no linux (no caso de eu mudar o IP de um DNS e dem
 
     $ source ~/.bashrc
 
+--- 
+
+Colorize json output from curl: 
+
+    IMPORTANT: For this to work, you must 'pip install pygments'.
+
+    The first pipe will pretty print the json, the second one will colorize it
+
+        $ curl http://localhost:5000/stats | python -m json.tool | pygmentize -l json
+
+---
+
