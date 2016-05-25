@@ -582,12 +582,14 @@ How to get a python dict sorted by its key names:
 
 Given a list, how to shuffle its elements (randomize the indexes positions):
 
+ipdb> import random
+
 ipdb> x = [[i] for i in range(10)]
 
 ipdb> x
 [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
 
-ipdb> shuffle(x)                                                                                                                                                                                                                                                                
+ipdb> random.shuffle(x)
 
 ipdb> x
 [[0], [4], [9], [8], [6], [1], [5], [7], [3], [2]]
