@@ -593,3 +593,24 @@ ipdb> x
 [[0], [4], [9], [8], [6], [1], [5], [7], [3], [2]]
 
 ---
+
+How to sort a dict by its keys / values: 
+
+    from collections import OrderedDict
+
+    import operator
+
+    x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
+
+    # itemgetter(1) will sort by its values
+    tuple_sorted_by_values = sorted(x.items(), key=operator.itemgetter(1))
+
+    # itemgetter(0) will sort by its keys
+    tuple_sorted_by_keys = sorted(x.items(), key=operator.itemgetter(0))
+
+    # Then, you can convert these tuples to a dict: 
+    by_values_dict = OrderedDict(tuple_sorted_by_values)
+    by_keys_dict = OrderedDict(tuple_sorted_by_keys)
+
+---
+
