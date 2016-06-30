@@ -616,3 +616,7 @@ How to sort a dict by its keys / values:
 
 ---
 
+Python has modules in the standard library to deal with users and groups: 
+    - users: pwd (https://pymotw.com/3/pwd/)
+    - groups: grp (https://pymotw.com/3/grp/)
+
