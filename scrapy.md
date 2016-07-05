@@ -416,8 +416,6 @@ u'180'
 
 HANDLE SCRAPY STATUS SUMMARY / ERRORS (OR: HOW TO ADD NEW STATUSES): 
 
-
-
 from scrapy.spider import BaseSpider
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
@@ -451,7 +449,7 @@ class MySpider(BaseSpider):
     dispatcher.connect(handle_spider_closed, signals.spider_closed)
 
 
->>> Output (the downloader/exception_count* stats will only appear if exceptions are actually thrown - I simulated them by trying to run the spider after I'd turned off my wireless adapter):
+>>> Output (the downloader/exception_count *stats will only appear if exceptions are actually thrown* - I simulated them by trying to run the spider after I'd turned off my wireless adapter):
 
 2012-12-10 11:15:26+0000 [myspider] INFO: Dumping Scrapy stats:
     {'downloader/exception_count': 15,
@@ -479,3 +477,18 @@ class MySpider(BaseSpider):
      'start_time': datetime.datetime(2012, 12, 10, 11, 15, 26, 560000)}
 
 (reference: http://www.unknownerror.org/opensource/scrapy/scrapy/q/stackoverflow/13724730/how-to-get-the-scrapy-failure-urls)
+
+---
+
+HOW TO SELECT THE TEXT OF ALL ELEMENTS BELOW A CERTAIN ELEMENT: 
+
+E.g., let's suppose I want the text of all elements below ".box-price": 
+
+    response.xpath("//div[@class ='box-price']/descendant::text()").extract()
+
+I could also exclude some elements from this list using XPATH conditionals: 
+
+    response.xpath("//div[@class='box-price']/descendant::text()[not(parent::div/@class='infobox')]").extract()
+
+(in the last example, I am excluding all elements that have the class "infobox".)
+   
