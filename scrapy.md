@@ -482,6 +482,9 @@ class MySpider(BaseSpider):
 
 HOW TO SELECT THE TEXT OF ALL ELEMENTS BELOW A CERTAIN ELEMENT: 
 
+This is quite useful to avoid the use of lxml, keeping the parsers simple. 
+The technique resumes to using "/descendant" on the desired xpath. 
+
 E.g., let's suppose I want the text of all elements below ".box-price": 
 
     response.xpath("//div[@class ='box-price']/descendant::text()").extract()
@@ -491,4 +494,16 @@ I could also exclude some elements from this list using XPATH conditionals:
     response.xpath("//div[@class='box-price']/descendant::text()[not(parent::div/@class='infobox')]").extract()
 
 (in the last example, I am excluding all elements that have the class "infobox".)
+
+--- 
+
+HOW TO USE REGULAR EXPRESSIONS WITH response.css() and response.xpath(): 
+
+Basically, after css, you can chain the methods "re()" or "re_first()" (instead of
+"extract()" or "extract_first()". E.g.:
+
+    response.css('#ctl00_Body_boxParcelamento .e .bold').re_first(r'([0-9]{1,2})X+')
+
+---
+
    
