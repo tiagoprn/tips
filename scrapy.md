@@ -506,4 +506,17 @@ Basically, after css, you can chain the methods "re()" or "re_first()" (instead 
 
 ---
 
+EXAMPLE OF XPATH "contains" query: 
+
+response.xpath('//a[contains(@href,"Filtro")]//@href').extract()
+
+There are other useful queries, like "starts-with" and others. Instead of
+looping through the elements, notice that it is more efficient and much more
+interesting to use those xpath queries, so that scrapy recomends using xpaths
+for the most complex selectors, just because of this ability to have methods
+like contains, starts-with and potentially many others (it must be useful to 
+study xpaths queries in depth to learn all of its advanced tricks). 
+
+---
+
    
