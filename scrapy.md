@@ -506,4 +506,31 @@ Basically, after css, you can chain the methods "re()" or "re_first()" (instead 
 
 ---
 
-   
+ANOTHER WAY TO GET XPATH ON A PARTIAL ELEMENT VALUE: 
+
+<table>
+    ...   
+    <tr>
+        <th>
+            Código de Barras
+        </th>
+        <td>
+            7896584052084, 7896584052091
+        </td>
+    </tr>
+</table>
+
+Suppose I want to get the value of the "Código de Barras" cell. The XPATH
+expression would have to be written like that: 
+
+ean = response.xpath(
+	'//th[contains(text(), "de Barras")]/'
+	'following-sibling'
+	'::td/text()').extract_first().replace('\n', '').strip()
+
+The secret here is "contains...", combined with "following-sibling". 
+
+---
+
+
+
