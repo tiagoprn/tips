@@ -544,3 +544,14 @@ ean = response.xpath(
 	'::td/text()').extract_first().replace('\n', '').strip()
 
 ---
+
+HOW TO ALLOW SCRAPY TO MAKE A 2ND REQUEST TO THE SAME URL ON PURPOSE 
+(FORCING IT TO BYPASS THE FILTER_DUPLICATE_URLS SETTING): 
+
+# the param "dont_filter" below is necessary to allow to
+# pass a second time through the product url.
+yield Request(meta['original_product_url'],
+				callback=self.parse_product,
+				meta=meta,
+				dont_filter=True)
+
