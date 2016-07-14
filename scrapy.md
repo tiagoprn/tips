@@ -555,3 +555,22 @@ yield Request(meta['original_product_url'],
 				meta=meta,
 				dont_filter=True)
 
+---
+
+HOW TO SELECT AN ELEMENT WITH CSS AND XPATH: 
+
+Suppose the following element: 
+
+```
+<a class="ultima " data-pagina="16" href="http://www.ricardoeletro.com.br/Loja/Cama-Mesa-e-Banho/Jogo-de-Cama/2438-2439?p=16">
+```
+
+To get the value of the property "data-pagina" on this element, I can do: 
+
+```
+response.css('.ultima').xpath('@data-pagina').extract_first()
+```
+
+---
+
+
