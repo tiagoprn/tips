@@ -8,13 +8,21 @@ Sample queries:
     $ INFO keyspace
     PS: Redis has a fixed number of databases (16), starting from 0.
 
-- Get all keys:
-    $ SCAN 0
-        ( PS: suposing db0 here)
+- Select a specific database:
 
-    OR
+    $ SELECT [number] 
+    
+    e.g.
+    
+    $ SELECT 1
 
+
+- Get all keys on a database:
     $ KEYS * 
+
+- Getting the remaining TTL of a key (in how much time it will expire): 
+
+    $ TTL [key_name] 
 
 
 - Setting / Getting keys:
